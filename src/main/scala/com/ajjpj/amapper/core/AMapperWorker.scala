@@ -15,7 +15,7 @@ trait AMapperWorker[H] {
    */
   def helpers: H
 
-  def map(path: PathBuilder, source: AnyRef, sourceType: AType, sourceQualifier: AQualifier, target: AnyRef, targetType: AType, targetQualifier: AQualifier): AnyRef
+  def map(path: PathBuilder, source: AnyRef, sourceType: AType, sourceQualifier: AQualifier, target: AnyRef, targetType: AType, targetQualifier: AQualifier, context: Map[String, AnyRef]): AnyRef
 
   /**
    * deferred mapping causes this mapping to be deferred until no non-deferred mapping work is left. The underlying

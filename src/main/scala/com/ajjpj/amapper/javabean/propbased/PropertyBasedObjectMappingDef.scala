@@ -9,7 +9,7 @@ import scala.reflect.ClassTag
  * @author arno
  */
 case class PropertyBasedObjectMappingDef[S<:AnyRef,T<:AnyRef](props: List[SourceAndTargetProp])(implicit sourceTag: ClassTag[S], targetTag: ClassTag[T]) extends SimpleJavaBeanObjectMappingDefBase[S,T] {
-  def doMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], path: PathBuilder) {
+  override def doMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder) {
     props.foreach(p => {
       val isDeferred = p.sourceProp.isDeferred
 
@@ -17,7 +17,7 @@ case class PropertyBasedObjectMappingDef[S<:AnyRef,T<:AnyRef](props: List[Source
         worker.mapDeferred(path + SimplePathSegment(p.sourceProp.name), p.sourceProp.get(source), p.sourceProp.tpe, p.sourceProp.sourceQualifier, p.targetProp.get(target), p.targetProp.tpe, p.targetProp.targetQualifier, v => p.targetProp.set(target, v))
       }
       else {
-        val v = worker.map(path + SimplePathSegment(p.sourceProp.name), p.sourceProp.get(source), p.sourceProp.tpe, p.sourceProp.sourceQualifier, p.targetProp.get(target), p.targetProp.tpe, p.targetProp.targetQualifier)
+        val v = worker.map(path + SimplePathSegment(p.sourceProp.name), p.sourceProp.get(source), p.sourceProp.tpe, p.sourceProp.sourceQualifier, p.targetProp.get(target), p.targetProp.tpe, p.targetProp.targetQualifier, context)
         p.targetProp.set(target, v)
       }
     })

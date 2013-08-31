@@ -31,7 +31,7 @@ trait AValueMappingDef [S, T, H] extends CanHandleTypes {
    */
   def handlesNull: Boolean
 
-  def map(sourceValue: S, sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: H]): T
+  def map(sourceValue: S, sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef]): T
 }
 
 
@@ -48,6 +48,6 @@ trait AObjectMappingDef [S, T, H] extends CanHandleTypes {
    */
   def isCacheable: Boolean = true
 
-  def map(source: S, sourceType: AType, sourceQualiier: AQualifier, target: T, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: H], path: PathBuilder): T
+  def map(source: S, sourceType: AType, sourceQualiier: AQualifier, target: T, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef], path: PathBuilder): T
 }
 

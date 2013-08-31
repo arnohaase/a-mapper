@@ -5,14 +5,16 @@ todo
 
 * tests
 
+* thoughts
+  * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)
+  * ValueMappingDef: add path --> may itself contain object mappings?
+
 * features
   * for java beans / first shot
     * "special" mapped field
     * context: Map (keep for deferred props)
     * guards / conditional mapping
     * 'global' guard (--> 'don't map un-initialized Hibernate proxies') --> per call to 'map'
-  * ideas
-    * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)
   * parsing
     * janino
     * (configurable) chain of possible parsers for attribute expressions: field, method, method path, janino, janino from dot-separated, OGNL, ...
@@ -43,6 +45,8 @@ todo
     * date format for Date -> String
     * i18n for String -> String
   * qualifier for collection elements: same qualifier as for the collection
-
+  * examples for context
+    * currency / price
+  * context: only source side because ...?!
 
 

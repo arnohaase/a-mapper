@@ -8,6 +8,7 @@ import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.japi.classes.ClassCyclicChild;
 import com.ajjpj.amapper.javabean.japi.classes.ClassCyclicParent;
 import org.junit.Test;
+import scala.collection.immutable.Map;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -81,7 +82,7 @@ public class CoreTest {
 
             @Override
             @SuppressWarnings("unchecked")
-            public List<?> map(List<?> source, AType sourceType, AQualifier sourceQualifier, List<?> target, AType targetType, AQualifier targetQualifier, AMapperWorker<? extends JavaBeanMappingHelper> worker, PathBuilder path) {
+            public List<?> map(List<?> source, AType sourceType, AQualifier sourceQualifier, List<?> target, AType targetType, AQualifier targetQualifier, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context, PathBuilder path) {
                 final LinkedList<String> result = new LinkedList<String>();
                 for (Integer i: (Collection<Integer>) source) {
                     result.add ("number " + i);
@@ -97,7 +98,7 @@ public class CoreTest {
             }
 
             @Override
-            public String map(Number sourceValue, AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualfier, AMapperWorker<? extends JavaBeanMappingHelper> worker) {
+            public String map(Number sourceValue, AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualfier, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context) {
                 return sourceValue.toString();
             }
 

@@ -19,15 +19,15 @@ abstract class AbstractJavaBeanObjectMappingDef[S<:AnyRef,T<:AnyRef](implicit so
 
 abstract class SimpleJavaBeanObjectMappingDefBase[S<:AnyRef,T<:AnyRef](handlesSubclasses: Boolean = false)(implicit sourceClassTag: ClassTag[S], targetClassTag: ClassTag[T])
     extends AbstractJavaBeanObjectMappingDef[S,T] {
-  override def map(source: S, sourceType: AType, sourceQualifier: AQualifier, targetRaw: T, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: JavaBeanMappingHelper], path: PathBuilder): T = {
+  override def map(source: S, sourceType: AType, sourceQualifier: AQualifier, targetRaw: T, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder): T = {
     if(source == null)
       null.asInstanceOf[T]
     else {
       val target = if (targetRaw != null) targetRaw else worker.helpers.createInstance(targetType.asInstanceOf[JavaBeanType[T]], sourceType.asInstanceOf[JavaBeanType[_]])
-      doMap(source, target, worker, path)
+      doMap(source, target, worker, context, path)
       target
     }
   }
 
-  def doMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], path: PathBuilder): Unit
+  def doMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder): Unit
 }

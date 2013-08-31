@@ -8,6 +8,7 @@ import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.japi.classes.WithQualifiers;
 import com.ajjpj.amapper.javabean.japi.classes.WithoutQualifiers;
 import org.junit.Test;
+import scala.collection.immutable.Map;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +28,7 @@ public class QualifierTest {
         }
 
         @Override
-        public String map(String sourceValue, AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier, AMapperWorker<? extends JavaBeanMappingHelper> worker) {
+        public String map(String sourceValue, AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context) {
             return sourceValue + " from qualifier";
         }
     };
@@ -42,7 +43,7 @@ public class QualifierTest {
         }
 
         @Override
-        public String map(String sourceValue, AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier, AMapperWorker<? extends JavaBeanMappingHelper> worker) {
+        public String map(String sourceValue, AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context) {
             return sourceValue + " to qualifier " + targetQualifier.get("qualifier-test").get();
         }
     };

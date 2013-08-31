@@ -26,10 +26,10 @@ object BuiltinValueMappingDefs {
   object DoubleMappingDef extends FromNumberValueType((n: Number) => java.lang.Double.valueOf  (n.doubleValue))
 
   object CharToStringMappingDef extends AbstractValueMappingDef[java.lang.Character, String, AnyRef] {
-    override def map(sourceValue: Character, sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: AnyRef]) = String.valueOf(sourceValue)
+    override def map(sourceValue: Character, sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: AnyRef], context: Map[String, AnyRef]) = String.valueOf(sourceValue)
   }
   object StringToCharMappingDef extends AbstractValueMappingDef[String, java.lang.Character, AnyRef] {
-    override def map(sourceValue: String, sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: AnyRef]) = sourceValue.charAt(0)
+    override def map(sourceValue: String, sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: AnyRef], context: Map[String, AnyRef]) = sourceValue.charAt(0)
   }
 
   //--------------------------------------
@@ -47,11 +47,11 @@ object BuiltinValueMappingDefs {
 
   abstract class PassThroughValueType[T<:AnyRef](implicit clsTag: ClassTag[T]) extends AbstractValueMappingDef[T, T, AnyRef] {
     override def canHandle(sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier) = super.canHandle(sourceType, sourceQualifier, targetType, targetQualifier) && sourceType == targetType
-    override def map(sourceValue: T, sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: AnyRef]) = sourceValue
+    override def map(sourceValue: T, sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: AnyRef], context: Map[String, AnyRef]) = sourceValue
   }
 
   abstract class FromNumberValueType[T<:AnyRef](extractor: Number => T)(implicit clsTag: ClassTag[T]) extends AbstractValueMappingDef[Number, T, AnyRef] {
-    override def map(sourceValue: Number, sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: AnyRef]) = extractor(sourceValue)
+    override def map(sourceValue: Number, sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: AnyRef], context: Map[String, AnyRef]) = extractor(sourceValue)
   }
 }
 

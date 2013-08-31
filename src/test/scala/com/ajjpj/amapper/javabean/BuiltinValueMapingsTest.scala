@@ -23,20 +23,20 @@ class BuiltinValueMapingsTest extends FunSuite with ShouldMatchers {
     BuiltinValueMappingDefs.StringMappingDef.canHandle(typeOf[String], NoQualifier, typeOf[Date],   NoQualifier) should equal (false)
     BuiltinValueMappingDefs.StringMappingDef.canHandle(typeOf[Date],   NoQualifier, typeOf[String], NoQualifier) should equal (false)
 
-    BuiltinValueMappingDefs.StringMappingDef.map("a",   null, null, null, null, null) should equal("a")
-    BuiltinValueMappingDefs.StringMappingDef.map("bcd", null, null, null, null, null) should equal("bcd")
-    BuiltinValueMappingDefs.StringMappingDef.map(null,  null, null, null, null, null) should equal(null)
+    BuiltinValueMappingDefs.StringMappingDef.map("a",   null, null, null, null, null, null) should equal("a")
+    BuiltinValueMappingDefs.StringMappingDef.map("bcd", null, null, null, null, null, null) should equal("bcd")
+    BuiltinValueMappingDefs.StringMappingDef.map(null,  null, null, null, null, null, null) should equal(null)
   }
 
   test("boolean") {
     BuiltinValueMappingDefs.BooleanMappingDef.canHandle (typeOf[java.lang.Boolean], NoQualifier, typeOf[java.lang.Boolean], NoQualifier) should equal (true)
 //TODO test this at the 'builder' level BuiltinValueMappingDefs.BooleanMappingDef.canHandle (SimpleJavaBeanType (java.lang.Boolean.TYPE),     SimpleJavaBeanType(java.lang.Boolean.TYPE))     should equal (true)
 
-    BuiltinValueMappingDefs.BooleanMappingDef.map(true,                         null, null, null, null, null) should equal(true)
-    BuiltinValueMappingDefs.BooleanMappingDef.map(new java.lang.Boolean(true),  null, null, null, null, null) should equal(true)
-    BuiltinValueMappingDefs.BooleanMappingDef.map(false,                        null, null, null, null, null) should equal(false)
-    BuiltinValueMappingDefs.BooleanMappingDef.map(new java.lang.Boolean(false), null, null, null, null, null) should equal(false)
-    BuiltinValueMappingDefs.BooleanMappingDef.map(null,                         null, null, null, null, null) should equal(null)
+    BuiltinValueMappingDefs.BooleanMappingDef.map(true,                         null, null, null, null, null, null) should equal(true)
+    BuiltinValueMappingDefs.BooleanMappingDef.map(new java.lang.Boolean(true),  null, null, null, null, null, null) should equal(true)
+    BuiltinValueMappingDefs.BooleanMappingDef.map(false,                        null, null, null, null, null, null) should equal(false)
+    BuiltinValueMappingDefs.BooleanMappingDef.map(new java.lang.Boolean(false), null, null, null, null, null, null) should equal(false)
+    BuiltinValueMappingDefs.BooleanMappingDef.map(null,                         null, null, null, null, null, null) should equal(null)
   }
 
   test("enum") {
@@ -45,8 +45,8 @@ class BuiltinValueMapingsTest extends FunSuite with ShouldMatchers {
     BuiltinValueMappingDefs.EnumMappingDef.canHandle (typeOf[RetentionPolicy], NoQualifier, typeOf[ElementType],     NoQualifier)     should equal (false)
     BuiltinValueMappingDefs.EnumMappingDef.canHandle (typeOf[ElementType],     NoQualifier, typeOf[RetentionPolicy], NoQualifier) should equal (false)
 
-    BuiltinValueMappingDefs.EnumMappingDef.map(RetentionPolicy.RUNTIME, null, null, null, null, null).asInstanceOf[AnyRef] should equal (RetentionPolicy.RUNTIME)
-    BuiltinValueMappingDefs.EnumMappingDef.map(ElementType.TYPE,        null, null, null, null, null).asInstanceOf[AnyRef] should equal (ElementType.TYPE)
+    BuiltinValueMappingDefs.EnumMappingDef.map(RetentionPolicy.RUNTIME, null, null, null, null, null, null).asInstanceOf[AnyRef] should equal (RetentionPolicy.RUNTIME)
+    BuiltinValueMappingDefs.EnumMappingDef.map(ElementType.TYPE,        null, null, null, null, null, null).asInstanceOf[AnyRef] should equal (ElementType.TYPE)
   }
 
   test("long") {
@@ -59,8 +59,8 @@ class BuiltinValueMapingsTest extends FunSuite with ShouldMatchers {
     BuiltinValueMappingDefs.LongMappingDef.canHandle (typeOf[java.lang.Character], NoQualifier, typeOf[java.lang.Long],    NoQualifier) should equal (false)
     BuiltinValueMappingDefs.LongMappingDef.canHandle (typeOf[java.lang.Long],      NoQualifier, typeOf[java.lang.Integer], NoQualifier) should equal (false)
 
-    BuiltinValueMappingDefs.LongMappingDef.map(1,             null, null, null, null, null) should equal(1L)
-    BuiltinValueMappingDefs.LongMappingDef.map(BigDecimal(1), null, null, null, null, null) should equal(1L)
+    BuiltinValueMappingDefs.LongMappingDef.map(1,             null, null, null, null, null, null) should equal(1L)
+    BuiltinValueMappingDefs.LongMappingDef.map(BigDecimal(1), null, null, null, null, null, null) should equal(1L)
   }
 
   test("charToString") {
@@ -68,8 +68,8 @@ class BuiltinValueMapingsTest extends FunSuite with ShouldMatchers {
     BuiltinValueMappingDefs.CharToStringMappingDef.canHandle (typeOf[java.lang.Character], NoQualifier, typeOf[java.lang.Character], NoQualifier) should equal (false)
     BuiltinValueMappingDefs.CharToStringMappingDef.canHandle (typeOf[java.lang.String],    NoQualifier, typeOf[java.lang.String],    NoQualifier) should equal (false)
 
-    BuiltinValueMappingDefs.CharToStringMappingDef.map ('a', null, null, null, null, null) should equal ("a")
-    BuiltinValueMappingDefs.CharToStringMappingDef.map ('b', null, null, null, null, null) should equal ("b")
+    BuiltinValueMappingDefs.CharToStringMappingDef.map ('a', null, null, null, null, null, null) should equal ("a")
+    BuiltinValueMappingDefs.CharToStringMappingDef.map ('b', null, null, null, null, null, null) should equal ("b")
   }
 
   test("stringToChar") {
@@ -77,7 +77,7 @@ class BuiltinValueMapingsTest extends FunSuite with ShouldMatchers {
     BuiltinValueMappingDefs.StringToCharMappingDef.canHandle (typeOf[java.lang.Character], NoQualifier, typeOf[java.lang.Character], NoQualifier) should equal (false)
     BuiltinValueMappingDefs.StringToCharMappingDef.canHandle (typeOf[java.lang.String],    NoQualifier, typeOf[java.lang.String],    NoQualifier) should equal (false)
 
-    BuiltinValueMappingDefs.StringToCharMappingDef.map ("a", null, null, null, null, null) should equal ('a')
-    BuiltinValueMappingDefs.StringToCharMappingDef.map ("b", null, null, null, null, null) should equal ('b')
+    BuiltinValueMappingDefs.StringToCharMappingDef.map ("a", null, null, null, null, null, null) should equal ('a')
+    BuiltinValueMappingDefs.StringToCharMappingDef.map ("b", null, null, null, null, null, null) should equal ('b')
   }
 }

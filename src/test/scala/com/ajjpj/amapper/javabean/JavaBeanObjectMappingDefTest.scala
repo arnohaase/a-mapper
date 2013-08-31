@@ -20,7 +20,7 @@ import org.mockito.Mockito
 class JavaBeanObjectMappingDefTest extends FunSuite with ShouldMatchers with MockitoSugar {
   test("abstract") {
     val md = new AbstractJavaBeanObjectMappingDef[String, Date]() {
-      override def map(source: String, sourceType: AType, sourceQualifier: AQualifier, target: Date, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: JavaBeanMappingHelper], path: PathBuilder): Date = null
+      override def map(source: String, sourceType: AType, sourceQualifier: AQualifier, target: Date, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder): Date = null
     }
 
     md.sourceClass should equal (classOf[String])
@@ -34,7 +34,7 @@ class JavaBeanObjectMappingDefTest extends FunSuite with ShouldMatchers with Moc
 
   test("simple") {
     val md = new SimpleJavaBeanObjectMappingDefBase[String, StringBuilder]() {
-      def doMap(source: String, target: StringBuilder, worker: AMapperWorker[_ <: JavaBeanMappingHelper], path: PathBuilder) {
+      def doMap(source: String, target: StringBuilder, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder) {
         target.append(source)
       }
     }
@@ -47,7 +47,7 @@ class JavaBeanObjectMappingDefTest extends FunSuite with ShouldMatchers with Moc
     md.canHandle (SimpleJavaBeanType(classOf[String]), NoQualifier, SimpleJavaBeanType(classOf[AnyRef]),        NoQualifier)        should equal (false)
 
     val prevSb = new StringBuilder
-    val mappedPrev = md.map("abc", null, NoQualifier, prevSb, null, NoQualifier, null, null)
+    val mappedPrev = md.map("abc", null, NoQualifier, prevSb, null, NoQualifier, null, null, null)
     mappedPrev should be theSameInstanceAs prevSb
     mappedPrev.toString should equal ("abc")
 
@@ -55,7 +55,7 @@ class JavaBeanObjectMappingDefTest extends FunSuite with ShouldMatchers with Moc
     import Mockito._
     when (worker.helpers) thenReturn SimpleBeanMappingHelper
 
-    val mappedNew = md.map("xyz", null, NoQualifier, null, JavaBeanTypes[StringBuilder], NoQualifier, worker, null)
+    val mappedNew = md.map("xyz", null, NoQualifier, null, JavaBeanTypes[StringBuilder], NoQualifier, worker, null, null)
     mappedNew.getClass should be (classOf[StringBuilder])
     mappedNew.toString should equal ("xyz")
   }
