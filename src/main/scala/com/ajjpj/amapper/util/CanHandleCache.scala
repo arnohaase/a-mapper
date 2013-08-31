@@ -1,11 +1,11 @@
-package com.ajjpj.amapper.core.impl
+package com.ajjpj.amapper.util
 
 import com.ajjpj.amapper.core.{AQualifier, CanHandleTypes, AType}
 
 /**
  * @author arno
  */
-class MappingDefResolver[T <: CanHandleTypes] (all: Seq[T]) {
+class CanHandleCache[T <: CanHandleTypes] (all: Seq[T]) {
   @volatile private var resolved: Map[(AType, AType, AQualifier, AQualifier), Option[T]] = Map()
 
   def mappingDefFor(sourceType: AType, targetType: AType, sourceQualifier: AQualifier, targetQualifier: AQualifier): Option[T] = {

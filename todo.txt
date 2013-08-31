@@ -4,6 +4,8 @@ todo
   * log exception including path in worker --> configurable: log and maintain old exception, wrap, ...
 
 * tests
+  * deProxyStrategy
+  * contextExtractor (--> Java Beans implementation)
 
 * thoughts
   * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)
@@ -12,7 +14,6 @@ todo
 * features
   * for java beans / first shot
     * "special" mapped field
-    * context: Map (keep for deferred props)
     * guards / conditional mapping
     * 'global' guard (--> 'don't map un-initialized Hibernate proxies') --> per call to 'map'
   * parsing

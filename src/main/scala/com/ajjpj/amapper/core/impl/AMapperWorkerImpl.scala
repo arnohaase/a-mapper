@@ -2,25 +2,29 @@ package com.ajjpj.amapper.core.impl
 
 import com.ajjpj.amapper.core._
 import scala.collection.mutable.ArrayBuffer
+import com.ajjpj.amapper.util.CanHandleCache
 
 /**
  * @author arno
  */
-private[impl] class AMapperWorkerImpl[H] (valueMappings: MappingDefResolver[AValueMappingDef[_,_, _ >: H]],
-                                     objectMappings: MappingDefResolver[AObjectMappingDef[_,_, _ >: H]],
+private[impl] class AMapperWorkerImpl[H] (valueMappings: CanHandleCache[AValueMappingDef[_,_, _ >: H]],
+                                     objectMappings: CanHandleCache[AObjectMappingDef[_,_, _ >: H]],
                                      val logger: AMapperLogger, deProxyStrategy: AnyRef => AnyRef,
                                      val helpers: H,
+                                     contextExtractor: AContextExtractor,
                                      deferredWork: ArrayBuffer[()=>Unit]) extends AMapperWorker[H] {
   private val identityCache = new IdentityCache
 
   override def map(path: PathBuilder, source: AnyRef, sourceType: AType, sourceQualifier: AQualifier, target: AnyRef, targetType: AType, targetQualifier: AQualifier, context: Map[String, AnyRef]) = {
     logger.debug ("map: " + sourceType + " @ " + path.build)
+    val newContext = contextExtractor.withContext(context, source, sourceType)
+
     valueMappings.mappingDefFor(sourceType, targetType, sourceQualifier, targetQualifier) match {
       case Some(m) =>
-        mapValue(m, source, sourceType, sourceQualifier, targetType, targetQualifier, context)
+        mapValue(m, source, sourceType, sourceQualifier, targetType, targetQualifier, newContext)
       case None =>
         objectMappings.mappingDefFor(sourceType, targetType, sourceQualifier, targetQualifier) match {
-          case Some(m) => mapObject(m, source, sourceType, sourceQualifier, target, targetType, targetQualifier, context, path)
+          case Some(m) => mapObject(m, source, sourceType, sourceQualifier, target, targetType, targetQualifier, newContext, path)
           case None => throw new AMapperException("no mapping def found for " + sourceType + " / " + targetType + ".", path.build)
         }
     }
