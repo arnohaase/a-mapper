@@ -10,9 +10,11 @@ todo
 * thoughts
   * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)
   * ValueMappingDef: add path --> may itself contain object mappings?
+  * separate 'create' and 'merge' modes?
 
 * features
   * for java beans / first shot
+    * "enhancer" (--> merge with "deProxy"?)
     * "special" mapped field
     * guards / conditional mapping
     * 'global' guard (--> 'don't map un-initialized Hibernate proxies') --> per call to 'map'
@@ -33,13 +35,13 @@ todo
   * separate 'transformation' step between source and target access?
 
 * admin
-  * create GIT repo
   * upload to maven central
 
 * ?!?!?
   * special kind of 'mapping def' for multi-valued / indexed properties
 
 * documentation
+  * Java Bean mapping: sourceCls == targetClass --> only 'forward' mapping is registered
   * examples for qualifiers
     * 'list' mapping strategy
     * number of decimals for 'double to BigDecimal' mapping

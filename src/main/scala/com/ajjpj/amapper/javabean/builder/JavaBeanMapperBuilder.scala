@@ -3,7 +3,7 @@ package com.ajjpj.amapper.javabean.builder
 import com.ajjpj.amapper.AMapper
 import com.ajjpj.amapper.core.impl.{AMapperImpl}
 import com.ajjpj.amapper.core._
-import com.ajjpj.amapper.javabean.{BuiltinValueMappingDefs, SimpleBeanMappingHelper, JavaBeanMappingHelper}
+import com.ajjpj.amapper.javabean.{AnnotationBasedContextExtractor, BuiltinValueMappingDefs, SimpleBeanMappingHelper, JavaBeanMappingHelper}
 import com.ajjpj.amapper.util.CanHandleCache
 
 /**
@@ -21,7 +21,7 @@ class JavaBeanMapperBuilder[H <: JavaBeanMappingHelper](val helperFactory: () =>
   var log: AMapperLogger = AMapperLogger.defaultLogger
   var deProxyStrategy: AnyRef => AnyRef = x=>x
 
-  var contextExtractor: AContextExtractor = NoContextExtractor
+  var contextExtractor: AContextExtractor = AnnotationBasedContextExtractor
 
   /**
    * later additions take precedence over earlier additions
@@ -33,7 +33,12 @@ class JavaBeanMapperBuilder[H <: JavaBeanMappingHelper](val helperFactory: () =>
    */
   def addObjectMapping(m: AObjectMappingDef[_,_,_>:H]): JavaBeanMapperBuilder[H] = {objectMappings = m :: objectMappings; this}
 
-  def addBeanMapping(m: JavaBeanMapping[_,_]): JavaBeanMapperBuilder[H] = {addObjectMapping(m.build); addObjectMapping(m.buildBackward); this}
+  def addBeanMapping(m: JavaBeanMapping[_,_]): JavaBeanMapperBuilder[H] = {
+    addObjectMapping(m.build)
+    if(m.sourceCls != m.targetCls)
+      addObjectMapping(m.buildBackward)
+    this
+  }
 
   def withLogger(log: AMapperLogger): JavaBeanMapperBuilder[H] = {this.log = log; this}
   def withDeProxyStrategy(deProxyStrategy: AnyRef => AnyRef) = {this.deProxyStrategy = deProxyStrategy; this}

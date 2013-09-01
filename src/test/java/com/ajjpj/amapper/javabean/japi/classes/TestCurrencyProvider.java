@@ -1,7 +1,9 @@
 package com.ajjpj.amapper.javabean.japi.classes;
 
+import com.ajjpj.amapper.javabean.japi.AContextMarker;
 
-//TODO @OmdMapperContextMarker
+
+@AContextMarker
 public interface TestCurrencyProvider {
     String getCurrency();
 }

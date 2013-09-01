@@ -20,7 +20,6 @@ public class QualifierTest {
     final AbstractValueMappingDef<String, String, JavaBeanMappingHelper> fromQualifier = new AbstractValueMappingDef<String, String, JavaBeanMappingHelper>(String.class, String.class) {
         @Override
         public boolean canHandle(AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier) {
-            System.out.println("checking fromQualifier with " + sourceQualifier);
             if (!super.canHandle(sourceType, sourceQualifier, targetType, targetQualifier)) {
                 return false;
             }
