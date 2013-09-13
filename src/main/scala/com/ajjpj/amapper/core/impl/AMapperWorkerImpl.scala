@@ -33,11 +33,32 @@ private[impl] class AMapperWorkerImpl[H] (valueMappings: CanHandleSourceAndTarge
     if(source == null && ! v.handlesNull) null else v.asInstanceOf[AValueMappingDef[AnyRef, AnyRef, H]].map(source, types, this, context)
 
   private def mapObject(m: AObjectMappingDef[_,_,_ >: H], sourceRaw: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef], path: PathBuilder) = {
+    var skip = false
 
-    val source = sourceRaw //TODO deProxyStrategy(sourceRaw)
-    val result = m.asInstanceOf[AObjectMappingDef[AnyRef, AnyRef, H]].map(source, target, types, this, context, path)
-    identityCache.register(source, result, path)
-    result
+    val source = preProcessor.entryFor(types) match {
+      case Some(p) =>
+        p.preProcess(sourceRaw, types) match {
+          case Some(s) => s
+          case None => skip=true; sourceRaw
+        }
+      case None =>
+        sourceRaw
+    }
+
+    if(skip)
+      target
+    else {
+      val resultRaw = m.asInstanceOf[AObjectMappingDef[AnyRef, AnyRef, H]].map(source, target, types, this, context, path)
+      val result = postProcessor.entryFor(types) match {
+        case Some(p) => p.postProcess(resultRaw, types)
+        case None => resultRaw
+      }
+
+      if(m.isCacheable)
+        identityCache.register(source, result, path)
+
+      result
+    }
   }
 
   /**

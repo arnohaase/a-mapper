@@ -5,7 +5,6 @@ todo
   * log exception including path in worker --> configurable: log and maintain old exception, wrap, ...
 
 * tests
-  * preprocessor / postprocessor
 
 * thoughts
   * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)
@@ -14,11 +13,6 @@ todo
 
 * features
   * for java beans / first shot
-    * "preprocessor"
-      * "deProxy"
-      * "enhance" (--> inject something)
-      * "guard" (--> don't map uninitialized Hibernate proxies)
-      * source vs. target side
     * "special" mapped field
     * guards / conditional mapping
   * parsing
@@ -54,5 +48,11 @@ todo
   * examples for context
     * currency / price
   * context: only source side because ...?!
+  * preprocessing on source side, postprocessing on target side
+  * examples for preprocessors
+    * deProxy
+    * skip Hibernate proxies
+  * exmples for postprocessors
+    * inject user's locale
 
 
