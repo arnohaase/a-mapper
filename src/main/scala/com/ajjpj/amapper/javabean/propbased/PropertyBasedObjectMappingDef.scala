@@ -35,15 +35,15 @@ case class SourceAndTargetProp[S<:AnyRef, T<:AnyRef] (sourceProp: PropertyAccess
   override def sourceName = sourceProp.name
   override def targetName = targetProp.name
 
-  private def newPath(path: PathBuilder) = path + SimplePathSegment(sourceProp.name)
+  private def newPath(path: PathBuilder, isSourceSide: Boolean) = path + SimplePathSegment(if(isSourceSide) sourceProp.name else targetProp.name)
   val isDeferred = sourceProp.isDeferred
 
   override def doMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder) {
     if(isDeferred) {
-      worker.mapDeferred(newPath(path), sourceProp.get(source), targetProp.get(target), types, v => targetProp.set(target, v))
+      worker.mapDeferred(newPath(path, isSourceSide=true), sourceProp.get(source), targetProp.get(target), types, v => targetProp.set(target, v))
     }
     else {
-      worker.map(newPath(path), sourceProp.get(source), targetProp.get(target), types, context) match {
+      worker.map(newPath(path, isSourceSide=true), sourceProp.get(source), targetProp.get(target), types, context) match {
         case Some(v) => targetProp.set(target, v)
         case _ =>
       }
@@ -52,9 +52,9 @@ case class SourceAndTargetProp[S<:AnyRef, T<:AnyRef] (sourceProp: PropertyAccess
 
   def doDiff(diff: ADiffBuilder, sourceOld: S, sourceNew: S, worker: AMapperWorker[_ <: JavaBeanMappingHelper], contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {
     if(isDeferred)
-      worker.diffDeferred (newPath(path), sourceProp.get(sourceOld), sourceProp.get(sourceNew), types, contextOld, contextNew, isDerived)
+      worker.diffDeferred (newPath(path, isSourceSide=false), sourceProp.get(sourceOld), sourceProp.get(sourceNew), types, contextOld, contextNew, isDerived)
     else
-      worker.diff (newPath(path), sourceProp.get(sourceOld), sourceProp.get(sourceNew), types, contextOld, contextNew, isDerived)
+      worker.diff (newPath(path, isSourceSide=false), sourceProp.get(sourceOld), sourceProp.get(sourceNew), types, contextOld, contextNew, isDerived)
   }
 }
 

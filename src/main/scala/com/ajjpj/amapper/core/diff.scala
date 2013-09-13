@@ -4,6 +4,8 @@ package com.ajjpj.amapper.core
  * @author arno
  */
 class ADiff(val elements: Iterable[ADiffElement]) {
+  def isEmpty = elements.isEmpty
+
   val paths: Set[APath] = elements.map(_.path).toSet
   val byPath: Map[APath, Iterable[ADiffElement]] = paths.map(p => p -> elements.filter(_.path == p)).toMap
   val byPathString: Map[String, Iterable[ADiffElement]] = byPath.map(e => e._1.segments.map(_.name).mkString(".") -> e._2)

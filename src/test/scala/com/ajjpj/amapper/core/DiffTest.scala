@@ -5,7 +5,7 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 import com.ajjpj.amapper.javabean.builder.{JavaBeanMapping, JavaBeanMapperBuilder}
-import com.ajjpj.amapper.javabean.japi.classes.{ClassA, ClassB}
+import com.ajjpj.amapper.javabean.japi.classes._
 import com.ajjpj.amapper.javabean.JavaBeanTypes
 
 /**
@@ -43,4 +43,108 @@ class DiffTest extends FunSuite with ShouldMatchers {
   }
 
   //TODO ref with same identifier
+
+  val ie = new IdentifierExtractor {
+    def uniqueIdentifier(o: AnyRef, tpe: AType) = o match {
+      case x: DiffSource => x.getOid
+      case x: DiffTarget => x.getOid
+      case x: DiffSourceChild => x.getOid
+      case x: DiffTargetChild => x.getOid
+    }
+  }
+
+  val mapper = JavaBeanMapperBuilder.create()
+    .withIdentifierExtractor(ie)
+    .addBeanMapping(JavaBeanMapping.create(classOf[DiffSource], classOf[DiffTarget])
+    .addMapping("oid", classOf[java.lang.String], "oid", classOf[java.lang.Long])
+    .addMapping("sourceName", classOf[String], "targetName", classOf[String])
+    .addMapping("sourceChild", classOf[DiffSourceChild], "targetChild", classOf[DiffTargetChild])
+  )
+    .addBeanMapping(JavaBeanMapping.create(classOf[DiffSourceChild], classOf[DiffTargetChild])
+    .addMapping("oid", classOf[java.lang.String], "oid", classOf[java.lang.Long])
+    .addMapping("sourceNum", classOf[java.lang.Double], "targetNum", classOf[java.lang.Integer])
+  )
+    .build
+
+  test("diff equal") {
+    val s1 = new DiffSource(1, "source", new DiffSourceChild(2, 123.0))
+    val s2 = new DiffSource(1, "source", new DiffSourceChild(2, 123.0))
+
+    val diff = mapper.diff(s1, s2, JavaBeanTypes[DiffSource], NoQualifier, JavaBeanTypes[DiffTarget], NoQualifier)
+
+    diff.isEmpty should equal (true)
+  }
+
+  test("diff source different but target equal") {
+    val s1 = new DiffSource(1, "source", new DiffSourceChild(2, 123.1))
+    val s2 = new DiffSource(1, "source", new DiffSourceChild(2, 123.2))
+
+    val diff = mapper.diff(s1, s2, JavaBeanTypes[DiffSource], NoQualifier, JavaBeanTypes[DiffTarget], NoQualifier)
+
+    diff.isEmpty should equal (true)
+  }
+
+  test("diff attribute different") {
+    val s1 = new DiffSource(1, "source", new DiffSourceChild(2, 123.1))
+    val s2 = new DiffSource(1, "source", new DiffSourceChild(2, 124.1))
+
+    val diff = mapper.diff(s1, s2, JavaBeanTypes[DiffSource], NoQualifier, JavaBeanTypes[DiffTarget], NoQualifier)
+
+    diff.isEmpty should equal (false)
+    diff.elements.size should equal (1)
+
+    diff.getSingle("targetChild.targetNum").map(_.oldValue) should equal (Some(123))
+    diff.getSingle("targetChild.targetNum").map(_.newValue) should equal (Some(124))
+    diff.getSingle("targetChild.targetNum").map(_.isDerived) should equal (Some(false))
+
+    diff.getSingle("targetChild.targetNum").map(_.isInstanceOf[AttributeDiffElement]) should equal (Some(true))
+  }
+
+  test("diff ref different") {
+    val s1 = new DiffSource(1, "source", new DiffSourceChild(2, 123.1))
+    val s2 = new DiffSource(1, "source", new DiffSourceChild(3, 123.1))
+
+    val diff = mapper.diff(s1, s2, JavaBeanTypes[DiffSource], NoQualifier, JavaBeanTypes[DiffTarget], NoQualifier)
+
+    diff.elements.size should equal (2)
+
+    diff.getSingle("targetChild").map(_.oldValue) should equal (Some(2L))
+    diff.getSingle("targetChild").map(_.newValue) should equal (Some(3L))
+    diff.getSingle("targetChild").map(_.isDerived) should equal (Some(false))
+    diff.getSingle("targetChild").map(_.isInstanceOf[ChangeRefDiffElement]) should equal (Some(true))
+
+    diff.getSingle("targetChild.oid").map(_.oldValue) should equal (Some(2L))
+    diff.getSingle("targetChild.oid").map(_.newValue) should equal (Some(3L))
+    diff.getSingle("targetChild.oid").map(_.isDerived) should equal (Some(true))
+    diff.getSingle("targetChild.oid").map(_.isInstanceOf[AttributeDiffElement]) should equal (Some(true))
+  }
+
+  test("diff cascade") {
+    val s1 = new DiffSource(1, "source1", new DiffSourceChild(3, 123.1))
+    val s2 = new DiffSource(2, "source2", new DiffSourceChild(4, 123.1))
+
+    val diff = mapper.diff(s1, s2, JavaBeanTypes[DiffSource], NoQualifier, JavaBeanTypes[DiffTarget], NoQualifier)
+
+    diff.elements.size should equal (5)
+
+    diff.getSingle("").map(_.oldValue) should equal (Some(1L))
+    diff.getSingle("").map(_.newValue) should equal (Some(2L))
+    diff.getSingle("").map(_.isDerived) should equal (Some(false))
+
+    diff.getSingle("oid").map(_.oldValue) should equal (Some(1L))
+    diff.getSingle("oid").map(_.newValue) should equal (Some(2L))
+    diff.getSingle("oid").map(_.isDerived) should equal (Some(true))
+
+    diff.getSingle("targetName").map(_.oldValue) should equal (Some("source1"))
+    diff.getSingle("targetName").map(_.newValue) should equal (Some("source2"))
+    diff.getSingle("targetName").map(_.isDerived) should equal (Some(true))
+
+    diff.getSingle("targetChild").map(_.oldValue) should equal (Some(3L))
+    diff.getSingle("targetChild").map(_.newValue) should equal (Some(4L))
+    diff.getSingle("targetChild").map(_.isDerived) should equal (Some(true))
+
+    diff.getSingle("targetChild.oid").map(_.oldValue) should equal (Some(3L))
+    diff.getSingle("targetChild.oid").map(_.newValue) should equal (Some(4L))
+    diff.getSingle("targetChild.oid").map(_.isDerived) should equal (Some(true))
+  }
 }

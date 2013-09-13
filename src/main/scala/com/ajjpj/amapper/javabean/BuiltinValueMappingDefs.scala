@@ -41,37 +41,35 @@ object BuiltinValueMappingDefs {
       }
     }
   }
+}
 
-  //--------------------------------------
+abstract class AbstractValueMappingDef[S<:AnyRef, T<:AnyRef, H<:AnyRef](implicit srcTag: ClassTag[S], targetTag: ClassTag[T]) extends AValueMappingDef[S, T, H] {
+  val sourceTpe = JavaBeanTypes[S]
+  val targetTpe = JavaBeanTypes[T]
 
-  abstract class AbstractValueMappingDef[S<:AnyRef, T<:AnyRef, H<:AnyRef](implicit srcTag: ClassTag[S], targetTag: ClassTag[T]) extends AValueMappingDef[S, T, H] {
-    val sourceTpe = JavaBeanTypes[S]
-    val targetTpe = JavaBeanTypes[T]
-
-    override def canHandle(types: QualifiedSourceAndTargetType) = (types.sourceType, types.targetType) match {
-      case (st: JavaBeanType[_], tt: JavaBeanType[_]) => sourceTpe.isAssignableFrom(st) && targetTpe.isAssignableFrom(tt)
-      case _ => false
-    }
-    override def handlesNull = true
+  override def canHandle(types: QualifiedSourceAndTargetType) = (types.sourceType, types.targetType) match {
+    case (st: JavaBeanType[_], tt: JavaBeanType[_]) => sourceTpe.isAssignableFrom(st) && targetTpe.isAssignableFrom(tt)
+    case _ => false
   }
+  override def handlesNull = true
+}
 
-  abstract class PassThroughValueType[T<:AnyRef](implicit clsTag: ClassTag[T]) extends AbstractValueMappingDef[T, T, AnyRef] {
-    override def canHandle(types: QualifiedSourceAndTargetType) = super.canHandle(types) && types.sourceType == types.targetType
-    override def map(sourceValue: T, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: AnyRef], context: Map[String, AnyRef]) = sourceValue
+abstract class PassThroughValueType[T<:AnyRef](implicit clsTag: ClassTag[T]) extends AbstractValueMappingDef[T, T, AnyRef] {
+  override def canHandle(types: QualifiedSourceAndTargetType) = super.canHandle(types) && types.sourceType == types.targetType
+  override def map(sourceValue: T, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: AnyRef], context: Map[String, AnyRef]) = sourceValue
 
-    override def diff(diff: ADiffBuilder, sourceOld: T, sourceNew: T, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: AnyRef], oldContext: Map[String, AnyRef], newContext: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {
-      if(sourceOld != sourceNew) {
-        diff.add(AttributeDiffElement(path.build, map(sourceOld, types, worker, oldContext), map(sourceNew, types, worker, newContext), isDerived))
-      }
+  override def diff(diff: ADiffBuilder, sourceOld: T, sourceNew: T, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: AnyRef], oldContext: Map[String, AnyRef], newContext: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {
+    if(sourceOld != sourceNew) {
+      diff.add(AttributeDiffElement(path.build, map(sourceOld, types, worker, oldContext), map(sourceNew, types, worker, newContext), isDerived))
     }
   }
+}
 
-  abstract class FromNumberValueType[T<:AnyRef](extractor: Number => T)(implicit clsTag: ClassTag[T]) extends AbstractValueMappingDef[Number, T, AnyRef] {
-    override def map(sourceValue: Number, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: AnyRef], context: Map[String, AnyRef]) = extractor(sourceValue)
-    override def diff(diff: ADiffBuilder, sourceOld: Number, sourceNew: Number, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: AnyRef], oldContext: Map[String, AnyRef], newContext: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {
-      if(extractor(sourceOld) != extractor(sourceNew)) {
-        diff.add(AttributeDiffElement(path.build, extractor(sourceOld), extractor(sourceNew), isDerived))
-      }
+abstract class FromNumberValueType[T<:AnyRef](extractor: Number => T)(implicit clsTag: ClassTag[T]) extends AbstractValueMappingDef[Number, T, AnyRef] {
+  override def map(sourceValue: Number, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: AnyRef], context: Map[String, AnyRef]) = extractor(sourceValue)
+  override def diff(diff: ADiffBuilder, sourceOld: Number, sourceNew: Number, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: AnyRef], oldContext: Map[String, AnyRef], newContext: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {
+    if(extractor(sourceOld) != extractor(sourceNew)) {
+      diff.add(AttributeDiffElement(path.build, extractor(sourceOld), extractor(sourceNew), isDerived))
     }
   }
 }

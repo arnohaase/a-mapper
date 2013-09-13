@@ -135,16 +135,20 @@ private[impl] class AMapperWorkerImpl[H] (valueMappings: CanHandleSourceAndTarge
 
     var causesDerived = false
     if(sourceOld == null && sourceNew != null) {
-      diffBuilder.add (AddDiffElement (path.build, sourceNew, isDerived))   //TODO transform 'source' to 'target' for diff elements everywhere!!!
+      diffBuilder.add (AddDiffElement (path.build, sourceNew, isDerived))
       causesDerived = true
     }
     else if(sourceOld != null && sourceNew == null) {
-      diffBuilder.add (RemoveDiffElement (path.build, sourceOld, isDerived)) //TODO transform 'source' to 'target' for diff elements everywhere!!!
+      diffBuilder.add (RemoveDiffElement (path.build, sourceOld, isDerived))
       causesDerived = true
     }
-    else if (identifierExtractor.uniqueIdentifier (sourceOld, types.sourceType) != identifierExtractor.uniqueIdentifier (sourceNew, types.sourceType)) {
-      diffBuilder.add (ChangeRefDiffElement (path.build, sourceOld, sourceNew, isDerived)) //TODO transform 'source' to 'target' for diff elements everywhere!!!
-      causesDerived = true
+    else {
+      val oldIdent = identifierExtractor.uniqueIdentifier (sourceOld, types.sourceType)
+      val newIdent = identifierExtractor.uniqueIdentifier (sourceNew, types.sourceType)
+      if (oldIdent != newIdent) {
+        diffBuilder.add (ChangeRefDiffElement (path.build, oldIdent, newIdent, isDerived))
+        causesDerived = true
+      }
     }
 
     objectMappingFor(types, path).diff (diffBuilder, sourceOld, sourceNew, types, this, oldContext, newContext, path, isDerived || causesDerived)

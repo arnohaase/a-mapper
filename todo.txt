@@ -8,9 +8,6 @@ todo
   * diff
     * deferred
     * derived
-    * target values in diff
-      * value mappings
-      * object mappings
     * add / remove / change ref
     * collections
     * JApi
@@ -71,4 +68,8 @@ todo
   * Java Beans mapping with same source and target type: only 'forward' is used
   * .withMatchingPropsMapping
   * no postprocessing in diff
+  * diff:
+    * target values
+    * target path
+
 
