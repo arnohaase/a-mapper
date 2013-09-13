@@ -1,12 +1,11 @@
 todo
 ----
 * cross cutting
-  * QualifiedSourceAndTargetTypes
   * generic CompositeCanHandle[T <: CanHandle]?
   * log exception including path in worker --> configurable: log and maintain old exception, wrap, ...
 
 * tests
-  * deProxyStrategy
+  * preprocessor / postprocessor
 
 * thoughts
   * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)
@@ -20,10 +19,8 @@ todo
       * "enhance" (--> inject something)
       * "guard" (--> don't map uninitialized Hibernate proxies)
       * source vs. target side
-    * "enhancer" (--> merge with "deProxy"?)
     * "special" mapped field
     * guards / conditional mapping
-    * 'global' guard (--> 'don't map un-initialized Hibernate proxies') --> per call to 'map'
   * parsing
     * janino
     * (configurable) chain of possible parsers for attribute expressions: field, method, method path, janino, janino from dot-separated, OGNL, ...

@@ -19,7 +19,7 @@ class EquivalenceBasedMerger[SE <: AnyRef, S<:Iterable[SE], T <: AMutableCollect
     val equiv = h.equivalenceMap(source, types.sourceType, target.asIterable, types.targetType)
 
     if(target.asIterable.isEmpty) // this is a performance optimization
-      equiv.sourceWithoutTarget.foreach(s => target.add(worker.map(ACollectionSupport.elementPath(path, worker, s, sourceElementType), s, null, types, context).asInstanceOf[TE]))
+      equiv.sourceWithoutTarget.foreach(s => target.add(worker.map(ACollectionSupport.elementPath(path, worker, s, sourceElementType), s, null, elementTypes, context).asInstanceOf[TE]))
     else {
       equiv.targetWithoutSource.foreach(target.remove)
       equiv.sourceWithoutTarget.map(s => target.add(worker.map(path + ParameterizedPathSegment("elements", worker.helpers.uniqueIdentifier(s, sourceElementType)), s, null, elementTypes, context).asInstanceOf[TE]))
