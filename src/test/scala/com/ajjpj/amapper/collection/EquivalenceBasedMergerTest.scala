@@ -41,6 +41,11 @@ class EquivalenceBasedMergerTest extends FunSuite with ShouldMatchers with Mocki
     def mapValue(path: PathBuilder, source: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]): AnyRef = ???
     def mapObject(path: PathBuilder, source: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]): Option[AnyRef] = {mapped += (String.valueOf(source) -> ("#" + source)); Some("#"+source)}
     def mapDeferred(path: PathBuilder, source: AnyRef, target: => AnyRef, types: QualifiedSourceAndTargetType, callback: (AnyRef) => Unit) = ???
+
+    def diff(path: PathBuilder, sourceOld: AnyRef, sourceNew: AnyRef, types: QualifiedSourceAndTargetType, oldContext: Map[String, AnyRef], newContext: Map[String, AnyRef], isDerived: Boolean) {}
+    def diffValue(path: PathBuilder, sourceOld: AnyRef, sourceNew: AnyRef, types: QualifiedSourceAndTargetType, oldContext: Map[String, AnyRef], newContext: Map[String, AnyRef], isDerived: Boolean) {}
+    def diffObject(path: PathBuilder, sourceOld: AnyRef, sourceNew: AnyRef, types: QualifiedSourceAndTargetType, oldContextOrig: Map[String, AnyRef], newContextOrig: Map[String, AnyRef], isDerived: Boolean) {}
+    def diffDeferred(path: PathBuilder, sourceOld: AnyRef, sourceNew: AnyRef, types: QualifiedSourceAndTargetType, oldContextOrig: Map[String, AnyRef], newContextOrig: Map[String, AnyRef], isDerived: Boolean) {}
   }
 
   val merger = new EquivalenceBasedMerger[String, Iterable[String], AMutableCollection[String], String, ACollectionHelper]

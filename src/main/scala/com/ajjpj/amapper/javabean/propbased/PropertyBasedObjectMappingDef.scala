@@ -1,8 +1,11 @@
 package com.ajjpj.amapper.javabean.propbased
 
 import com.ajjpj.amapper.javabean.{JavaBeanMappingHelper, SimpleJavaBeanObjectMappingDefBase}
-import com.ajjpj.amapper.core.{QualifiedSourceAndTargetType, SimplePathSegment, PathBuilder, AMapperWorker}
+import com.ajjpj.amapper.core._
 import scala.reflect.ClassTag
+import com.ajjpj.amapper.core.SimplePathSegment
+import scala.Some
+import com.ajjpj.amapper.core.QualifiedSourceAndTargetType
 
 
 /**
@@ -12,12 +15,17 @@ case class PropertyBasedObjectMappingDef[S<:AnyRef,T<:AnyRef](props: List[Partia
   override def doMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder) {
     props.foreach(_.doMap(source, target, worker, context, path))
   }
+
+  override def diff(diff: ADiffBuilder, sourceOld: S, sourceNew: S, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: JavaBeanMappingHelper], contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {
+    props.foreach(_.doDiff(diff, sourceOld, sourceNew, worker, contextOld, contextNew, path, isDerived))
+  }
 }
 
 trait PartialMapping[S<:AnyRef, T<:AnyRef] {
   def sourceName: String
   def targetName: String
   def doMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder): Unit
+  def doDiff(diff: ADiffBuilder, sourceOld: S, sourceNew: S, worker: AMapperWorker[_ <: JavaBeanMappingHelper], contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean): Unit
 }
 
 case class SourceAndTargetProp[S<:AnyRef, T<:AnyRef] (sourceProp: PropertyAccessor, targetProp: PropertyAccessor) extends PartialMapping[S,T] {
@@ -27,18 +35,26 @@ case class SourceAndTargetProp[S<:AnyRef, T<:AnyRef] (sourceProp: PropertyAccess
   override def sourceName = sourceProp.name
   override def targetName = targetProp.name
 
-  override def doMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder) {
-    val isDeferred = sourceProp.isDeferred
+  private def newPath(path: PathBuilder) = path + SimplePathSegment(sourceProp.name)
+  val isDeferred = sourceProp.isDeferred
 
+  override def doMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder) {
     if(isDeferred) {
-      worker.mapDeferred(path + SimplePathSegment(sourceProp.name), sourceProp.get(source), targetProp.get(target), types, v => targetProp.set(target, v))
+      worker.mapDeferred(newPath(path), sourceProp.get(source), targetProp.get(target), types, v => targetProp.set(target, v))
     }
     else {
-      worker.map(path + SimplePathSegment(sourceProp.name), sourceProp.get(source), targetProp.get(target), types, context) match {
+      worker.map(newPath(path), sourceProp.get(source), targetProp.get(target), types, context) match {
         case Some(v) => targetProp.set(target, v)
         case _ =>
       }
     }
+  }
+
+  def doDiff(diff: ADiffBuilder, sourceOld: S, sourceNew: S, worker: AMapperWorker[_ <: JavaBeanMappingHelper], contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {
+    if(isDeferred)
+      worker.diffDeferred (newPath(path), sourceProp.get(sourceOld), sourceProp.get(sourceNew), types, contextOld, contextNew, isDerived)
+    else
+      worker.diff (newPath(path), sourceProp.get(sourceOld), sourceProp.get(sourceNew), types, contextOld, contextNew, isDerived)
   }
 }
 
@@ -67,6 +83,14 @@ class GuardedPartialMapping[S<:AnyRef,T<:AnyRef](inner: PartialMapping[S,T], sho
   def doMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder) {
     if(shouldMap.shouldMap(source, target, worker, context, path)) {
       inner.doMap(source, target, worker, context, path)
+    }
+  }
+
+  def doDiff(diff: ADiffBuilder, sourceOld: S, sourceNew: S, worker: AMapperWorker[_ <: JavaBeanMappingHelper], contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {
+    (shouldMap.shouldMap(sourceOld, null.asInstanceOf[T], worker, contextOld, path), shouldMap.shouldMap(sourceNew, null.asInstanceOf[T], worker, contextNew, path)) match {
+      case (true, true) => inner.doDiff(diff, sourceOld, sourceNew, worker, contextOld, contextNew, path, isDerived)
+      case (false, false) =>
+      case _ => // TODO log diff mismatch
     }
   }
 }

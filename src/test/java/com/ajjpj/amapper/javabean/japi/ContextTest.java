@@ -1,6 +1,8 @@
 package com.ajjpj.amapper.javabean.japi;
 
+import com.ajjpj.amapper.core.ADiffBuilder;
 import com.ajjpj.amapper.core.AMapperWorker;
+import com.ajjpj.amapper.core.PathBuilder;
 import com.ajjpj.amapper.core.QualifiedSourceAndTargetType;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.japi.classes.ClassRequiringContext;
@@ -31,6 +33,10 @@ public class ContextTest {
                 public PriceClass map(Double sourceValue, QualifiedSourceAndTargetType types, AMapperWorker<?> worker, Map<String, Object> context) {
                     final TestCurrencyProvider tcp = (TestCurrencyProvider) context.get(TestCurrencyProvider.class.getName()).get();
                     return new PriceClass(sourceValue, tcp.getCurrency());
+                }
+
+                @Override
+                public void diff(ADiffBuilder diff, Double sourceOld, Double sourceNew, QualifiedSourceAndTargetType types, AMapperWorker<?> worker, Map<String, Object> contextOld, Map<String, Object> contextNew, PathBuilder path, boolean isDerived) {
                 }
             })
             .build();

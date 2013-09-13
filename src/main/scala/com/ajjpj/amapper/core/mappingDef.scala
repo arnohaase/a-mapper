@@ -28,6 +28,8 @@ trait AValueMappingDef [S, T, H] extends CanHandleSourceAndTarget {
   def handlesNull: Boolean
 
   def map(sourceValue: S, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef]): T
+
+  def diff(diff: ADiffBuilder, sourceOld: S, sourceNew: S, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean): Unit
 }
 
 
@@ -45,5 +47,7 @@ trait AObjectMappingDef [S, T, H] extends CanHandleSourceAndTarget {
   def isCacheable: Boolean = true
 
   def map(source: S, target: T, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef], path: PathBuilder): T
+
+  def diff(diff: ADiffBuilder, sourceOld: S, sourceNew: S, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean): Unit
 }
 

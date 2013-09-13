@@ -28,6 +28,7 @@ class PrePostProcessorTest extends FunSuite with ShouldMatchers {
   val objectMapping = new AObjectMappingDef[AnyRef,AnyRef,AnyRef] {
     def canHandle(types: QualifiedSourceAndTargetType) = true
     def map(source: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: AnyRef], context: Map[String, AnyRef], path: PathBuilder) = {source.asInstanceOf[DataClass].y="mapped"; source}
+    def diff(diff: ADiffBuilder, sourceOld: AnyRef, sourceNew: AnyRef, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: AnyRef], contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {}
   }
   val objectMappings = new CanHandleSourceAndTargetCache[AObjectMappingDef[_,_,_>:AnyRef]](List(objectMapping))
 

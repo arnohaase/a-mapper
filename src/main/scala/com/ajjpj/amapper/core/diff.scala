@@ -5,6 +5,12 @@ package com.ajjpj.amapper.core
  */
 class ADiff(elements: Iterable[ADiffElement])
 
+class ADiffBuilder {
+  private var elements = Vector[ADiffElement]()
+  def add(diffElement: ADiffElement) = elements :+= diffElement
+  def build = new ADiff(elements)
+}
+
 
 sealed trait ADiffElement {
   def path: APath
@@ -26,6 +32,7 @@ case class AttributeDiffElement (path: APath, oldValue: AnyRef, newValue: AnyRef
  * for changes of objects, with 'oldValue' and 'newValue' containing the 'unique identifiers' as returned by an IdentifierExtractor
  */
 case class ChangeRefDiffElement (path: APath, oldValue: AnyRef, newValue: AnyRef, isDerived: Boolean) extends ADiffElement
+
 case class AddDiffElement       (path: APath,                   newValue: AnyRef, isDerived: Boolean) extends ADiffElement {
   val oldValue = null
 }

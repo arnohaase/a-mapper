@@ -89,6 +89,10 @@ public class CoreTest {
                 }
                 return result;
             }
+
+            @Override
+            public void diff(ADiffBuilder diff, List<?> sourceOld, List<?> sourceNew, QualifiedSourceAndTargetType types, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> contextOld, Map<String, Object> contextNew, PathBuilder path, boolean isDerived) {
+            }
         };
 
         final AValueMappingDef<Number, String, JavaBeanMappingHelper> numberToString = new AValueMappingDef<Number, String, JavaBeanMappingHelper>() {
@@ -100,6 +104,10 @@ public class CoreTest {
             @Override
             public String map(Number sourceValue, QualifiedSourceAndTargetType types, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context) {
                 return sourceValue.toString();
+            }
+
+            @Override
+            public void diff(ADiffBuilder diff, Number sourceOld, Number sourceNew, QualifiedSourceAndTargetType types, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> contextOld, Map<String, Object> contextNew, PathBuilder path, boolean isDerived) {
             }
 
             @Override

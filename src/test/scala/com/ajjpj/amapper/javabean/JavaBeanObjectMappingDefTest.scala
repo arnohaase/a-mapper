@@ -21,6 +21,7 @@ class JavaBeanObjectMappingDefTest extends FunSuite with ShouldMatchers with Moc
   test("abstract") {
     val md = new AbstractJavaBeanObjectMappingDef[String, Date]() {
       override def map(source: String, target: Date, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder): Date = null
+      override def diff(diff: ADiffBuilder, sourceOld: String, sourceNew: String, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: JavaBeanMappingHelper], contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {}
     }
 
     md.sourceClass should equal (classOf[String])
@@ -37,6 +38,8 @@ class JavaBeanObjectMappingDefTest extends FunSuite with ShouldMatchers with Moc
       def doMap(source: String, target: StringBuilder, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder) {
         target.append(source)
       }
+
+      def diff(diff: ADiffBuilder, sourceOld: String, sourceNew: String, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: JavaBeanMappingHelper], contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {}
     }
 
     md.sourceClass should equal (classOf[String])

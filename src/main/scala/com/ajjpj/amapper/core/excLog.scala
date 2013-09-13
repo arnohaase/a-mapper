@@ -13,6 +13,7 @@ abstract class AMapperLogger {
 
   def deferredWithoutInitial(path: APath) = warn("Object mapped as 'deferred' without previously being mapped in the primary hierarchy @ " + path)
   def severalExistingTargetsForSource(path: APath, s: AnyRef) = warn("Several existing target elements for source element " + s + "@" + path)
+  def diffPreProcessMismatch(path: APath) = warn("Mismatch in diff operation: One source object skipped by preprocessor, the other not skipped. Skipping. @" + path)
 }
 
 object AMapperLogger {

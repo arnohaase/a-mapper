@@ -1,6 +1,8 @@
 package com.ajjpj.amapper.javabean.japi;
 
+import com.ajjpj.amapper.core.ADiffBuilder;
 import com.ajjpj.amapper.core.AMapperWorker;
+import com.ajjpj.amapper.core.PathBuilder;
 import com.ajjpj.amapper.core.QualifiedSourceAndTargetType;
 import com.ajjpj.amapper.javabean.JavaBeanMappingHelper;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
@@ -29,6 +31,10 @@ public class QualifierTest {
         public String map(String sourceValue, QualifiedSourceAndTargetType types, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context) {
             return sourceValue + " from qualifier";
         }
+
+        @Override
+        public void diff(ADiffBuilder diff, String sourceOld, String sourceNew, QualifiedSourceAndTargetType types, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> contextOld, Map<String, Object> contextNew, PathBuilder path, boolean isDerived) {
+        }
     };
 
     final AbstractValueMappingDef<String, String, JavaBeanMappingHelper> toQualifier = new AbstractValueMappingDef<String, String, JavaBeanMappingHelper>(String.class, String.class) {
@@ -43,6 +49,10 @@ public class QualifierTest {
         @Override
         public String map(String sourceValue, QualifiedSourceAndTargetType types, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context) {
             return sourceValue + " to qualifier " + types.targetQualifier().get("qualifier-test").get();
+        }
+
+        @Override
+        public void diff(ADiffBuilder diff, String sourceOld, String sourceNew, QualifiedSourceAndTargetType types, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> contextOld, Map<String, Object> contextNew, PathBuilder path, boolean isDerived) {
         }
     };
 

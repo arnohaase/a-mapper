@@ -33,6 +33,11 @@ trait AMapperWorker[H] {
    *
    */
   def mapDeferred(path: PathBuilder, source: AnyRef, target: => AnyRef, types: QualifiedSourceAndTargetType, callback: AnyRef => Unit): Unit
+
+  def diff(path: PathBuilder, sourceOld: AnyRef, sourceNew: AnyRef, types: QualifiedSourceAndTargetType, oldContext: Map[String, AnyRef], newContext: Map[String, AnyRef], isDerived: Boolean)
+  def diffValue(path: PathBuilder, sourceOld: AnyRef, sourceNew: AnyRef, types: QualifiedSourceAndTargetType, oldContext: Map[String, AnyRef], newContext: Map[String, AnyRef], isDerived: Boolean)
+  def diffObject(path: PathBuilder, sourceOld: AnyRef, sourceNew: AnyRef, types: QualifiedSourceAndTargetType, oldContextOrig: Map[String, AnyRef], newContextOrig: Map[String, AnyRef], isDerived: Boolean)
+  def diffDeferred(path: PathBuilder, sourceOld: AnyRef, sourceNew: AnyRef, types: QualifiedSourceAndTargetType, oldContextOrig: Map[String, AnyRef], newContextOrig: Map[String, AnyRef], isDerived: Boolean)
 }
 
 

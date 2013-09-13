@@ -13,6 +13,7 @@ private[impl] class AMapperWorkerImpl[H] (valueMappings: CanHandleSourceAndTarge
                                      contextExtractor: AContextExtractor, preProcessor: CanHandleSourceAndTargetCache[APreProcessor], postProcessor: CanHandleSourceAndTargetCache[APostProcessor],
                                      deferredWork: ArrayBuffer[()=>Unit]) extends AMapperWorker[H] {
   private val identityCache = new IdentityCache
+  val diffBuilder = new ADiffBuilder
 
   override def map(path: PathBuilder, source: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]) = {
     valueMappings.entryFor(types) match {
@@ -23,30 +24,33 @@ private[impl] class AMapperWorkerImpl[H] (valueMappings: CanHandleSourceAndTarge
 
   override def mapValue(path: PathBuilder, source: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]) = {
     logger.debug ("map: " + source + " @ " + path.build)
-    valueMappings.entryFor(types) match {
-      case Some(m) => if(source == null && ! m.handlesNull) null else m.asInstanceOf[AValueMappingDef[AnyRef, AnyRef, H]].map(source, types, this, context)
-      case None => throw new AMapperException("no value mapping def found for " + types, path.build)
-    }
+    val m = valueMappingFor(types, path)
+    if(source == null && ! m.handlesNull) null else m.asInstanceOf[AValueMappingDef[AnyRef, AnyRef, H]].map(source, types, this, context)
   }
 
-  override def mapObject(path: PathBuilder, source: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]) = {
-    logger.debug ("map: " + source + " @ " + path.build)
-    val newContext = contextExtractor.withContext(context, source, types.sourceType)
-
-    objectMappings.entryFor(types) match {
-      case Some(m) => doMapObject(m, source, target, types, newContext, path)
-      case None => throw new AMapperException("no mapping def found for " + types + ".", path.build)
-    }
+  private def valueMappingFor(types: QualifiedSourceAndTargetType, path: PathBuilder) = valueMappings.entryFor(types) match {
+    case Some(m) => m.asInstanceOf[AValueMappingDef[AnyRef, AnyRef, H]]
+    case None => throw new AMapperException("no value mapping def found for " + types, path.build)
   }
 
-  private def doMapObject(m: AObjectMappingDef[_,_,_ >: H], sourceRaw: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef], path: PathBuilder): Option[AnyRef] = {
+  private def objectMappingFor(types: QualifiedSourceAndTargetType, path: PathBuilder) = objectMappings.entryFor(types) match {
+    case Some(m) => m.asInstanceOf[AObjectMappingDef[AnyRef, AnyRef, H]]
+    case None => throw new AMapperException("no object mapping def found for " + types, path.build)
+  }
+
+
+  override def mapObject(path: PathBuilder, sourceRaw: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]) = {
+    logger.debug ("map: " + sourceRaw + " @ " + path.build)
+
+    val m = objectMappingFor(types, path)
     val preProcessed = preProcessor
       .entryFor(types)
       .map(_.preProcess(sourceRaw, types)) // apply preprocessor (if any)
       .getOrElse(Some(sourceRaw)) // no preprocessor: leave 'as is'
 
     preProcessed.map(source => {
-      val resultRaw = m.asInstanceOf[AObjectMappingDef[AnyRef, AnyRef, H]].map(source, target, types, this, context, path)
+      val newContext = contextExtractor.withContext(context, sourceRaw, types.sourceType)
+      val resultRaw = m.asInstanceOf[AObjectMappingDef[AnyRef, AnyRef, H]].map(source, target, types, this, newContext, path)
 
       val result = postProcessor
         .entryFor(types)
@@ -75,22 +79,100 @@ private[impl] class AMapperWorkerImpl[H] (valueMappings: CanHandleSourceAndTarge
   override def mapDeferred(path: PathBuilder, sourceRaw: AnyRef, target: => AnyRef, types: QualifiedSourceAndTargetType, callback: (AnyRef) => Unit) {
     logger.debug ("map deferred: " + types + " @ " + path.build)
     deferredWork += (() => {
-      objectMappings.entryFor(types) match {
-        case Some(m) =>
-          logger.debug("processing deferred: " + types + " @ " + path.build)
-          val source = sourceRaw //TODO deProxyStrategy(sourceRaw)
-          identityCache.get(source) match {
-            case Some(prevTarget) =>
-              callback(prevTarget)
-            case None =>
-              logger.deferredWithoutInitial(path.build) //TODO special treatment for collections etc. --> flag in the mapping def?
-            // create a new, empty context: context is accumulated only from parents to children
-            mapObject(path, source, target, types, Map[String, AnyRef]()) match {
-              case Some(mapped) => callback(mapped)
-              case _ =>
-            }
-          }
-        case None => throw new AMapperException("no mapping def found for " + types + ".", path.build)
+      logger.debug("processing deferred: " + types + " @ " + path.build)
+      val source = sourceRaw //TODO deProxyStrategy(sourceRaw)
+      identityCache.get(source) match {
+        case Some(prevTarget) =>
+          callback(prevTarget)
+        case None =>
+          logger.deferredWithoutInitial(path.build) //TODO special treatment for collections etc. --> flag in the mapping def?
+        // create a new, empty context: context is accumulated only from parents to children
+        mapObject(path, source, target, types, Map[String, AnyRef]()) match {
+          case Some(mapped) => callback(mapped)
+          case _ =>
+        }
+      }
+    })
+  }
+
+  override def diff(path: PathBuilder, sourceOld: AnyRef, sourceNew: AnyRef, types: QualifiedSourceAndTargetType, oldContext: Map[String, AnyRef], newContext: Map[String, AnyRef], isDerived: Boolean) {
+    valueMappings.entryFor(types) match {
+      case Some(v) => diffValue (path, sourceOld, sourceNew, types, oldContext, newContext, isDerived)
+      case None    => diffObject(path, sourceOld, sourceNew, types, oldContext, newContext, isDerived)
+    }
+  }
+
+  override def diffValue(path: PathBuilder, sourceOld: AnyRef, sourceNew: AnyRef, types: QualifiedSourceAndTargetType, oldContext: Map[String, AnyRef], newContext: Map[String, AnyRef], isDerived: Boolean) {
+    logger.debug ("diff: " + sourceOld + " <-> " + sourceNew + " @ " + path.build)
+    valueMappingFor(types, path).diff(diffBuilder, sourceOld, sourceNew, types, this, oldContext, newContext, path, isDerived)
+  }
+
+  override def diffObject(path: PathBuilder, sourceOldRaw: AnyRef, sourceNewRaw: AnyRef, types: QualifiedSourceAndTargetType, contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], isDerived: Boolean) {
+    logger.debug ("diff: " + sourceOldRaw + " <-> " + sourceNewRaw + " @ " + path.build)
+    val pre = preProcessor.entryFor(types)
+    val preProcessedOld: Option[AnyRef] = pre
+      .map(_.preProcess(sourceOldRaw, types)) // apply preprocessor (if any)
+      .getOrElse(Some(sourceOldRaw)) // no preprocessor: leave 'as is'
+    val preProcessedNew: Option[AnyRef] = pre
+      .map(_.preProcess(sourceNewRaw, types)) // apply preprocessor (if any)
+      .getOrElse(Some(sourceNewRaw)) // no preprocessor: leave 'as is'
+
+    (preProcessedOld.isDefined, preProcessedNew.isDefined) match {
+      case (false, false) =>
+      case (true, true) =>
+        val sourceOld = preProcessedOld.get
+        val sourceNew = preProcessedNew.get
+
+        doDiffObject(path, sourceOld, sourceNew, types, contextOld, contextNew, isDerived)
+      case _ =>
+        logger.diffPreProcessMismatch(path.build)
+    }
+  }
+
+  private def doDiffObject(path: PathBuilder, sourceOld: AnyRef, sourceNew: AnyRef, types: QualifiedSourceAndTargetType, contextOldOrig: Map[String, AnyRef], contextNewOrig: Map[String, AnyRef], isDerived: Boolean) {
+    val oldContext = contextExtractor.withContext (contextOldOrig, sourceOld, types.sourceType)
+    val newContext = contextExtractor.withContext (contextNewOrig, sourceNew, types.sourceType)
+
+    var causesDerived = false
+    if(sourceOld == null && sourceNew != null) {
+      diffBuilder.add (AddDiffElement (path.build, sourceNew, isDerived))   //TODO transform 'source' to 'target' for diff elements everywhere!!!
+      causesDerived = true
+    }
+    else if(sourceOld != null && sourceNew == null) {
+      diffBuilder.add (RemoveDiffElement (path.build, sourceOld, isDerived)) //TODO transform 'source' to 'target' for diff elements everywhere!!!
+      causesDerived = true
+    }
+    else if (identifierExtractor.uniqueIdentifier (sourceOld, types.sourceType) != identifierExtractor.uniqueIdentifier (sourceNew, types.sourceType)) {
+      diffBuilder.add (ChangeRefDiffElement (path.build, sourceOld, sourceNew, isDerived)) //TODO transform 'source' to 'target' for diff elements everywhere!!!
+      causesDerived = true
+    }
+
+    objectMappingFor(types, path).diff (diffBuilder, sourceOld, sourceNew, types, this, oldContext, newContext, path, isDerived || causesDerived)
+    identityCache.register((sourceOld, sourceNew), this, path)
+  }
+
+  override def diffDeferred(path: PathBuilder, sourceOldRaw: AnyRef, sourceNewRaw: AnyRef, types: QualifiedSourceAndTargetType, contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], isDerived: Boolean) {
+    logger.debug ("diff deferred: " + sourceOldRaw + " <-> " + sourceNewRaw + " @ " + path.build)
+    deferredWork += (() => {
+      logger.debug("processing deferred diff: " + types + "@" + path.build)
+
+      val pre = preProcessor.entryFor(types)
+      val preProcessedOld: Option[AnyRef] = pre
+        .map(_.preProcess(sourceOldRaw, types)) // apply preprocessor (if any)
+        .getOrElse(Some(sourceOldRaw)) // no preprocessor: leave 'as is'
+      val preProcessedNew: Option[AnyRef] = pre
+          .map(_.preProcess(sourceNewRaw, types)) // apply preprocessor (if any)
+          .getOrElse(Some(sourceNewRaw)) // no preprocessor: leave 'as is'
+
+      (preProcessedOld.isDefined, preProcessedNew.isDefined) match {
+        case (false, false) =>
+        case (true, true) if identityCache.get((preProcessedOld, preProcessedNew)).isDefined =>
+        case (true, true) =>
+          logger.deferredWithoutInitial(path.build)
+
+          doDiffObject(path, preProcessedOld.get, preProcessedNew.get, types, contextOld, contextNew, isDerived)
+        case _ =>
+          logger.diffPreProcessMismatch(path.build)
       }
     })
   }

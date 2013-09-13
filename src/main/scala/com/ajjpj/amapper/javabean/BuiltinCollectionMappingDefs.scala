@@ -21,20 +21,6 @@ object BuiltinCollectionMappingDefs {
 
   //------------------------
 
-  abstract class AbstractEquivMergingSetCollectionMappingDef[TC <: juCollection,H<:JavaBeanMappingHelper with ACollectionHelper](implicit clsTag: ClassTag[TC]) extends AbstractCollectionMappingDef[TC,H](JavaBeanTypes[TC, AnyRef]) {
-    val merger = new EquivalenceBasedMerger[AnyRef, Iterable[AnyRef], AMutableCollection[AnyRef], AnyRef, H] ()
-
-    override def doMap(source: juCollection, targetRaw: TC, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef], path: PathBuilder): TC = {
-      val target: TC = if (targetRaw != null) targetRaw else worker.helpers.createEmptyMutableCollection(types.targetType, types.sourceType).underlying.asInstanceOf[TC]
-
-      merger.map(Wrappers.JCollectionWrapper(source), ACollectionAdapter(target), types, worker, context, path)
-
-      target
-    }
-  }
-
-  //------------------------
-
   abstract class AbstractCollectionMappingDef[TC <: juCollection, H <: JavaBeanMappingHelper](targetType: SingleParamBeanType[TC, _ <: AnyRef]) extends AObjectMappingDef[juCollection, TC, H] {
     val collectionType = JavaBeanTypes[juCollection]
 
@@ -48,5 +34,24 @@ object BuiltinCollectionMappingDefs {
     }
 
     def doMap(source: juCollection, target: TC, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef], path: PathBuilder): TC
+
+    def diff(diff: ADiffBuilder, sourceOld: BuiltinCollectionMappingDefs.juCollection, sourceNew: BuiltinCollectionMappingDefs.juCollection, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {
+      //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      throw new Error("TODO")
+    }
+  }
+
+  //------------------------
+
+  abstract class AbstractEquivMergingSetCollectionMappingDef[TC <: juCollection,H<:JavaBeanMappingHelper with ACollectionHelper](implicit clsTag: ClassTag[TC]) extends AbstractCollectionMappingDef[TC,H](JavaBeanTypes[TC, AnyRef]) {
+    val merger = new EquivalenceBasedMerger[AnyRef, Iterable[AnyRef], AMutableCollection[AnyRef], AnyRef, H] ()
+
+    override def doMap(source: juCollection, targetRaw: TC, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef], path: PathBuilder): TC = {
+      val target: TC = if (targetRaw != null) targetRaw else worker.helpers.createEmptyMutableCollection(types.targetType, types.sourceType).underlying.asInstanceOf[TC]
+
+      merger.map(Wrappers.JCollectionWrapper(source), ACollectionAdapter(target), types, worker, context, path)
+
+      target
+    }
   }
 }

@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.javabean.japi;
 
+import com.ajjpj.amapper.core.ADiffBuilder;
 import com.ajjpj.amapper.core.AMapperWorker;
 import com.ajjpj.amapper.core.PathBuilder;
 import com.ajjpj.amapper.javabean.JavaBeanMappingHelper;
@@ -27,6 +28,10 @@ public class SpecialMappingTest {
                                 target.setFirstName("X. Y. Z.");
                                 target.setLastName(source.getFirstName() + " " + source.getLastName());
                             }
+
+                            @Override
+                            public void doDiff(ADiffBuilder diff, ClassA sourceOld, ClassA sourceNew, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> contextOld, Map<String, Object> contextNew, PathBuilder path, boolean isDerived) {
+                            }
                         })
                 ).build();
 
@@ -48,6 +53,10 @@ public class SpecialMappingTest {
                             public void doMap(ClassB source, ClassA target, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context, PathBuilder path) {
                                 target.setFirstName("X. Y. Z.");
                                 target.setLastName(source.getFirstName() + " " + source.getLastName());
+                            }
+
+                            @Override
+                            public void doDiff(ADiffBuilder diff, ClassB sourceOld, ClassB sourceNew, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> contextOld, Map<String, Object> contextNew, PathBuilder path, boolean isDerived) {
                             }
                         })
                 ).build();
@@ -102,7 +111,7 @@ public class SpecialMappingTest {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                         .withMatchingPropsMappings()
-                        .withBackwardGuardBySourceExpression("firstName", new ShouldMap<ClassB,ClassA>() {
+                        .withBackwardGuardBySourceExpression("firstName", new ShouldMap<ClassB, ClassA>() {
                             @Override
                             public boolean shouldMap(ClassB source, ClassA target, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context, PathBuilder path) {
                                 return shouldMap;
