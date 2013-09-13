@@ -4,6 +4,7 @@ import com.ajjpj.amapper.AMapper;
 import com.ajjpj.amapper.core.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
 import com.ajjpj.amapper.javabean.JavaBeanTypes;
+import scala.Option;
 
 import java.util.Collection;
 import java.util.List;
@@ -82,6 +83,12 @@ class JavaBeanMapperImpl implements JavaBeanMapper {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T map(Object source, JavaBeanType<?> sourceType, AQualifier sourceQualifier, T target, JavaBeanType<T> targetType, AQualifier targetQualifier) {
-        return (T) inner.map(source, sourceType, sourceQualifier, target, targetType, targetQualifier);
+        final Option<?> result = inner.map(source, sourceType, sourceQualifier, target, targetType, targetQualifier);
+        if(result.isDefined()) {
+            return (T) result.get();
+        }
+        else {
+            return null;
+        }
     }
 }

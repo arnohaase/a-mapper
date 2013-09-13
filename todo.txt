@@ -13,8 +13,12 @@ todo
 
 * features
   * for java beans / first shot
+    * PropertyBasedMappingDef:
+      * differentiate between value and object props
+      * inline property mappings (where possible)
     * "special" mapped field
     * guards / conditional mapping
+      * selective mapping of collection elements?
   * parsing
     * janino
     * (configurable) chain of possible parsers for attribute expressions: field, method, method path, janino, janino from dot-separated, OGNL, ...
@@ -52,7 +56,11 @@ todo
   * examples for preprocessors
     * deProxy
     * skip Hibernate proxies
-  * exmples for postprocessors
+    * *not* for modifying the source object!
+  * examples for postprocessors
     * inject user's locale
+  * examples for isCacheable=false
+    * mapping a translation into a map of translations
+  * no context update for value mappings
 
 

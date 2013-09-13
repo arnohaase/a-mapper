@@ -15,7 +15,7 @@ class AMapperImpl[H] (valueMappings: CanHandleSourceAndTargetCache[AValueMapping
                   preProcessor: CanHandleSourceAndTargetCache[APreProcessor],
                   postProcessor: CanHandleSourceAndTargetCache[APostProcessor]
                   ) extends AMapper {
-  override def map(source: AnyRef, sourceType: AType, sourceQualifier: AQualifier, target: AnyRef, targetType: AType, targetQualifier: AQualifier): AnyRef = {
+  override def map(source: AnyRef, sourceType: AType, sourceQualifier: AQualifier, target: AnyRef, targetType: AType, targetQualifier: AQualifier): Option[AnyRef] = {
     val deferredWork = ArrayBuffer[()=>Unit]()
     val worker = new AMapperWorkerImpl[H](valueMappings, objectMappings, log, helperFactory(), contextExtractor, preProcessor, postProcessor, deferredWork)
     val result = worker.map(new PathBuilder, source, target, QualifiedSourceAndTargetType(sourceType, sourceQualifier, targetType, targetQualifier), Map[String, AnyRef]())

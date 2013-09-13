@@ -34,7 +34,9 @@ class EquivalenceBasedMergerTest extends FunSuite with ShouldMatchers with Mocki
       }
     }
     def helpers = helper
-    def map(path: PathBuilder, source: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]) = {mapped += (String.valueOf(source) -> ("#" + source)); "#"+source}
+    def map(path: PathBuilder, source: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]) = mapObject(path, source, target, types, context)
+    def mapValue(path: PathBuilder, source: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]): AnyRef = ???
+    def mapObject(path: PathBuilder, source: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]): Option[AnyRef] = {mapped += (String.valueOf(source) -> ("#" + source)); Some("#"+source)}
     def mapDeferred(path: PathBuilder, source: AnyRef, target: => AnyRef, types: QualifiedSourceAndTargetType, callback: (AnyRef) => Unit) = ???
   }
 

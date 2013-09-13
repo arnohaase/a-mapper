@@ -17,8 +17,10 @@ case class PropertyBasedObjectMappingDef[S<:AnyRef,T<:AnyRef](props: List[Source
         worker.mapDeferred(path + SimplePathSegment(p.sourceProp.name), p.sourceProp.get(source), p.targetProp.get(target), p.types, v => p.targetProp.set(target, v))
       }
       else {
-        val v = worker.map(path + SimplePathSegment(p.sourceProp.name), p.sourceProp.get(source), p.targetProp.get(target), p.types, context)
-        p.targetProp.set(target, v)
+        worker.map(path + SimplePathSegment(p.sourceProp.name), p.sourceProp.get(source), p.targetProp.get(target), p.types, context) match {
+          case Some(v) => p.targetProp.set(target, v)
+          case _ =>
+        }
       }
     })
   }

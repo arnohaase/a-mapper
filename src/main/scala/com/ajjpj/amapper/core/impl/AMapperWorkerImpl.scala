@@ -15,50 +15,49 @@ private[impl] class AMapperWorkerImpl[H] (valueMappings: CanHandleSourceAndTarge
   private val identityCache = new IdentityCache
 
   override def map(path: PathBuilder, source: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]) = {
-    logger.debug ("map: " + source + " @ " + path.build)
-    val newContext = contextExtractor.withContext(context, source, types.sourceType)
-
     valueMappings.entryFor(types) match {
-      case Some(m) =>
-        mapValue(m, source, types, newContext)
-      case None =>
-        objectMappings.entryFor(types) match {
-          case Some(m) => mapObject(m, source, target, types, newContext, path)
-          case None => throw new AMapperException("no mapping def found for " + types + ".", path.build)
-        }
+      case Some(v) => Some(mapValue(path, source, types, context))
+      case None => mapObject(path, source, target, types, context)
     }
   }
 
-  private def mapValue(v: AValueMappingDef[_,_,_ >: H], source: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]) =
-    if(source == null && ! v.handlesNull) null else v.asInstanceOf[AValueMappingDef[AnyRef, AnyRef, H]].map(source, types, this, context)
-
-  private def mapObject(m: AObjectMappingDef[_,_,_ >: H], sourceRaw: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef], path: PathBuilder) = {
-    var skip = false
-
-    val source = preProcessor.entryFor(types) match {
-      case Some(p) =>
-        p.preProcess(sourceRaw, types) match {
-          case Some(s) => s
-          case None => skip=true; sourceRaw
-        }
-      case None =>
-        sourceRaw
+  override def mapValue(path: PathBuilder, source: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]) = {
+    logger.debug ("map: " + source + " @ " + path.build)
+    valueMappings.entryFor(types) match {
+      case Some(m) => if(source == null && ! m.handlesNull) null else m.asInstanceOf[AValueMappingDef[AnyRef, AnyRef, H]].map(source, types, this, context)
+      case None => throw new AMapperException("no value mapping def found for " + types, path.build)
     }
+  }
 
-    if(skip)
-      target
-    else {
+  override def mapObject(path: PathBuilder, source: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]) = {
+    logger.debug ("map: " + source + " @ " + path.build)
+    val newContext = contextExtractor.withContext(context, source, types.sourceType)
+
+    objectMappings.entryFor(types) match {
+      case Some(m) => doMapObject(m, source, target, types, newContext, path)
+      case None => throw new AMapperException("no mapping def found for " + types + ".", path.build)
+    }
+  }
+
+  private def doMapObject(m: AObjectMappingDef[_,_,_ >: H], sourceRaw: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef], path: PathBuilder): Option[AnyRef] = {
+    val preProcessed = preProcessor
+      .entryFor(types)
+      .map(_.preProcess(sourceRaw, types)) // apply preprocessor (if any)
+      .getOrElse(Some(sourceRaw)) // no preprocessor: leave 'as is'
+
+    preProcessed.map(source => {
       val resultRaw = m.asInstanceOf[AObjectMappingDef[AnyRef, AnyRef, H]].map(source, target, types, this, context, path)
-      val result = postProcessor.entryFor(types) match {
-        case Some(p) => p.postProcess(resultRaw, types)
-        case None => resultRaw
-      }
+
+      val result = postProcessor
+        .entryFor(types)
+        .map(_.postProcess(resultRaw, types))
+        .getOrElse (resultRaw)
 
       if(m.isCacheable)
         identityCache.register(source, result, path)
 
       result
-    }
+    })
   }
 
   /**
@@ -76,22 +75,21 @@ private[impl] class AMapperWorkerImpl[H] (valueMappings: CanHandleSourceAndTarge
   override def mapDeferred(path: PathBuilder, sourceRaw: AnyRef, target: => AnyRef, types: QualifiedSourceAndTargetType, callback: (AnyRef) => Unit) {
     logger.debug ("map deferred: " + types + " @ " + path.build)
     deferredWork += (() => {
-      def doMap() = {
-        logger.debug ("processing deferred: " + types + " @ " + path.build)
-        val source = sourceRaw //TODO deProxyStrategy(sourceRaw)
-        identityCache.get(source) match {
-          case Some(prevTarget) =>
-            callback(prevTarget)
-          case None =>
-            logger.deferredWithoutInitial(path.build) //TODO special treatment for collections etc. --> flag in the mapping def?
-            // create a new, empty context: context is accumulated only from parents to children
-            val mapped = map(path, source, target, types, Map[String, AnyRef]())
-            callback(mapped)
-        }
-      }
-
       objectMappings.entryFor(types) match {
-        case Some(m) => doMap()
+        case Some(m) =>
+          logger.debug("processing deferred: " + types + " @ " + path.build)
+          val source = sourceRaw //TODO deProxyStrategy(sourceRaw)
+          identityCache.get(source) match {
+            case Some(prevTarget) =>
+              callback(prevTarget)
+            case None =>
+              logger.deferredWithoutInitial(path.build) //TODO special treatment for collections etc. --> flag in the mapping def?
+            // create a new, empty context: context is accumulated only from parents to children
+            mapObject(path, source, target, types, Map[String, AnyRef]()) match {
+              case Some(mapped) => callback(mapped)
+              case _ =>
+            }
+          }
         case None => throw new AMapperException("no mapping def found for " + types + ".", path.build)
       }
     })

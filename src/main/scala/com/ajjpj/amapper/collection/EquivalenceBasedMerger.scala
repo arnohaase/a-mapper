@@ -18,11 +18,11 @@ class EquivalenceBasedMerger[SE <: AnyRef, S<:Iterable[SE], T <: AMutableCollect
 
     val equiv = h.equivalenceMap(source, types.sourceType, target.asIterable, types.targetType)
 
-    if(target.asIterable.isEmpty) // this is a performance optimization
-      equiv.sourceWithoutTarget.foreach(s => target.add(worker.map(ACollectionSupport.elementPath(path, worker, s, sourceElementType), s, null, elementTypes, context).asInstanceOf[TE]))
+    if(target.asIterable.isEmpty)  // this is a performance optimization
+      addNewElements(equiv, worker, path, elementTypes, target, context)
     else {
       equiv.targetWithoutSource.foreach(target.remove)
-      equiv.sourceWithoutTarget.map(s => target.add(worker.map(path + ParameterizedPathSegment("elements", worker.helpers.uniqueIdentifier(s, sourceElementType)), s, null, elementTypes, context).asInstanceOf[TE]))
+      addNewElements(equiv, worker, path, elementTypes, target, context)
 
       equiv.sourcesWithTargetEquivalent.foreach (s => equiv.targetEquivalents(s) match {
         case e if e.size == 1 && e.iterator.next().count == 1 => //TODO unapply for set with a single element
@@ -30,11 +30,20 @@ class EquivalenceBasedMerger[SE <: AnyRef, S<:Iterable[SE], T <: AMutableCollect
         case e => // special case: several existing equivalents in the target collection for the same source element
           worker.logger.severalExistingTargetsForSource(path.build, s)
           e.foreach (x => (1 to x.count).foreach {_ => target.remove(x.el)})
-          target.add(worker.map(ACollectionSupport.elementPath(path, worker, s, sourceElementType), s, e.iterator.next(), elementTypes, context).asInstanceOf[TE])
+
+          worker.map(ACollectionSupport.elementPath(path, worker, s, sourceElementType), s, e.iterator.next(), elementTypes, context) match {
+            case Some(o) => target.add(o.asInstanceOf[TE])
+            case None =>
+          }
       })
     }
 
     target
+  }
+
+  private def addNewElements (equiv: EquivalenceMap[SE, TE], worker: AMapperWorker[_ <: H], path: PathBuilder, elementTypes: QualifiedSourceAndTargetType, target: T, context: Map[String, AnyRef]) {
+    val mapped = equiv.sourceWithoutTarget.flatMap(s => worker.map(ACollectionSupport.elementPath(path, worker, s, elementTypes.sourceType), s, null, elementTypes, context))
+    mapped.foreach(t => target.add(t.asInstanceOf[TE]))
   }
 }
 

@@ -54,7 +54,7 @@ class PrePostProcessorTest extends FunSuite with ShouldMatchers {
 
   test("pre and post processor") {
     val orig = new DataClass()
-    val mapped = mapper.map(orig, type1, NoQualifier, null, type1, NoQualifier).asInstanceOf[DataClass]
+    val mapped = mapper.map(orig, type1, NoQualifier, null, type1, NoQualifier).get.asInstanceOf[DataClass]
 
     mapped should be theSameInstanceAs(orig)
     mapped.x should equal ("type1")
@@ -64,7 +64,7 @@ class PrePostProcessorTest extends FunSuite with ShouldMatchers {
 
   test ("simple postprocessor") {
     val orig = new DataClass()
-    val mapped = mapper.map(orig, type1, NoQualifier, null, type3, NoQualifier).asInstanceOf[DataClass]
+    val mapped = mapper.map(orig, type1, NoQualifier, null, type3, NoQualifier).get.asInstanceOf[DataClass]
 
     mapped should be theSameInstanceAs(orig)
     mapped.x should equal ("x")
@@ -74,7 +74,7 @@ class PrePostProcessorTest extends FunSuite with ShouldMatchers {
 
   test ("simple preprocessor") {
     val orig = new DataClass()
-    val mapped = mapper.map(orig, type1, NoQualifier, null, type2, NoQualifier).asInstanceOf[DataClass]
+    val mapped = mapper.map(orig, type1, NoQualifier, null, type2, NoQualifier).get.asInstanceOf[DataClass]
 
     mapped should be theSameInstanceAs(orig)
     mapped.x should equal ("type1")
@@ -84,7 +84,7 @@ class PrePostProcessorTest extends FunSuite with ShouldMatchers {
 
   test ("simple preprocessor 2") {
     val orig = new DataClass()
-    val mapped = mapper.map(orig, type2, NoQualifier, null, type2, NoQualifier).asInstanceOf[DataClass]
+    val mapped = mapper.map(orig, type2, NoQualifier, null, type2, NoQualifier).get.asInstanceOf[DataClass]
 
     mapped should be theSameInstanceAs(orig)
     mapped.x should equal ("type2")
@@ -94,7 +94,7 @@ class PrePostProcessorTest extends FunSuite with ShouldMatchers {
 
   test ("no preprocessor") {
     val orig = new DataClass()
-    val mapped = mapper.map(orig, type1, NoQualifier, null, type4, NoQualifier).asInstanceOf[DataClass]
+    val mapped = mapper.map(orig, type1, NoQualifier, null, type4, NoQualifier).get.asInstanceOf[DataClass]
 
     mapped should be theSameInstanceAs(orig)
     mapped.x should equal ("x")
@@ -105,11 +105,8 @@ class PrePostProcessorTest extends FunSuite with ShouldMatchers {
   test ("preprocessor skip --> post processing is automatically skipped") {
     val orig = new DataClass()
     val oldTarget = new DataClass()
-    val mapped = mapper.map(orig, type3, NoQualifier, oldTarget, type1, NoQualifier).asInstanceOf[DataClass]
+    val mapped = mapper.map(orig, type3, NoQualifier, oldTarget, type1, NoQualifier)
 
-    mapped should be theSameInstanceAs(oldTarget)
-    mapped.x should equal ("x")
-    mapped.y should equal ("unmapped")
-    mapped.z should equal (1)
+    mapped should equal (None)
   }
 }
