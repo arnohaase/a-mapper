@@ -19,6 +19,7 @@ sealed trait DiffElement {
    */
   def isDerived: Boolean
 }
+
 case class AttributeDiffElement[T] (path: Path, oldValue: T, newValue: T, isDerived: Boolean) extends DiffElement
 case class ChangeRefDiffElement    (path: Path, newValue: ObjectRef,      isDerived: Boolean) extends DiffElement
 case class AddDiffElement          (path: Path, newValue: ObjectRef,      isDerived: Boolean) extends DiffElement

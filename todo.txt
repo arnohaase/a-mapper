@@ -24,9 +24,9 @@ todo
     * flag 'exception free' in object (and value) mappings --> possible optimization: skip path enhancement (or rather 'inlineable'? --> context, special mapping, ...)
   * collections
     * several implementations for collection mapping (by equivalence, by least "distance", ...); adapter for JAPI / JavaBeans (--> modularize that)
-    * java.util.Map
-    * java.util.List --> Levenshtein
-    * java.util.List --> "bag"
+    * Map
+    * List --> Levenshtein
+    * List --> "bag"
     * arrays
   * map, diff, simulate, merge
   * streaming output
