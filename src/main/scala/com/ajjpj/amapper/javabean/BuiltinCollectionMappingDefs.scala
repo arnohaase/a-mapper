@@ -24,10 +24,10 @@ object BuiltinCollectionMappingDefs {
   abstract class AbstractEquivMergingSetCollectionMappingDef[TC <: juCollection,H<:JavaBeanMappingHelper with ACollectionHelper](implicit clsTag: ClassTag[TC]) extends AbstractCollectionMappingDef[TC,H](JavaBeanTypes[TC, AnyRef]) {
     val merger = new EquivalenceBasedMerger[AnyRef, Iterable[AnyRef], AMutableCollection[AnyRef], AnyRef, H] ()
 
-    override def doMap(source: juCollection, sourceType: SingleParamBeanType[_<:AnyRef,_<:AnyRef], sourceQualifier: AQualifier, targetRaw: TC, targetType: SingleParamBeanType[TC,_<:AnyRef], targetQualifier: AQualifier, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef], path: PathBuilder): TC = {
-      val target: TC = if (targetRaw != null) targetRaw else worker.helpers.createEmptyMutableCollection(targetType, sourceType).underlying.asInstanceOf[TC]
+    override def doMap(source: juCollection, targetRaw: TC, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef], path: PathBuilder): TC = {
+      val target: TC = if (targetRaw != null) targetRaw else worker.helpers.createEmptyMutableCollection(types.targetType, types.sourceType).underlying.asInstanceOf[TC]
 
-      merger.map(Wrappers.JCollectionWrapper(source), sourceType, sourceQualifier, ACollectionAdapter(target), targetType, targetQualifier, worker, context, path)
+      merger.map(Wrappers.JCollectionWrapper(source), ACollectionAdapter(target), types, worker, context, path)
 
       target
     }
@@ -38,18 +38,15 @@ object BuiltinCollectionMappingDefs {
   abstract class AbstractCollectionMappingDef[TC <: juCollection, H <: JavaBeanMappingHelper](targetType: SingleParamBeanType[TC, _ <: AnyRef]) extends AObjectMappingDef[juCollection, TC, H] {
     val collectionType = JavaBeanTypes[juCollection]
 
-    override def canHandle(st: AType, sourceQualifier: AQualifier, tt: AType, targetQualifier: AQualifier) = (st, tt) match {
+    override def canHandle(types: QualifiedSourceAndTargetType) = (types.sourceType, types.targetType) match {
       case (stCandidate: JavaBeanType[_], ttCandidate: SingleParamBeanType[_, _]) => collectionType.isAssignableFrom(stCandidate) && targetType.isAssignableFrom(ttCandidate)
       case _ => false
     }
 
-    final override def map(source: juCollection, sourceTypeRaw: AType, sourceQualifier: AQualifier, target: TC, targetTypeRaw: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef], path: PathBuilder) = {
-      val sourceType = sourceTypeRaw.asInstanceOf[SingleParamBeanType[_ <: AnyRef,_ <: AnyRef]]
-      val targetType = targetTypeRaw.asInstanceOf[SingleParamBeanType[TC,_ <: AnyRef]]
-
-      doMap(source, sourceType, sourceQualifier, target, targetType, targetQualifier, worker, context, path)
+    final override def map(source: juCollection, target: TC, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef], path: PathBuilder) = {
+      doMap(source, target, types, worker, context, path)
     }
 
-    def doMap(source: juCollection, sourceType: SingleParamBeanType[_<:AnyRef,_<:AnyRef], sourceQualifier: AQualifier, target: TC, targetType: SingleParamBeanType[TC,_<:AnyRef], targetQualifier: AQualifier, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef], path: PathBuilder): TC
+    def doMap(source: juCollection, target: TC, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef], path: PathBuilder): TC
   }
 }

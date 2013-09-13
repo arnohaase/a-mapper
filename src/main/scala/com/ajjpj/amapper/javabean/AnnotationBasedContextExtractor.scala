@@ -25,7 +25,7 @@ class AnnotationBasedContextExtractor extends AContextExtractor {
   }
 
   def extractKeys(tpe: AType) = tpe match {
-    //TODO recursive interface analysis; move this to JavBeanSupport
+    //TODO recursive interface analysis; move this to JavaBeanSupport
     case SimpleJavaBeanType(cls) => cls.getInterfaces.filter(_.getAnnotation(classOf[AContextMarker]) != null).map(_.getName).toList
     case _ => Nil
   }

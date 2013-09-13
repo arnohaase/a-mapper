@@ -1,11 +1,12 @@
 todo
 ----
 * cross cutting
+  * QualifiedSourceAndTargetTypes
+  * generic CompositeCanHandle[T <: CanHandle]?
   * log exception including path in worker --> configurable: log and maintain old exception, wrap, ...
 
 * tests
   * deProxyStrategy
-  * contextExtractor (--> Java Beans implementation)
 
 * thoughts
   * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)
@@ -14,6 +15,11 @@ todo
 
 * features
   * for java beans / first shot
+    * "preprocessor"
+      * "deProxy"
+      * "enhance" (--> inject something)
+      * "guard" (--> don't map uninitialized Hibernate proxies)
+      * source vs. target side
     * "enhancer" (--> merge with "deProxy"?)
     * "special" mapped field
     * guards / conditional mapping
@@ -21,7 +27,7 @@ todo
   * parsing
     * janino
     * (configurable) chain of possible parsers for attribute expressions: field, method, method path, janino, janino from dot-separated, OGNL, ...
-    * flag 'exception free' in object (and value) mappings --> possible optimizatino: skip path enhancement (or rather 'inlineable'? --> context, special mapping, ...)
+    * flag 'exception free' in object (and value) mappings --> possible optimization: skip path enhancement (or rather 'inlineable'? --> context, special mapping, ...)
   * collections
     * several implementations for collection mapping (by equivalence, by least "distance", ...); adapter for JAPI / JavaBeans (--> modularize that)
     * java.util.Map

@@ -1,8 +1,7 @@
 package com.ajjpj.amapper.javabean.japi;
 
 import com.ajjpj.amapper.core.AMapperWorker;
-import com.ajjpj.amapper.core.AQualifier;
-import com.ajjpj.amapper.core.AType;
+import com.ajjpj.amapper.core.QualifiedSourceAndTargetType;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.japi.classes.ClassRequiringContext;
 import com.ajjpj.amapper.javabean.japi.classes.ClassWithContext;
@@ -21,15 +20,15 @@ public class ContextTest {
     @Test
     public void testContext () {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withBeanMapping (JavaBeanMapping.create (ClassWithContext.class, ClassWithContext.class))
+            .withBeanMapping(JavaBeanMapping.create(ClassWithContext.class, ClassWithContext.class))
             .withBeanMapping (JavaBeanMapping.create(ClassRequiringContext.class, ClassRequiringContext.class)
                 .removeMappingForTargetProp("price")
                 .removeMappingForSourceProp("amount")
-                .addOneWayMapping ("amount", Double.class, "price", PriceClass.class)
+                .addOneWayMapping("amount", Double.class, "price", PriceClass.class)
                 )
             .withValueMapping(new AbstractValueMappingDef<Double, PriceClass, Object>(Double.class, PriceClass.class) {
                 @Override
-                public PriceClass map(Double sourceValue, AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier, AMapperWorker<?> worker, Map<String, Object> context) {
+                public PriceClass map(Double sourceValue, QualifiedSourceAndTargetType types, AMapperWorker<?> worker, Map<String, Object> context) {
                     final TestCurrencyProvider tcp = (TestCurrencyProvider) context.get(TestCurrencyProvider.class.getName()).get();
                     return new PriceClass(sourceValue, tcp.getCurrency());
                 }

@@ -1,10 +1,6 @@
 package com.ajjpj.amapper.core
 
 
-trait CanHandleTypes {
-  def canHandle(sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier): Boolean
-}
-
 /**
  * implementations are required to have an 'equals' method that covers all keys and their values
  */
@@ -24,21 +20,21 @@ case class MapBasedQualifier (map: Map[String, String]) extends AQualifier {
  * A value mapping transforms data for which there is no difference between several copies as long as their attribute
  *  values are the same, e.g. strings, numbers or timestamps.
  */
-trait AValueMappingDef [S, T, H] extends CanHandleTypes {
+trait AValueMappingDef [S, T, H] extends CanHandleSourceAndTarget {
   /**
    * 'true' means a source value of <code>null</code> is passed to this mapping def, 'false' causes shortcut evaluation to
    *  return <code>null</code> immediately
    */
   def handlesNull: Boolean
 
-  def map(sourceValue: S, sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef]): T
+  def map(sourceValue: S, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef]): T
 }
 
 
 /**
  * Object mappings deal with data that is sensitive to
  */
-trait AObjectMappingDef [S, T, H] extends CanHandleTypes {
+trait AObjectMappingDef [S, T, H] extends CanHandleSourceAndTarget {
   /**
    * @return true iff both source and target side have object identity, i.e. calls with the <em>same</em> object
    *         must return the <em>same</em> result. That is almost always desirable - it is one of the key characteristics
@@ -48,6 +44,6 @@ trait AObjectMappingDef [S, T, H] extends CanHandleTypes {
    */
   def isCacheable: Boolean = true
 
-  def map(source: S, sourceType: AType, sourceQualiier: AQualifier, target: T, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef], path: PathBuilder): T
+  def map(source: S, target: T, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef], path: PathBuilder): T
 }
 

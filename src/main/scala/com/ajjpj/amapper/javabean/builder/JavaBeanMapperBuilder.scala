@@ -1,10 +1,9 @@
 package com.ajjpj.amapper.javabean.builder
 
 import com.ajjpj.amapper.AMapper
-import com.ajjpj.amapper.core.impl.{AMapperImpl}
+import com.ajjpj.amapper.core.impl.AMapperImpl
 import com.ajjpj.amapper.core._
 import com.ajjpj.amapper.javabean.{AnnotationBasedContextExtractor, BuiltinValueMappingDefs, SimpleBeanMappingHelper, JavaBeanMappingHelper}
-import com.ajjpj.amapper.util.CanHandleCache
 
 /**
  * @author arno
@@ -19,7 +18,9 @@ class JavaBeanMapperBuilder[H <: JavaBeanMappingHelper](val helperFactory: () =>
 
   var objectMappings: List[AObjectMappingDef[_,_,_>:H]] = List()
   var log: AMapperLogger = AMapperLogger.defaultLogger
-  var deProxyStrategy: AnyRef => AnyRef = x=>x
+
+  var preProcessor = List[APreProcessor]()
+  var postProcessor = List[APostProcessor]()
 
   var contextExtractor: AContextExtractor = AnnotationBasedContextExtractor
 
@@ -41,10 +42,10 @@ class JavaBeanMapperBuilder[H <: JavaBeanMappingHelper](val helperFactory: () =>
   }
 
   def withLogger(log: AMapperLogger): JavaBeanMapperBuilder[H] = {this.log = log; this}
-  def withDeProxyStrategy(deProxyStrategy: AnyRef => AnyRef) = {this.deProxyStrategy = deProxyStrategy; this}
   def withContextExtractor(contextExtractor: AContextExtractor) = {this.contextExtractor = contextExtractor; this}
 
-  def build: AMapper = new AMapperImpl[H] (new CanHandleCache(valueMappings), new CanHandleCache(objectMappings), log, helperFactory, contextExtractor, deProxyStrategy)
+  def build: AMapper = new AMapperImpl[H] (new CanHandleSourceAndTargetCache(valueMappings), new CanHandleSourceAndTargetCache(objectMappings), log, helperFactory, contextExtractor,
+    new CanHandleSourceAndTargetCache (preProcessor), new CanHandleSourceAndTargetCache (postProcessor))
 }
 
 object JavaBeanMapperBuilder { //TODO remove this

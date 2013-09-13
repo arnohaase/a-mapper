@@ -11,7 +11,7 @@ abstract class AbstractJavaBeanObjectMappingDef[S<:AnyRef,T<:AnyRef](implicit so
   val sourceClass = sourceClassTag.runtimeClass.asInstanceOf[Class[S]]
   val targetClass = targetClassTag.runtimeClass.asInstanceOf[Class[T]]
 
-  override def canHandle(sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier) = (sourceType, targetType) match {
+  override def canHandle(types: QualifiedSourceAndTargetType) = (types.sourceType, types.targetType) match {
     case (jst: JavaBeanType[_], jtt: JavaBeanType[_]) => sourceClass == jst.cls && targetClass == jtt.cls
     case _ => false
   }
@@ -19,11 +19,11 @@ abstract class AbstractJavaBeanObjectMappingDef[S<:AnyRef,T<:AnyRef](implicit so
 
 abstract class SimpleJavaBeanObjectMappingDefBase[S<:AnyRef,T<:AnyRef](handlesSubclasses: Boolean = false)(implicit sourceClassTag: ClassTag[S], targetClassTag: ClassTag[T])
     extends AbstractJavaBeanObjectMappingDef[S,T] {
-  override def map(source: S, sourceType: AType, sourceQualifier: AQualifier, targetRaw: T, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder): T = {
+  override def map(source: S, targetRaw: T, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder): T = {
     if(source == null)
       null.asInstanceOf[T]
     else {
-      val target = if (targetRaw != null) targetRaw else worker.helpers.createInstance(targetType.asInstanceOf[JavaBeanType[T]], sourceType.asInstanceOf[JavaBeanType[_]])
+      val target = if (targetRaw != null) targetRaw else worker.helpers.createInstance(types.targetType.asInstanceOf[JavaBeanType[T]], types.sourceType.asInstanceOf[JavaBeanType[_]])
       doMap(source, target, worker, context, path)
       target
     }

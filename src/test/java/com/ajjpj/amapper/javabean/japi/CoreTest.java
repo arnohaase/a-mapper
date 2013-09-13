@@ -64,10 +64,10 @@ public class CoreTest {
     public void testObjectMappingPerElementClass () {
         final AObjectMappingDef<List<?>, List<?>, JavaBeanMappingHelper> stringListMapping = new AObjectMappingDef<List<?>, List<?>, JavaBeanMappingHelper> () {
             @Override
-            public boolean canHandle(AType st, AQualifier sourceQualifier, AType tt, AQualifier targetQualifier) {
-                if(st instanceof SingleParamBeanType && tt instanceof SingleParamBeanType) {
-                    final SingleParamBeanType sourceType = (SingleParamBeanType) st;
-                    final SingleParamBeanType targetType = (SingleParamBeanType) tt;
+            public boolean canHandle(QualifiedSourceAndTargetType types) {
+                if(types.sourceType() instanceof SingleParamBeanType && types.targetType() instanceof SingleParamBeanType) {
+                    final SingleParamBeanType sourceType = (SingleParamBeanType) types.sourceType();
+                    final SingleParamBeanType targetType = (SingleParamBeanType) types.targetType();
 
                     return sourceType.cls() == List.class && sourceType.paramCls() == Integer.class && targetType.cls() == List.class && targetType.paramCls() == String.class;
                 }
@@ -82,7 +82,7 @@ public class CoreTest {
 
             @Override
             @SuppressWarnings("unchecked")
-            public List<?> map(List<?> source, AType sourceType, AQualifier sourceQualifier, List<?> target, AType targetType, AQualifier targetQualifier, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context, PathBuilder path) {
+            public List<?> map(List<?> source, List<?> target, QualifiedSourceAndTargetType types, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context, PathBuilder path) {
                 final LinkedList<String> result = new LinkedList<String>();
                 for (Integer i: (Collection<Integer>) source) {
                     result.add ("number " + i);
@@ -98,13 +98,13 @@ public class CoreTest {
             }
 
             @Override
-            public String map(Number sourceValue, AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualfier, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context) {
+            public String map(Number sourceValue, QualifiedSourceAndTargetType types, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context) {
                 return sourceValue.toString();
             }
 
             @Override
-            public boolean canHandle(AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier) {
-                return sourceType.equals(JavaBeanTypes.create(Number.class)) && targetType.equals(JavaBeanTypes.create(String.class));
+            public boolean canHandle(QualifiedSourceAndTargetType types) {
+                return types.sourceType().equals(JavaBeanTypes.create(Number.class)) && types.targetType().equals(JavaBeanTypes.create(String.class));
             }
         };
 

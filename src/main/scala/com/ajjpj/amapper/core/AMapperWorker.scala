@@ -15,7 +15,7 @@ trait AMapperWorker[H] {
    */
   def helpers: H
 
-  def map(path: PathBuilder, source: AnyRef, sourceType: AType, sourceQualifier: AQualifier, target: AnyRef, targetType: AType, targetQualifier: AQualifier, context: Map[String, AnyRef]): AnyRef
+  def map(path: PathBuilder, source: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]): AnyRef
 
   /**
    * deferred mapping causes this mapping to be deferred until no non-deferred mapping work is left. The underlying
@@ -28,7 +28,7 @@ trait AMapperWorker[H] {
    *  mapping is created after the initial object structure is complete. This also prevents streaming processing.
    *
    */
-  def mapDeferred(path: PathBuilder, source: AnyRef, sourceType: AType, sourceQualifier: AQualifier, target: => AnyRef, targetType: AType, targetQualifier: AQualifier, callback: AnyRef => Unit): Unit
+  def mapDeferred(path: PathBuilder, source: AnyRef, target: => AnyRef, types: QualifiedSourceAndTargetType, callback: AnyRef => Unit): Unit
 }
 
 

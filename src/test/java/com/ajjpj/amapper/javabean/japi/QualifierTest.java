@@ -1,8 +1,7 @@
 package com.ajjpj.amapper.javabean.japi;
 
 import com.ajjpj.amapper.core.AMapperWorker;
-import com.ajjpj.amapper.core.AQualifier;
-import com.ajjpj.amapper.core.AType;
+import com.ajjpj.amapper.core.QualifiedSourceAndTargetType;
 import com.ajjpj.amapper.javabean.JavaBeanMappingHelper;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.japi.classes.WithQualifiers;
@@ -10,7 +9,7 @@ import com.ajjpj.amapper.javabean.japi.classes.WithoutQualifiers;
 import org.junit.Test;
 import scala.collection.immutable.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -19,31 +18,31 @@ import static org.junit.Assert.*;
 public class QualifierTest {
     final AbstractValueMappingDef<String, String, JavaBeanMappingHelper> fromQualifier = new AbstractValueMappingDef<String, String, JavaBeanMappingHelper>(String.class, String.class) {
         @Override
-        public boolean canHandle(AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier) {
-            if (!super.canHandle(sourceType, sourceQualifier, targetType, targetQualifier)) {
+        public boolean canHandle(QualifiedSourceAndTargetType types) {
+            if (!super.canHandle(types)) {
                 return false;
             }
-            return sourceQualifier.get("qualifier-test").isDefined();
+            return types.sourceQualifier().get("qualifier-test").isDefined();
         }
 
         @Override
-        public String map(String sourceValue, AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context) {
+        public String map(String sourceValue, QualifiedSourceAndTargetType types, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context) {
             return sourceValue + " from qualifier";
         }
     };
 
     final AbstractValueMappingDef<String, String, JavaBeanMappingHelper> toQualifier = new AbstractValueMappingDef<String, String, JavaBeanMappingHelper>(String.class, String.class) {
         @Override
-        public boolean canHandle(AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier) {
-            if (!super.canHandle(sourceType, sourceQualifier, targetType, targetQualifier)) {
+        public boolean canHandle(QualifiedSourceAndTargetType types) {
+            if (!super.canHandle(types)) {
                 return false;
             }
-            return targetQualifier.get("qualifier-test").isDefined();
+            return types.targetQualifier().get("qualifier-test").isDefined();
         }
 
         @Override
-        public String map(String sourceValue, AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context) {
-            return sourceValue + " to qualifier " + targetQualifier.get("qualifier-test").get();
+        public String map(String sourceValue, QualifiedSourceAndTargetType types, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context) {
+            return sourceValue + " to qualifier " + types.targetQualifier().get("qualifier-test").get();
         }
     };
 

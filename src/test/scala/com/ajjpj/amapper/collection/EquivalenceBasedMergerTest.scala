@@ -34,8 +34,8 @@ class EquivalenceBasedMergerTest extends FunSuite with ShouldMatchers with Mocki
       }
     }
     def helpers = helper
-    def map(path: PathBuilder, source: AnyRef, sourceType: AType, sourceQualifier: AQualifier, target: AnyRef, targetType: AType, targetQualifier: AQualifier, context: Map[String, AnyRef]) = {mapped += (String.valueOf(source) -> ("#" + source)); "#"+source}
-    def mapDeferred(path: PathBuilder, source: AnyRef, sourceType: AType, sourceQualifier: AQualifier, target: => AnyRef, targetType: AType, targetQualifier: AQualifier, callback: (AnyRef) => Unit) = ???
+    def map(path: PathBuilder, source: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]) = {mapped += (String.valueOf(source) -> ("#" + source)); "#"+source}
+    def mapDeferred(path: PathBuilder, source: AnyRef, target: => AnyRef, types: QualifiedSourceAndTargetType, callback: (AnyRef) => Unit) = ???
   }
 
   val merger = new EquivalenceBasedMerger[String, Iterable[String], AMutableCollection[String], String, ACollectionHelper]
@@ -44,7 +44,7 @@ class EquivalenceBasedMergerTest extends FunSuite with ShouldMatchers with Mocki
     val source = List("a", "c", "d")
     val target = scala.collection.mutable.Set("#a", "#b", "#d", "#e")
 
-    val result = merger.map(source, null, NoQualifier, ACollectionAdapter(target), null, NoQualifier, worker, Map[String, AnyRef](), new PathBuilder (Nil))
+    val result = merger.map(source, ACollectionAdapter(target), null, worker, Map[String, AnyRef](), new PathBuilder (Nil))
 
     target should equal (scala.collection.mutable.Set("#a", "#c", "#d"))
     result.underlying should be theSameInstanceAs target
@@ -52,19 +52,19 @@ class EquivalenceBasedMergerTest extends FunSuite with ShouldMatchers with Mocki
 
   test("create new collection") {
     mapped --= mapped.keys
-    val result = merger.map(List("a", "bc", "def"), null, NoQualifier, null, null, NoQualifier, worker, Map[String, AnyRef](), new PathBuilder (Nil)).underlying
+    val result = merger.map(List("a", "bc", "def"), null, null, worker, Map[String, AnyRef](), new PathBuilder (Nil)).underlying
     result should equal (ArrayBuffer("#a", "#bc", "#def"))
     mapped should equal (Map("a" -> "#a", "bc" -> "#bc", "def" -> "#def"))
   }
 
   test("remove source duplicates") {
-    val result = merger.map(List("a", "b", "a", "b"), null, NoQualifier, null, null, NoQualifier, worker, Map[String, AnyRef](), new PathBuilder(Nil)).underlying
+    val result = merger.map(List("a", "b", "a", "b"), null, null, worker, Map[String, AnyRef](), new PathBuilder(Nil)).underlying
     result should equal (ArrayBuffer("#a", "#b"))
   }
 
   test("several target equivalents for one source element") {
     logCountSeveral = 0
-    val result = merger.map(List("a", "b"), null, NoQualifier, ACollectionAdapter(ArrayBuffer("#a", "#a", "#a", "#b", "#b")), null, NoQualifier, worker, Map[String, AnyRef](), new PathBuilder(Nil)).underlying
+    val result = merger.map(List("a", "b"), ACollectionAdapter(ArrayBuffer("#a", "#a", "#a", "#b", "#b")), null, worker, Map[String, AnyRef](), new PathBuilder(Nil)).underlying
 
     logCountSeveral should equal (2)
     result should equal (ArrayBuffer("#a", "#b"))

@@ -2,40 +2,40 @@ package com.ajjpj.amapper.core.impl
 
 import com.ajjpj.amapper.core._
 import scala.collection.mutable.ArrayBuffer
-import com.ajjpj.amapper.util.CanHandleCache
 
 /**
  * @author arno
  */
-private[impl] class AMapperWorkerImpl[H] (valueMappings: CanHandleCache[AValueMappingDef[_,_, _ >: H]],
-                                     objectMappings: CanHandleCache[AObjectMappingDef[_,_, _ >: H]],
-                                     val logger: AMapperLogger, deProxyStrategy: AnyRef => AnyRef,
+private[impl] class AMapperWorkerImpl[H] (valueMappings: CanHandleSourceAndTargetCache[AValueMappingDef[_,_, _ >: H]],
+                                     objectMappings: CanHandleSourceAndTargetCache[AObjectMappingDef[_,_, _ >: H]],
+                                     val logger: AMapperLogger,
                                      val helpers: H,
-                                     contextExtractor: AContextExtractor,
+                                     contextExtractor: AContextExtractor, preProcessor: CanHandleSourceAndTargetCache[APreProcessor], postProcessor: CanHandleSourceAndTargetCache[APostProcessor],
                                      deferredWork: ArrayBuffer[()=>Unit]) extends AMapperWorker[H] {
   private val identityCache = new IdentityCache
 
-  override def map(path: PathBuilder, source: AnyRef, sourceType: AType, sourceQualifier: AQualifier, target: AnyRef, targetType: AType, targetQualifier: AQualifier, context: Map[String, AnyRef]) = {
-    logger.debug ("map: " + sourceType + " @ " + path.build)
-    val newContext = contextExtractor.withContext(context, source, sourceType)
+  override def map(path: PathBuilder, source: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]) = {
+    logger.debug ("map: " + source + " @ " + path.build)
+    val newContext = contextExtractor.withContext(context, source, types.sourceType)
 
-    valueMappings.mappingDefFor(sourceType, targetType, sourceQualifier, targetQualifier) match {
+    valueMappings.entryFor(types) match {
       case Some(m) =>
-        mapValue(m, source, sourceType, sourceQualifier, targetType, targetQualifier, newContext)
+        mapValue(m, source, types, newContext)
       case None =>
-        objectMappings.mappingDefFor(sourceType, targetType, sourceQualifier, targetQualifier) match {
-          case Some(m) => mapObject(m, source, sourceType, sourceQualifier, target, targetType, targetQualifier, newContext, path)
-          case None => throw new AMapperException("no mapping def found for " + sourceType + " / " + targetType + ".", path.build)
+        objectMappings.entryFor(types) match {
+          case Some(m) => mapObject(m, source, target, types, newContext, path)
+          case None => throw new AMapperException("no mapping def found for " + types + ".", path.build)
         }
     }
   }
 
-  private def mapValue(v: AValueMappingDef[_,_,_ >: H], source: AnyRef, sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier, context: Map[String, AnyRef]) =
-    if(source == null && ! v.handlesNull) null else v.asInstanceOf[AValueMappingDef[AnyRef, AnyRef, H]].map(source, sourceType, sourceQualifier, targetType, targetQualifier, this, context)
+  private def mapValue(v: AValueMappingDef[_,_,_ >: H], source: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]) =
+    if(source == null && ! v.handlesNull) null else v.asInstanceOf[AValueMappingDef[AnyRef, AnyRef, H]].map(source, types, this, context)
 
-  private def mapObject(m: AObjectMappingDef[_,_,_ >: H], sourceRaw: AnyRef, sourceType: AType, sourceQualifier: AQualifier, target: AnyRef, targetType: AType, targetQualifier: AQualifier, context: Map[String, AnyRef], path: PathBuilder) = {
-    val source = deProxyStrategy(sourceRaw)
-    val result = m.asInstanceOf[AObjectMappingDef[AnyRef, AnyRef, H]].map(source, sourceType, sourceQualifier, target, targetType, targetQualifier, this, context, path)
+  private def mapObject(m: AObjectMappingDef[_,_,_ >: H], sourceRaw: AnyRef, target: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef], path: PathBuilder) = {
+
+    val source = sourceRaw //TODO deProxyStrategy(sourceRaw)
+    val result = m.asInstanceOf[AObjectMappingDef[AnyRef, AnyRef, H]].map(source, target, types, this, context, path)
     identityCache.register(source, result, path)
     result
   }
@@ -52,26 +52,26 @@ private[impl] class AMapperWorkerImpl[H] (valueMappings: CanHandleCache[AValueMa
    * NB: deferred mapping automatically means mutable state in the target object structure because the result of the
    *  mapping is created after the initial object structure is complete. This also prevents streaming processing.
    */
-  override def mapDeferred(path: PathBuilder, sourceRaw: AnyRef, sourceType: AType, sourceQualifier: AQualifier, target: => AnyRef, targetType: AType, targetQualifier: AQualifier, callback: (AnyRef) => Unit) {
-    logger.debug ("map deferred: " + sourceType + " @ " + path.build)
+  override def mapDeferred(path: PathBuilder, sourceRaw: AnyRef, target: => AnyRef, types: QualifiedSourceAndTargetType, callback: (AnyRef) => Unit) {
+    logger.debug ("map deferred: " + types + " @ " + path.build)
     deferredWork += (() => {
       def doMap() = {
-        logger.debug ("processing deferred: " + sourceType + " @ " + path.build)
-        val source = deProxyStrategy(sourceRaw)
+        logger.debug ("processing deferred: " + types + " @ " + path.build)
+        val source = sourceRaw //TODO deProxyStrategy(sourceRaw)
         identityCache.get(source) match {
           case Some(prevTarget) =>
             callback(prevTarget)
           case None =>
             logger.deferredWithoutInitial(path.build) //TODO special treatment for collections etc. --> flag in the mapping def?
             // create a new, empty context: context is accumulated only from parents to children
-            val mapped = map(path, source, sourceType, sourceQualifier, target, targetType, targetQualifier, Map[String, AnyRef]())
+            val mapped = map(path, source, target, types, Map[String, AnyRef]())
             callback(mapped)
         }
       }
 
-      objectMappings.mappingDefFor(sourceType, targetType, sourceQualifier, targetQualifier) match {
+      objectMappings.entryFor(types) match {
         case Some(m) => doMap()
-        case None => throw new AMapperException("no mapping def found for " + sourceType + " / " + targetType + ".", path.build)
+        case None => throw new AMapperException("no mapping def found for " + types + ".", path.build)
       }
     })
   }

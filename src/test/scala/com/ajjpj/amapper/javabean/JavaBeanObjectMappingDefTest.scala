@@ -20,16 +20,16 @@ import org.mockito.Mockito
 class JavaBeanObjectMappingDefTest extends FunSuite with ShouldMatchers with MockitoSugar {
   test("abstract") {
     val md = new AbstractJavaBeanObjectMappingDef[String, Date]() {
-      override def map(source: String, sourceType: AType, sourceQualifier: AQualifier, target: Date, targetType: AType, targetQualifier: AQualifier, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder): Date = null
+      override def map(source: String, target: Date, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder): Date = null
     }
 
     md.sourceClass should equal (classOf[String])
     md.targetClass should equal (classOf[Date])
 
-    md.canHandle (SimpleJavaBeanType(classOf[String]), NoQualifier, SimpleJavaBeanType(classOf[Date]), NoQualifier)               should equal (true)
-    md.canHandle (SimpleJavaBeanType(classOf[AnyRef]), NoQualifier, SimpleJavaBeanType(classOf[Date]), NoQualifier)               should equal (false)
-    md.canHandle (SimpleJavaBeanType(classOf[String]), NoQualifier, SimpleJavaBeanType(classOf[AnyRef]), NoQualifier)             should equal (false)
-    md.canHandle (SimpleJavaBeanType(classOf[String]), NoQualifier, SimpleJavaBeanType(classOf[java.sql.Timestamp]), NoQualifier) should equal (false)
+    md.canHandle (QualifiedSourceAndTargetType(SimpleJavaBeanType(classOf[String]), NoQualifier, SimpleJavaBeanType(classOf[Date]), NoQualifier))               should equal (true)
+    md.canHandle (QualifiedSourceAndTargetType(SimpleJavaBeanType(classOf[AnyRef]), NoQualifier, SimpleJavaBeanType(classOf[Date]), NoQualifier))               should equal (false)
+    md.canHandle (QualifiedSourceAndTargetType(SimpleJavaBeanType(classOf[String]), NoQualifier, SimpleJavaBeanType(classOf[AnyRef]), NoQualifier))             should equal (false)
+    md.canHandle (QualifiedSourceAndTargetType(SimpleJavaBeanType(classOf[String]), NoQualifier, SimpleJavaBeanType(classOf[java.sql.Timestamp]), NoQualifier)) should equal (false)
   }
 
   test("simple") {
@@ -42,12 +42,12 @@ class JavaBeanObjectMappingDefTest extends FunSuite with ShouldMatchers with Moc
     md.sourceClass should equal (classOf[String])
     md.targetClass should equal (classOf[StringBuilder])
 
-    md.canHandle (SimpleJavaBeanType(classOf[String]), NoQualifier, SimpleJavaBeanType(classOf[StringBuilder]), NoQualifier) should equal (true)
-    md.canHandle (SimpleJavaBeanType(classOf[AnyRef]), NoQualifier, SimpleJavaBeanType(classOf[StringBuilder]), NoQualifier) should equal (false)
-    md.canHandle (SimpleJavaBeanType(classOf[String]), NoQualifier, SimpleJavaBeanType(classOf[AnyRef]),        NoQualifier)        should equal (false)
+    md.canHandle (QualifiedSourceAndTargetType(SimpleJavaBeanType(classOf[String]), NoQualifier, SimpleJavaBeanType(classOf[StringBuilder]), NoQualifier)) should equal (true)
+    md.canHandle (QualifiedSourceAndTargetType(SimpleJavaBeanType(classOf[AnyRef]), NoQualifier, SimpleJavaBeanType(classOf[StringBuilder]), NoQualifier)) should equal (false)
+    md.canHandle (QualifiedSourceAndTargetType(SimpleJavaBeanType(classOf[String]), NoQualifier, SimpleJavaBeanType(classOf[AnyRef]),        NoQualifier))        should equal (false)
 
     val prevSb = new StringBuilder
-    val mappedPrev = md.map("abc", null, NoQualifier, prevSb, null, NoQualifier, null, null, null)
+    val mappedPrev = md.map("abc", prevSb, null, null, null, null)
     mappedPrev should be theSameInstanceAs prevSb
     mappedPrev.toString should equal ("abc")
 
@@ -55,7 +55,7 @@ class JavaBeanObjectMappingDefTest extends FunSuite with ShouldMatchers with Moc
     import Mockito._
     when (worker.helpers) thenReturn SimpleBeanMappingHelper
 
-    val mappedNew = md.map("xyz", null, NoQualifier, null, JavaBeanTypes[StringBuilder], NoQualifier, worker, null, null)
+    val mappedNew = md.map("xyz", null, QualifiedSourceAndTargetType(null, NoQualifier, JavaBeanTypes[StringBuilder], NoQualifier), worker, null, null)
     mappedNew.getClass should be (classOf[StringBuilder])
     mappedNew.toString should equal ("xyz")
   }

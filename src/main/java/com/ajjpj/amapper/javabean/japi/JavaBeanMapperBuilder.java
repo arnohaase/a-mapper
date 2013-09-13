@@ -62,11 +62,6 @@ public class JavaBeanMapperBuilder<H extends JavaBeanMappingHelper> {
         return this;
     }
 
-    public JavaBeanMapperBuilder<H> withDeProxyStrategy(DeProxyStrategy deProxyStrategy) {
-        inner.withDeProxyStrategy(JApi.asFunction(deProxyStrategy));
-        return this;
-    }
-
     public JavaBeanMapperBuilder<H> withContextExtractor(AContextExtractor contextExtractor) {
         inner.withContextExtractor(contextExtractor);
         return this;
