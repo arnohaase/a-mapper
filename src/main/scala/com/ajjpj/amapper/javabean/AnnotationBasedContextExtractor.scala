@@ -9,17 +9,25 @@ import com.ajjpj.amapper.javabean.japi.AContextMarker
  * @author arno
  */
 class AnnotationBasedContextExtractor extends AContextExtractor {
+  @volatile var cache = Map[AType, List[String]]()
+
   def withContext(context: Map[String, AnyRef], o: AnyRef, tpe: AType): Map[String, AnyRef] = {
-    tpe match {
-      case SimpleJavaBeanType(cls) => fromClass(context, o, cls)
-      case _ => context
+    cache.get(tpe) match {
+      case Some(Nil) =>
+        context
+      case Some(keys) =>
+        context ++ keys.map(_ -> o).toMap
+      case None =>
+        val keys = extractKeys(tpe)
+        cache += (tpe -> keys)
+        context ++ keys.map(_ -> o).toMap
     }
   }
 
-  def fromClass(context: Map[String, AnyRef], o: AnyRef, cls: Class[_]) = {
-    //TODO caching
+  def extractKeys(tpe: AType) = tpe match {
     //TODO recursive interface analysis; move this to JavBeanSupport
-    context ++ cls.getInterfaces.filter(_.getAnnotation(classOf[AContextMarker]) != null).map(iface => (iface.getName -> o)).toMap
+    case SimpleJavaBeanType(cls) => cls.getInterfaces.filter(_.getAnnotation(classOf[AContextMarker]) != null).map(_.getName).toList
+    case _ => Nil
   }
 }
 
