@@ -5,11 +5,14 @@ todo
   * log exception including path in worker --> configurable: log and maintain old exception, wrap, ...
 
 * tests
+  * special mapping
+  * guards
 
 * thoughts
   * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)
   * ValueMappingDef: add path --> may itself contain object mappings?
-  * separate 'create' and 'merge' modes?
+  * separate 'create' and 'merge' modes (instead of 'map')?
+  * special kind of 'mapping def' for multi-valued / indexed properties
 
 * features
   * for java beans / first shot
@@ -18,7 +21,6 @@ todo
       * inline property mappings (where possible)
     * "special" mapped field
     * guards / conditional mapping
-      * selective mapping of collection elements?
   * parsing
     * janino
     * (configurable) chain of possible parsers for attribute expressions: field, method, method path, janino, janino from dot-separated, OGNL, ...
@@ -38,9 +40,6 @@ todo
 * admin
   * upload to maven central
 
-* ?!?!?
-  * special kind of 'mapping def' for multi-valued / indexed properties
-
 * documentation
   * Java Bean mapping: sourceCls == targetClass --> only 'forward' mapping is registered
   * examples for qualifiers
@@ -57,6 +56,7 @@ todo
     * deProxy
     * skip Hibernate proxies
     * *not* for modifying the source object!
+    * security: ignore objects for which there are no permissions (both refs and collections!)
   * examples for postprocessors
     * inject user's locale
   * examples for isCacheable=false

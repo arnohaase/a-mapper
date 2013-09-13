@@ -1,9 +1,11 @@
 package com.ajjpj.amapper.javabean.builder
 
-import com.ajjpj.amapper.javabean.propbased.{PropertyAccessor, PropertyBasedObjectMappingDef, SourceAndTargetProp}
+import com.ajjpj.amapper.javabean.propbased._
 import scala.reflect.ClassTag
 import com.ajjpj.amapper.javabean.{JavaBeanTypes, JavaBeanType}
 import com.ajjpj.amapper.core.AMapperLogger
+import com.ajjpj.amapper.javabean.propbased.SourceAndTargetProp
+import com.ajjpj.amapper.javabean.propbased.PropertyBasedObjectMappingDef
 
 /**
  * @author arno
@@ -17,8 +19,8 @@ class JavaBeanMapping[S<:AnyRef,T<:AnyRef](isPropDeferred: IsDeferredStrategy, l
   val sourceCls = sourceTag.runtimeClass
   val targetCls = targetTag.runtimeClass
 
-  var forwardProps: List[SourceAndTargetProp] = Nil
-  var backwardProps: List[SourceAndTargetProp] = Nil
+  var forwardProps: List[PartialMapping] = Nil
+  var backwardProps: List[PartialMapping] = Nil
 
   def withMatchingPropsMappings() = {
     val sharedProps = PropertyAccessor.sharedProperties(sourceCls, targetCls, isPropDeferred, logger, qualifierExtractor)
@@ -118,28 +120,65 @@ class JavaBeanMapping[S<:AnyRef,T<:AnyRef](isPropDeferred: IsDeferredStrategy, l
 
 
   def removeMappingForSourceProp(expr: String) = {
-    forwardProps = forwardProps.filterNot(_.sourceProp.name == expr)
-    backwardProps = backwardProps.filterNot(_.targetProp.name == expr)
+    forwardProps = forwardProps.filterNot(_.sourceName == expr)
+    backwardProps = backwardProps.filterNot(_.targetName == expr)
     this
   }
 
   def removeMappingForTargetProp(expr: String) = {
-    forwardProps = forwardProps.filterNot(_.targetProp.name == expr)
-    backwardProps = backwardProps.filterNot(_.sourceProp.name == expr)
+    forwardProps = forwardProps.filterNot(_.targetName == expr)
+    backwardProps = backwardProps.filterNot(_.sourceName == expr)
     this
   }
 
   def makeOneWay(sourceExpr: String) = {
-    backwardProps = backwardProps.filterNot(_.targetProp.name == sourceExpr)
+    backwardProps = backwardProps.filterNot(_.targetName == sourceExpr)
     this
   }
   def makeBackwardsOneWay(sourceExpr: String) = {
-    forwardProps = forwardProps.filterNot(_.sourceProp.name == sourceExpr)
+    forwardProps = forwardProps.filterNot(_.sourceName == sourceExpr)
+    this
+  }
+
+  def addForwardSpecialMapping(partialMapping: PartialMapping) = {
+    forwardProps = partialMapping :: forwardProps
+    this
+  }
+  def addBackwardSpecialMapping(partialMapping: PartialMapping) = {
+    backwardProps = partialMapping :: backwardProps
+    this
+  }
+
+  def addForwardGuardBySourceExpression(sourceExpr: String, shouldMap: ShouldMap) = {
+    forwardProps = forwardProps.map (_ match {
+      case p if p.sourceName == sourceExpr => new GuardedPartialMapping(p, shouldMap)
+      case p => p
+    })
+    this
+  }
+  def addForwardGuardByTargetExpression(targetExpr: String, shouldMap: ShouldMap) = {
+    forwardProps = forwardProps.map (_ match {
+      case p if p.targetName == targetExpr => new GuardedPartialMapping(p, shouldMap)
+      case p => p
+    })
+    this
+  }
+  def addBackwardGuardBySourceExpression(sourceExpr: String, shouldMap: ShouldMap) = {
+    backwardProps = backwardProps.map (_ match {
+      case p if p.sourceName == sourceExpr => new GuardedPartialMapping(p, shouldMap)
+      case p => p
+    })
+    this
+  }
+  def addBackwardGuardByTargetExpression(targetExpr: String, shouldMap: ShouldMap) = {
+    backwardProps = backwardProps.map (_ match {
+      case p if p.targetName == targetExpr => new GuardedPartialMapping(p, shouldMap)
+      case p => p
+    })
     this
   }
 
   //TODO log warning if there is no such mapping
-  //TODO guards
 
   def build = PropertyBasedObjectMappingDef[S,T](forwardProps)
   def buildBackward = PropertyBasedObjectMappingDef[T,S](backwardProps)
@@ -158,3 +197,7 @@ object JavaBeanMapping {
 }
 
 //TODO test for write-only property
+
+
+
+

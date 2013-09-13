@@ -16,10 +16,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 
-@Ignore
+//@Ignore
 public class PerfTest extends Assert {
     private final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withBeanMapping(JavaBeanMapping.create(A.class, A.class))
+            .withBeanMapping(JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
             .build();
 
 	private A a;
