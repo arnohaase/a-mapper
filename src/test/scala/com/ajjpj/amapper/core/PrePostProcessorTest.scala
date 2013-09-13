@@ -48,7 +48,8 @@ class PrePostProcessorTest extends FunSuite with ShouldMatchers {
     }
   }
 
-  val mapper = new AMapperImpl[AnyRef](valueMappings, objectMappings, AMapperLogger.StdOut, () => null, NoContextExtractor,
+  val mapper = new AMapperImpl[AnyRef](valueMappings, objectMappings, AMapperLogger.StdOut, () => null, new IdentifierExtractor { def uniqueIdentifier(o: AnyRef, tpe: AType) = o.toString },
+    NoContextExtractor,
     new CanHandleSourceAndTargetCache[APreProcessor](List(preProcessor)),
     new CanHandleSourceAndTargetCache[APostProcessor](List(postProcessor)))
 

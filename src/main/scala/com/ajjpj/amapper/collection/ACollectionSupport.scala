@@ -7,6 +7,6 @@ import com.ajjpj.amapper.core.{AType, AMapperWorker, PathBuilder, ParameterizedP
  */
 private[collection] object ACollectionSupport {
   def elementPath(path: PathBuilder, worker: AMapperWorker[_ <: ACollectionHelper], el: AnyRef, elementType: AType): PathBuilder =
-    path + ParameterizedPathSegment("elements", worker.helpers.uniqueIdentifier(el, elementType))
+    path + ParameterizedPathSegment("elements", worker.identifierExtractor.uniqueIdentifier(el, elementType))
 
 }

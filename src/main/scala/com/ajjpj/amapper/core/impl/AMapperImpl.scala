@@ -10,14 +10,14 @@ import scala.collection.mutable.ArrayBuffer
 class AMapperImpl[H] (valueMappings: CanHandleSourceAndTargetCache[AValueMappingDef[_,_,_>:H]],
                   objectMappings: CanHandleSourceAndTargetCache[AObjectMappingDef[_,_,_>:H]],
                   log: AMapperLogger = AMapperLogger.defaultLogger,
-                  helperFactory: () => H,
+                  helperFactory: () => H, identifierExtractor: IdentifierExtractor,
                   contextExtractor: AContextExtractor,
                   preProcessor: CanHandleSourceAndTargetCache[APreProcessor],
                   postProcessor: CanHandleSourceAndTargetCache[APostProcessor]
                   ) extends AMapper {
   override def map(source: AnyRef, sourceType: AType, sourceQualifier: AQualifier, target: AnyRef, targetType: AType, targetQualifier: AQualifier): Option[AnyRef] = {
     val deferredWork = ArrayBuffer[()=>Unit]()
-    val worker = new AMapperWorkerImpl[H](valueMappings, objectMappings, log, helperFactory(), contextExtractor, preProcessor, postProcessor, deferredWork)
+    val worker = new AMapperWorkerImpl[H](valueMappings, objectMappings, log, helperFactory(), identifierExtractor, contextExtractor, preProcessor, postProcessor, deferredWork)
     val result = worker.map(new PathBuilder, source, target, QualifiedSourceAndTargetType(sourceType, sourceQualifier, targetType, targetQualifier), Map[String, AnyRef]())
 
     while(!deferredWork.isEmpty) {

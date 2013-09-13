@@ -1,10 +1,7 @@
 package com.ajjpj.amapper.javabean.japi;
 
 
-import com.ajjpj.amapper.core.AContextExtractor;
-import com.ajjpj.amapper.core.AMapperLogger;
-import com.ajjpj.amapper.core.AObjectMappingDef;
-import com.ajjpj.amapper.core.AValueMappingDef;
+import com.ajjpj.amapper.core.*;
 import com.ajjpj.amapper.javabean.BuiltinCollectionMappingDefs;
 import com.ajjpj.amapper.javabean.JavaBeanMappingHelper;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
@@ -59,6 +56,11 @@ public class JavaBeanMapperBuilder<H extends JavaBeanMappingHelper> {
 
     public JavaBeanMapperBuilder<H> withLogger(AMapperLogger logger) {
         inner.withLogger(logger);
+        return this;
+    }
+
+    public JavaBeanMapperBuilder<H> withContextExtractor(IdentifierExtractor identifierExtractor) {
+        inner.withIdentifierExtractor(identifierExtractor);
         return this;
     }
 

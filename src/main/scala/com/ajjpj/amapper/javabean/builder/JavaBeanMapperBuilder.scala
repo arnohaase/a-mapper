@@ -22,6 +22,9 @@ class JavaBeanMapperBuilder[H <: JavaBeanMappingHelper](val helperFactory: () =>
   var preProcessor = List[APreProcessor]()
   var postProcessor = List[APostProcessor]()
 
+  var identifierExtractor: IdentifierExtractor = new IdentifierExtractor {
+    def uniqueIdentifier(o: AnyRef, tpe: AType) = o.toString
+  }
   var contextExtractor: AContextExtractor = AnnotationBasedContextExtractor
 
   /**
@@ -42,9 +45,11 @@ class JavaBeanMapperBuilder[H <: JavaBeanMappingHelper](val helperFactory: () =>
   }
 
   def withLogger(log: AMapperLogger): JavaBeanMapperBuilder[H] = {this.log = log; this}
+  def withIdentifierExtractor(identifierExtractor: IdentifierExtractor) = {this.identifierExtractor = identifierExtractor; this}
   def withContextExtractor(contextExtractor: AContextExtractor) = {this.contextExtractor = contextExtractor; this}
 
-  def build: AMapper = new AMapperImpl[H] (new CanHandleSourceAndTargetCache(valueMappings), new CanHandleSourceAndTargetCache(objectMappings), log, helperFactory, contextExtractor,
+  def build: AMapper = new AMapperImpl[H] (new CanHandleSourceAndTargetCache(valueMappings), new CanHandleSourceAndTargetCache(objectMappings), log, helperFactory,
+    identifierExtractor, contextExtractor,
     new CanHandleSourceAndTargetCache (preProcessor), new CanHandleSourceAndTargetCache (postProcessor))
 }
 

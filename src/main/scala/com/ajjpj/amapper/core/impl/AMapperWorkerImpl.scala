@@ -9,7 +9,7 @@ import scala.collection.mutable.ArrayBuffer
 private[impl] class AMapperWorkerImpl[H] (valueMappings: CanHandleSourceAndTargetCache[AValueMappingDef[_,_, _ >: H]],
                                      objectMappings: CanHandleSourceAndTargetCache[AObjectMappingDef[_,_, _ >: H]],
                                      val logger: AMapperLogger,
-                                     val helpers: H,
+                                     val helpers: H, val identifierExtractor: IdentifierExtractor,
                                      contextExtractor: AContextExtractor, preProcessor: CanHandleSourceAndTargetCache[APreProcessor], postProcessor: CanHandleSourceAndTargetCache[APostProcessor],
                                      deferredWork: ArrayBuffer[()=>Unit]) extends AMapperWorker[H] {
   private val identityCache = new IdentityCache
