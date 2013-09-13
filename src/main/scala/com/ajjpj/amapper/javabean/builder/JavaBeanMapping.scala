@@ -29,9 +29,6 @@ class JavaBeanMapping[S<:AnyRef,T<:AnyRef](isPropDeferred: IsDeferredStrategy, l
     this
   }
 
-  //TODO multiple mappings for the same source?
-  //TODO replace existing mappings 'by name' or throw exception if there is a problem?
-
   def addMapping(sourceExpression: String, sourceType: Cls, targetExpression: String, targetType: Cls): THIS = addMapping(sourceExpression, sourceType, targetExpression, targetType, isDeferred=false)
   def addMapping(sourceExpression: String, sourceType: Cls, targetExpression: String, targetType: Cls, isDeferred: Boolean): THIS = addMapping(sourceExpression, JavaBeanTypes.create(sourceType), targetExpression, JavaBeanTypes.create(targetType), isDeferred)
   def addMapping(sourceExpression: String, sourceType: Cls, sourceElementType: Cls, targetExpression: String, targetType: Cls, targetElementType: Cls): THIS = addMapping(sourceExpression, sourceType, sourceElementType, targetExpression, targetType, targetElementType, isDeferred=false)
@@ -149,28 +146,28 @@ class JavaBeanMapping[S<:AnyRef,T<:AnyRef](isPropDeferred: IsDeferredStrategy, l
     this
   }
 
-  def withForwardGuardBySourceExpression(sourceExpr: String, shouldMap: ShouldMap) = {
+  def withForwardGuardBySourceExpression(sourceExpr: String, shouldMap: ShouldMap[S,T]) = {
     forwardProps = forwardProps.map (_ match {
       case p if p.sourceName == sourceExpr => new GuardedPartialMapping(p, shouldMap)
       case p => p
     })
     this
   }
-  def withForwardGuardByTargetExpression(targetExpr: String, shouldMap: ShouldMap) = {
+  def withForwardGuardByTargetExpression(targetExpr: String, shouldMap: ShouldMap[S,T]) = {
     forwardProps = forwardProps.map (_ match {
       case p if p.targetName == targetExpr => new GuardedPartialMapping(p, shouldMap)
       case p => p
     })
     this
   }
-  def withBackwardGuardBySourceExpression(sourceExpr: String, shouldMap: ShouldMap) = {
+  def withBackwardGuardBySourceExpression(sourceExpr: String, shouldMap: ShouldMap[T,S]) = {
     backwardProps = backwardProps.map (_ match {
       case p if p.sourceName == sourceExpr => new GuardedPartialMapping(p, shouldMap)
       case p => p
     })
     this
   }
-  def withBackwardGuardByTargetExpression(targetExpr: String, shouldMap: ShouldMap) = {
+  def withBackwardGuardByTargetExpression(targetExpr: String, shouldMap: ShouldMap[T,S]) = {
     backwardProps = backwardProps.map (_ match {
       case p if p.targetName == targetExpr => new GuardedPartialMapping(p, shouldMap)
       case p => p

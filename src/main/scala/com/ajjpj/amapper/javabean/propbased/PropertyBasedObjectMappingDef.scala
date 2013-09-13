@@ -56,11 +56,11 @@ object ExplicitPartialMapping {
 }
 
 
-trait ShouldMap {
-  def shouldMap(source: AnyRef, target: AnyRef, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder): Boolean
+trait ShouldMap[S<:AnyRef,T<:AnyRef] {
+  def shouldMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder): Boolean
 }
 
-class GuardedPartialMapping[S<:AnyRef,T<:AnyRef](inner: PartialMapping[S,T], shouldMap: ShouldMap) extends PartialMapping[S,T] {
+class GuardedPartialMapping[S<:AnyRef,T<:AnyRef](inner: PartialMapping[S,T], shouldMap: ShouldMap[S,T]) extends PartialMapping[S,T] {
   def sourceName = inner.sourceName
   def targetName = inner.targetName
 

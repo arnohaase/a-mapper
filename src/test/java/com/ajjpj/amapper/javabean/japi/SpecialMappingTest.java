@@ -68,9 +68,9 @@ public class SpecialMappingTest {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                         .withMatchingPropsMappings()
-                        .withForwardGuardBySourceExpression("firstName", new ShouldMap() {
+                        .withForwardGuardBySourceExpression("firstName", new ShouldMap<ClassA,ClassB>() {
                             @Override
-                            public boolean shouldMap(Object source, Object target, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context, PathBuilder path) {
+                            public boolean shouldMap(ClassA source, ClassB target, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context, PathBuilder path) {
                                 return shouldMap;
                             }
                         })
@@ -102,9 +102,9 @@ public class SpecialMappingTest {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                         .withMatchingPropsMappings()
-                        .withBackwardGuardBySourceExpression("firstName", new ShouldMap() {
+                        .withBackwardGuardBySourceExpression("firstName", new ShouldMap<ClassB,ClassA>() {
                             @Override
-                            public boolean shouldMap(Object source, Object target, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context, PathBuilder path) {
+                            public boolean shouldMap(ClassB source, ClassA target, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context, PathBuilder path) {
                                 return shouldMap;
                             }
                         })
