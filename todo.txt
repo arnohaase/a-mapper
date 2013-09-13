@@ -5,22 +5,19 @@ todo
   * log exception including path in worker --> configurable: log and maintain old exception, wrap, ...
 
 * tests
-  * special mapping
-  * guards
 
 * thoughts
   * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)
   * ValueMappingDef: add path --> may itself contain object mappings?
   * separate 'create' and 'merge' modes (instead of 'map')?
   * special kind of 'mapping def' for multi-valued / indexed properties
+  * separate 'transformation' step between source and target access?
 
 * features
   * for java beans / first shot
     * PropertyBasedMappingDef:
       * differentiate between value and object props
       * inline property mappings (where possible)
-    * "special" mapped field
-    * guards / conditional mapping
   * parsing
     * janino
     * (configurable) chain of possible parsers for attribute expressions: field, method, method path, janino, janino from dot-separated, OGNL, ...

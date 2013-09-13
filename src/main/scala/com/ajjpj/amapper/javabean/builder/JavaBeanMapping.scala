@@ -16,16 +16,16 @@ class JavaBeanMapping[S<:AnyRef,T<:AnyRef](isPropDeferred: IsDeferredStrategy, l
   type Cls = Class[_<:AnyRef]
   //TODO filter by 'isReadable' / 'isWritable'
 
-  val sourceCls = sourceTag.runtimeClass
-  val targetCls = targetTag.runtimeClass
+  val sourceCls = sourceTag.runtimeClass.asInstanceOf[Class[S]]
+  val targetCls = targetTag.runtimeClass.asInstanceOf[Class[T]]
 
-  var forwardProps: List[PartialMapping] = Nil
-  var backwardProps: List[PartialMapping] = Nil
+  var forwardProps: List[PartialMapping[S,T]] = Nil
+  var backwardProps: List[PartialMapping[T,S]] = Nil
 
   def withMatchingPropsMappings() = {
     val sharedProps = PropertyAccessor.sharedProperties(sourceCls, targetCls, isPropDeferred, logger, qualifierExtractor)
-    forwardProps ++= sharedProps.filter(p => p.sourceProp.isReadable && p.targetProp.isWritable)
-    backwardProps ++= sharedProps.map(_.reverse).filter(p => p.sourceProp.isReadable && p.targetProp.isWritable)
+    forwardProps  ++= sharedProps.               filter(p => p.sourceProp.isReadable && p.targetProp.isWritable).asInstanceOf[Iterable[PartialMapping[S,T]]]
+    backwardProps ++= sharedProps.map(_.reverse).filter(p => p.sourceProp.isReadable && p.targetProp.isWritable).asInstanceOf[Iterable[PartialMapping[T,S]]]
     this
   }
 
@@ -42,10 +42,10 @@ class JavaBeanMapping[S<:AnyRef,T<:AnyRef](isPropDeferred: IsDeferredStrategy, l
     val targetAccessor = new AMapperExpressionParser(qualifierExtractor).parse(targetCls, targetExpression, sourceType, isDeferred)
 
     if(sourceAccessor.isReadable && targetAccessor.isWritable)
-      forwardProps = SourceAndTargetProp  (sourceAccessor, targetAccessor) :: forwardProps
+      forwardProps = SourceAndTargetProp[S,T](sourceAccessor, targetAccessor) :: forwardProps
 
     if(targetAccessor.isReadable && sourceAccessor.isWritable)
-      backwardProps = SourceAndTargetProp (targetAccessor, sourceAccessor) :: backwardProps
+      backwardProps = SourceAndTargetProp[T,S](targetAccessor, sourceAccessor) :: backwardProps
 
     this
   }
@@ -71,7 +71,7 @@ class JavaBeanMapping[S<:AnyRef,T<:AnyRef](isPropDeferred: IsDeferredStrategy, l
     val targetAccessor = new AMapperExpressionParser(qualifierExtractor).parse(targetCls, targetExpression, sourceType, isDeferred)
 
     if(sourceAccessor.isReadable && targetAccessor.isWritable)
-      forwardProps = SourceAndTargetProp  (sourceAccessor, targetAccessor) :: forwardProps
+      forwardProps = SourceAndTargetProp[S,T](sourceAccessor, targetAccessor) :: forwardProps
     else
       throw new IllegalArgumentException("source property must be readable and target property must be writable")
 
@@ -100,7 +100,7 @@ class JavaBeanMapping[S<:AnyRef,T<:AnyRef](isPropDeferred: IsDeferredStrategy, l
     val targetAccessor = new AMapperExpressionParser(qualifierExtractor).parse(targetCls, targetExpression, sourceType, isDeferred)
 
     if(targetAccessor.isReadable && sourceAccessor.isWritable)
-      backwardProps = SourceAndTargetProp (targetAccessor, sourceAccessor) :: backwardProps
+      backwardProps = SourceAndTargetProp[T,S](targetAccessor, sourceAccessor) :: backwardProps
     else
       throw new IllegalArgumentException("target property must be readable and source property must be writable")
 
@@ -140,37 +140,37 @@ class JavaBeanMapping[S<:AnyRef,T<:AnyRef](isPropDeferred: IsDeferredStrategy, l
     this
   }
 
-  def addForwardSpecialMapping(partialMapping: PartialMapping) = {
+  def withForwardSpecialMapping(partialMapping: PartialMapping[S,T]) = {
     forwardProps = partialMapping :: forwardProps
     this
   }
-  def addBackwardSpecialMapping(partialMapping: PartialMapping) = {
+  def withBackwardSpecialMapping(partialMapping: PartialMapping[T,S]) = {
     backwardProps = partialMapping :: backwardProps
     this
   }
 
-  def addForwardGuardBySourceExpression(sourceExpr: String, shouldMap: ShouldMap) = {
+  def withForwardGuardBySourceExpression(sourceExpr: String, shouldMap: ShouldMap) = {
     forwardProps = forwardProps.map (_ match {
       case p if p.sourceName == sourceExpr => new GuardedPartialMapping(p, shouldMap)
       case p => p
     })
     this
   }
-  def addForwardGuardByTargetExpression(targetExpr: String, shouldMap: ShouldMap) = {
+  def withForwardGuardByTargetExpression(targetExpr: String, shouldMap: ShouldMap) = {
     forwardProps = forwardProps.map (_ match {
       case p if p.targetName == targetExpr => new GuardedPartialMapping(p, shouldMap)
       case p => p
     })
     this
   }
-  def addBackwardGuardBySourceExpression(sourceExpr: String, shouldMap: ShouldMap) = {
+  def withBackwardGuardBySourceExpression(sourceExpr: String, shouldMap: ShouldMap) = {
     backwardProps = backwardProps.map (_ match {
       case p if p.sourceName == sourceExpr => new GuardedPartialMapping(p, shouldMap)
       case p => p
     })
     this
   }
-  def addBackwardGuardByTargetExpression(targetExpr: String, shouldMap: ShouldMap) = {
+  def withBackwardGuardByTargetExpression(targetExpr: String, shouldMap: ShouldMap) = {
     backwardProps = backwardProps.map (_ match {
       case p if p.targetName == targetExpr => new GuardedPartialMapping(p, shouldMap)
       case p => p

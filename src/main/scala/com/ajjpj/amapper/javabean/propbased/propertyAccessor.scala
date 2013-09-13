@@ -29,14 +29,14 @@ trait PropertyAccessor {
 object PropertyAccessor {
   type Type = JavaBeanType[_<:AnyRef]
 
-  def sharedProperties (sourceClass: Class[_], targetClass: Class[_], isPropDeferred: IsDeferredStrategy, log: AMapperLogger, qualifierExtractor: QualifierExtractor): Traversable[SourceAndTargetProp] =
+  def sharedProperties[S<:AnyRef,T<:AnyRef] (sourceClass: Class[S], targetClass: Class[T], isPropDeferred: IsDeferredStrategy, log: AMapperLogger, qualifierExtractor: QualifierExtractor): Traversable[SourceAndTargetProp[S,T]] =
     new SharedAccessorFactory(sourceClass, targetClass, isPropDeferred, log, qualifierExtractor).sharedAccesors
 
 
   def makeAccessible(m: Method) = if (! Modifier.isPublic(m.getModifiers) && !m.isAccessible) m.setAccessible(true)
   private[propbased] def isDeferred(isPropDeferred: IsDeferredStrategy, methods: Option[Method]*) = methods.flatMap(x=>x).exists(isPropDeferred(_))
 
-  private class SharedAccessorFactory (sourceClass: Class[_], targetClass: Class[_], isPropDeferred: IsDeferredStrategy, log: AMapperLogger, qualifierExtractor: QualifierExtractor) {
+  private class SharedAccessorFactory[S<:AnyRef,T<:AnyRef] (sourceClass: Class[S], targetClass: Class[T], isPropDeferred: IsDeferredStrategy, log: AMapperLogger, qualifierExtractor: QualifierExtractor) {
     type Cls = Class[_<:AnyRef]
 
     val sourceProps = JavaBeanSupport.allBeanProps(sourceClass, isPropDeferred, qualifierExtractor)
@@ -47,7 +47,7 @@ object PropertyAccessor {
     /**
      * @return *all* property pairs, regardless of their readability / writability
      */
-    val sharedAccesors = propNames.map(name => SourceAndTargetProp(sourceProps(name), targetProps(name)))
+    val sharedAccesors = propNames.map(name => SourceAndTargetProp[S,T](sourceProps(name), targetProps(name)))
 
     //TODO log warning if getter and setter have primitive and wrapped type, respectively
 

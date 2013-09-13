@@ -8,26 +8,26 @@ import scala.reflect.ClassTag
 /**
  * @author arno
  */
-case class PropertyBasedObjectMappingDef[S<:AnyRef,T<:AnyRef](props: List[PartialMapping])(implicit sourceTag: ClassTag[S], targetTag: ClassTag[T]) extends SimpleJavaBeanObjectMappingDefBase[S,T] {
+case class PropertyBasedObjectMappingDef[S<:AnyRef,T<:AnyRef](props: List[PartialMapping[S,T]])(implicit sourceTag: ClassTag[S], targetTag: ClassTag[T]) extends SimpleJavaBeanObjectMappingDefBase[S,T] {
   override def doMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder) {
     props.foreach(_.doMap(source, target, worker, context, path))
   }
 }
 
-trait PartialMapping {
+trait PartialMapping[S<:AnyRef, T<:AnyRef] {
   def sourceName: String
   def targetName: String
-  def doMap(source: AnyRef, target: AnyRef, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder): Unit
+  def doMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder): Unit
 }
 
-case class SourceAndTargetProp (sourceProp: PropertyAccessor, targetProp: PropertyAccessor) extends PartialMapping {
-  def reverse = SourceAndTargetProp (targetProp, sourceProp)
+case class SourceAndTargetProp[S<:AnyRef, T<:AnyRef] (sourceProp: PropertyAccessor, targetProp: PropertyAccessor) extends PartialMapping[S,T] {
+  def reverse = SourceAndTargetProp[T,S] (targetProp, sourceProp)
   val types = QualifiedSourceAndTargetType (sourceProp.tpe, sourceProp.sourceQualifier, targetProp.tpe, targetProp.targetQualifier)
 
   override def sourceName = sourceProp.name
   override def targetName = targetProp.name
 
-  override def doMap(source: AnyRef, target: AnyRef, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder) {
+  override def doMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder) {
     val isDeferred = sourceProp.isDeferred
 
     if(isDeferred) {
@@ -43,7 +43,7 @@ case class SourceAndTargetProp (sourceProp: PropertyAccessor, targetProp: Proper
 }
 
 
-abstract class ExplicitPartialMapping extends PartialMapping {
+abstract class ExplicitPartialMapping[S<:AnyRef, T<:AnyRef] extends PartialMapping[S,T] {
   override val sourceName = ExplicitPartialMapping.uniqueName
   override val targetName = ExplicitPartialMapping.uniqueName
 }
@@ -60,11 +60,11 @@ trait ShouldMap {
   def shouldMap(source: AnyRef, target: AnyRef, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder): Boolean
 }
 
-class GuardedPartialMapping(inner: PartialMapping, shouldMap: ShouldMap) extends PartialMapping {
+class GuardedPartialMapping[S<:AnyRef,T<:AnyRef](inner: PartialMapping[S,T], shouldMap: ShouldMap) extends PartialMapping[S,T] {
   def sourceName = inner.sourceName
   def targetName = inner.targetName
 
-  def doMap(source: AnyRef, target: AnyRef, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder) {
+  def doMap(source: S, target: T, worker: AMapperWorker[_ <: JavaBeanMappingHelper], context: Map[String, AnyRef], path: PathBuilder) {
     if(shouldMap.shouldMap(source, target, worker, context, path)) {
       inner.doMap(source, target, worker, context, path)
     }

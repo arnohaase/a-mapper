@@ -1,6 +1,5 @@
 package com.ajjpj.amapper.perf;
 
-import com.ajjpj.amapper.core.AMapperLogger;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.japi.JavaBeanMapper;
 import com.ajjpj.amapper.javabean.japi.JavaBeanMapperBuilder;
@@ -16,7 +15,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 
-//@Ignore
+@Ignore
 public class PerfTest extends Assert {
     private final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
             .withBeanMapping(JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
