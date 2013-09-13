@@ -3,7 +3,11 @@ package com.ajjpj.amapper.core
 /**
  * @author arno
  */
-class ADiff(elements: Iterable[ADiffElement])
+class ADiff(val elements: Iterable[ADiffElement]) {
+  val paths: Set[APath] = elements.map(_.path).toSet
+  val byPath: Map[APath, Iterable[ADiffElement]] = paths.map(p => p -> elements.filter(_.path == p)).toMap
+  def getSingle(path: APath): Option[ADiffElement] = byPath.get(path).map(_.find(_ => true)).getOrElse(None)
+}
 
 class ADiffBuilder {
   private var elements = Vector[ADiffElement]()
@@ -19,7 +23,13 @@ sealed trait ADiffElement {
    */
   def isDerived: Boolean
 
+  /**
+   * from the <em>target</em> perspective
+   */
   def oldValue: AnyRef
+  /**
+   * from the <em>target</em> perspective
+   */
   def newValue: AnyRef
 }
 

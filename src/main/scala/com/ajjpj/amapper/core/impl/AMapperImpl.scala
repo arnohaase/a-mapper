@@ -29,4 +29,20 @@ class AMapperImpl[H] (valueMappings: CanHandleSourceAndTargetCache[AValueMapping
 
     result
   }
+
+  override def diff(sourceOld: AnyRef, sourceNew: AnyRef, sourceType: AType, sourceQualifier: AQualifier, targetType: AType, targetQualifier: AQualifier): ADiff = {
+    val deferredWork = ArrayBuffer[()=>Unit]()
+    val worker = new AMapperWorkerImpl[H](valueMappings, objectMappings, log, helperFactory(), identifierExtractor, contextExtractor, preProcessor, postProcessor, deferredWork)
+
+    worker.diffObject(new PathBuilder, sourceOld, sourceNew, QualifiedSourceAndTargetType(sourceType, sourceQualifier, targetType, targetQualifier), Map[String, AnyRef](), Map[String, AnyRef](), false)
+
+    while(!deferredWork.isEmpty) {
+      // This roundabout way of iterating is done to facilitate changes to the 'deferredWork' list inside the loop
+      val workItem = deferredWork(0)
+      deferredWork.remove(0)
+      workItem.apply()
+    }
+
+    worker.diffBuilder.build
+  }
 }

@@ -5,6 +5,15 @@ todo
   * log exception including path in worker --> configurable: log and maintain old exception, wrap, ...
 
 * tests
+  * diff
+    * deferred
+    * derived
+    * target values in diff
+      * value mappings
+      * object mappings
+    * add / remove / change ref
+    * collections
+    * JApi
 
 * thoughts
   * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)

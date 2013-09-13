@@ -29,6 +29,15 @@ object AMapperLogger {
     protected def error(msg: String, exc: Exception) {println (preamble + "ERROR " + msg); if(exc != null) exc.printStackTrace(System.out)}
   }
 
+  val StdErr = new AMapperLogger {
+    def preamble = Thread.currentThread.getName + "@" + System.currentTimeMillis + ": "
+
+    def debug(msg: => String)                        {if(showDebug) System.err.println (preamble + "DEBUG " + msg)}
+    protected def info (msg: => String)              {if(showInfo) System.err.println (preamble + "INFO  " + msg)}
+    protected def warn (msg: String, exc: Exception) {System.err.println (preamble + "WARN  " + msg); if(exc != null) exc.printStackTrace(System.err)}
+    protected def error(msg: String, exc: Exception) {System.err.println (preamble + "ERROR " + msg); if(exc != null) exc.printStackTrace(System.err)}
+  }
+
   val Log4J = new AMapperLogger {
     val log = Logger.getLogger("org.ajjpj.amapper")
 

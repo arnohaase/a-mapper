@@ -56,9 +56,4 @@ public class SimpleTest {
         assertEquals ("456", b.getPhone().get(1).getPhone());
         assertEquals ("b",   b.getPhone().get(1).getOther());
     }
-
-
-
-    //TODO convenience superclass for object mappings
-    //TODO convenience superclass for logger (?)
 }
