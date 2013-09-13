@@ -62,5 +62,7 @@ todo
   * examples for isCacheable=false
     * mapping a translation into a map of translations
   * no context update for value mappings
+  * Java Beans mapping with same source and target type: only 'forward' is used
+  * .withMatchingPropsMappings
 
 

@@ -20,9 +20,12 @@ class JavaBeanMapping[S<:AnyRef,T<:AnyRef](isPropDeferred: IsDeferredStrategy, l
   var forwardProps: List[SourceAndTargetProp] = Nil
   var backwardProps: List[SourceAndTargetProp] = Nil
 
-  val sharedProps = PropertyAccessor.sharedProperties(sourceCls, targetCls, isPropDeferred, logger, qualifierExtractor)
-  forwardProps ++= sharedProps.filter(p => p.sourceProp.isReadable && p.targetProp.isWritable)
-  backwardProps ++= sharedProps.map(_.reverse).filter(p => p.sourceProp.isReadable && p.targetProp.isWritable)
+  def withMatchingPropsMappings() = {
+    val sharedProps = PropertyAccessor.sharedProperties(sourceCls, targetCls, isPropDeferred, logger, qualifierExtractor)
+    forwardProps ++= sharedProps.filter(p => p.sourceProp.isReadable && p.targetProp.isWritable)
+    backwardProps ++= sharedProps.map(_.reverse).filter(p => p.sourceProp.isReadable && p.targetProp.isWritable)
+    this
+  }
 
   //TODO multiple mappings for the same source?
   //TODO replace existing mappings 'by name' or throw exception if there is a problem?

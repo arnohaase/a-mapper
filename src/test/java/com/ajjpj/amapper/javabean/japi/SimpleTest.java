@@ -15,7 +15,7 @@ public class SimpleTest {
     @Test
     public void testSimple() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-                .withBeanMapping(JavaBeanMapping.create(Person.class, Person.class))
+                .withBeanMapping(JavaBeanMapping.create(Person.class, Person.class).withMatchingPropsMappings())
                 .build();
 
         final Person p = new Person("Arno", "Haase");
@@ -29,8 +29,8 @@ public class SimpleTest {
     @Test
     public void testSimple2 () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class))
-            .withBeanMapping(JavaBeanMapping.create(InnerClassA.class, InnerClassB.class))
+            .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class).withMatchingPropsMappings())
+            .withBeanMapping(JavaBeanMapping.create(InnerClassA.class, InnerClassB.class).withMatchingPropsMappings())
             .build();
 
         final ClassA a = new ClassA();

@@ -20,7 +20,7 @@ public class ContextTest {
     @Test
     public void testContext () {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withBeanMapping(JavaBeanMapping.create(ClassWithContext.class, ClassWithContext.class))
+            .withBeanMapping(JavaBeanMapping.create(ClassWithContext.class, ClassWithContext.class).withMatchingPropsMappings())
             .withBeanMapping (JavaBeanMapping.create(ClassRequiringContext.class, ClassRequiringContext.class)
                 .removeMappingForTargetProp("price")
                 .removeMappingForSourceProp("amount")

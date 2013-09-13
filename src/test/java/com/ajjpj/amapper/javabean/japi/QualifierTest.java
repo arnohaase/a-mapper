@@ -49,7 +49,7 @@ public class QualifierTest {
     final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
             .withValueMapping(fromQualifier)
             .withValueMapping(toQualifier)
-            .withBeanMapping(JavaBeanMapping.create(WithQualifiers.class, WithoutQualifiers.class))
+            .withBeanMapping(JavaBeanMapping.create(WithQualifiers.class, WithoutQualifiers.class).withMatchingPropsMappings())
             .build();
 
     @Test

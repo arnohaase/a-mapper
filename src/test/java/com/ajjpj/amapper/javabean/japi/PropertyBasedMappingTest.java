@@ -13,7 +13,7 @@ public class PropertyBasedMappingTest {
     @Test
     public void testBidirectional () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class))
+            .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class).withMatchingPropsMappings())
             .build();
 
         final ClassA a = new ClassA();
@@ -90,6 +90,7 @@ public class PropertyBasedMappingTest {
     public void testMakeOneWay () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
+                .withMatchingPropsMappings()
                 .makeOneWay("firstName")
             )
              .build();
@@ -110,6 +111,7 @@ public class PropertyBasedMappingTest {
     public void testMakeBackwardsOneWay () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
+                .withMatchingPropsMappings()
                 .makeBackwardsOneWay("firstName")
             )
              .build();
@@ -162,6 +164,7 @@ public class PropertyBasedMappingTest {
         // test that a single field can be mapped to several fields
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
+                .withMatchingPropsMappings()
                 .removeMappingForTargetProp("lastName")
                 .addMapping ("firstName", String.class, "lastName", String.class)
         )

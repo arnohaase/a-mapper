@@ -22,8 +22,8 @@ public class CoreTest {
     @Test
     public void testCyclicRef () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withBeanMapping (JavaBeanMapping.create (ClassCyclicParent.class, ClassCyclicParent.class))
-            .withBeanMapping (JavaBeanMapping.create (ClassCyclicChild.class, ClassCyclicChild.class))
+            .withBeanMapping (JavaBeanMapping.create (ClassCyclicParent.class, ClassCyclicParent.class).withMatchingPropsMappings())
+            .withBeanMapping (JavaBeanMapping.create (ClassCyclicChild.class, ClassCyclicChild.class).withMatchingPropsMappings())
             .build();
 
         final ClassCyclicParent parent = new ClassCyclicParent();
@@ -50,8 +50,8 @@ public class CoreTest {
         child2.setParent (parent);
 
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withBeanMapping (JavaBeanMapping.create (ClassCyclicParent.class, ClassCyclicParent.class))
-            .withBeanMapping (JavaBeanMapping.create (ClassCyclicChild.class, ClassCyclicChild.class))
+            .withBeanMapping (JavaBeanMapping.create (ClassCyclicParent.class, ClassCyclicParent.class).withMatchingPropsMappings())
+            .withBeanMapping (JavaBeanMapping.create (ClassCyclicChild.class, ClassCyclicChild.class).withMatchingPropsMappings())
             .build ();
 
         final ClassCyclicParent mappedParent = mapper.map (parent, ClassCyclicParent.class);

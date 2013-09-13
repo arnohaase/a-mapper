@@ -17,7 +17,7 @@ import java.text.DateFormat
 @RunWith(classOf[JUnitRunner])
 class PropertyBasedMappingDefTest extends FunSuite with ShouldMatchers {
   test("JavaBeanMapping.create") {
-    val m = JavaBeanMapping.create(classOf[Person], classOf[Person], DefaultIsDeferredStrategy, AMapperLogger.StdOut, NoQualifierExtractor).build
+    val m = JavaBeanMapping.create(classOf[Person], classOf[Person], DefaultIsDeferredStrategy, AMapperLogger.StdOut, NoQualifierExtractor).withMatchingPropsMappings().build
     m.props.size should equal (2)
 
     m.canHandle(QualifiedSourceAndTargetType(JavaBeanTypes[Person],     NoQualifier, JavaBeanTypes[Person],     NoQualifier)) should equal (true)
