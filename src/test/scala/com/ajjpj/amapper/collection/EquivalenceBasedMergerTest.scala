@@ -29,7 +29,7 @@ class EquivalenceBasedMergerTest extends FunSuite with ShouldMatchers with Mocki
       def warn(msg: String, exc: Exception) {}
       def error(msg: String, exc: Exception) {}
 
-      override def severalExistingTargetsForSource(path: Path, s: AnyRef) {
+      override def severalExistingTargetsForSource(path: APath, s: AnyRef) {
         logCountSeveral += 1
       }
     }

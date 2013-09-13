@@ -3,8 +3,8 @@ package com.ajjpj.amapper.core
 /**
  * @author arno
  */
-case class Path(segments: List[PathSegment]) {
-  def parent = Path(segments.reverse.tail.reverse)
+case class APath(segments: List[PathSegment]) {
+  def parent = APath(segments.reverse.tail.reverse)
   def last = segments.reverse.head
 
   override def toString = "Path{" + segments.mkString(".") + "}"
@@ -13,7 +13,7 @@ case class Path(segments: List[PathSegment]) {
 class PathBuilder(reversePath: List[PathSegment]) {
   def this() = this (Nil)
   def +(segment: PathSegment) = new PathBuilder(segment :: reversePath)
-  def build = Path (reversePath.reverse)
+  def build = APath (reversePath.reverse)
 }
 
 sealed trait PathSegment {

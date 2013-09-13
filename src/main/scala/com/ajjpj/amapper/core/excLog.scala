@@ -11,8 +11,8 @@ abstract class AMapperLogger {
   protected def warn(msg: String = "exception", exc: Exception = null)
   protected def error(msg: String = "exception", exc: Exception = null)
 
-  def deferredWithoutInitial(path: Path) = warn("Object mapped as 'deferred' without previously being mapped in the primary hierarchy @ " + path)
-  def severalExistingTargetsForSource(path: Path, s: AnyRef) = warn("Several existing target elements for source element " + s + "@" + path)
+  def deferredWithoutInitial(path: APath) = warn("Object mapped as 'deferred' without previously being mapped in the primary hierarchy @ " + path)
+  def severalExistingTargetsForSource(path: APath, s: AnyRef) = warn("Several existing target elements for source element " + s + "@" + path)
 }
 
 object AMapperLogger {
@@ -45,4 +45,4 @@ object AMapperLogger {
   }
 }
 
-class AMapperException(msg: String, path: Path) extends RuntimeException (msg + "@" + path)
+class AMapperException(msg: String, path: APath) extends RuntimeException (msg + "@" + path)
