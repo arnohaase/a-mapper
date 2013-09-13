@@ -33,12 +33,13 @@ class DiffTest extends FunSuite with ShouldMatchers {
     diff.elements.size should equal (2)
     diff.paths should equal (Set[APath](APath(Nil), (new PathBuilder + SimplePathSegment("firstName")).build))
 
-//TODO    val firstNameDiff = diff.getSingle("firstName")
     val firstNameDiff = diff.getSingle(APath(List(SimplePathSegment("firstName"))))
     firstNameDiff.isDefined should equal (true)
     firstNameDiff.get.oldValue should equal ("Arno")
     firstNameDiff.get.newValue should equal ("Fred")
     firstNameDiff.get.isDerived should equal (true)
+
+    diff.getSingle("firstName") should equal (firstNameDiff)
   }
 
   //TODO ref with same identifier

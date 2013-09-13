@@ -6,7 +6,9 @@ package com.ajjpj.amapper.core
 class ADiff(val elements: Iterable[ADiffElement]) {
   val paths: Set[APath] = elements.map(_.path).toSet
   val byPath: Map[APath, Iterable[ADiffElement]] = paths.map(p => p -> elements.filter(_.path == p)).toMap
+  val byPathString: Map[String, Iterable[ADiffElement]] = byPath.map(e => e._1.segments.map(_.name).mkString(".") -> e._2)
   def getSingle(path: APath): Option[ADiffElement] = byPath.get(path).map(_.find(_ => true)).getOrElse(None)
+  def getSingle(path: String): Option[ADiffElement] = byPathString.get(path).map(_.find(_ => true)).getOrElse(None)
 }
 
 class ADiffBuilder {
