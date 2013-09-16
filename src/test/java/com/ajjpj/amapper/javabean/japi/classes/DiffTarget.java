@@ -7,6 +7,7 @@ public class DiffTarget {
     private long oid;
     private String targetName;
     private DiffTargetChild targetChild;
+    private int derivedTargetNum;
 
     public DiffTarget(long oid, String targetName, DiffTargetChild targetChild) {
         this.oid = oid;
@@ -36,5 +37,13 @@ public class DiffTarget {
 
     public void setTargetChild(DiffTargetChild targetChild) {
         this.targetChild = targetChild;
+    }
+
+    public int getDerivedTargetNum() {
+        return derivedTargetNum;
+    }
+
+    public void setDerivedTargetNum(int derivedTargetNum) {
+        this.derivedTargetNum = derivedTargetNum;
     }
 }
