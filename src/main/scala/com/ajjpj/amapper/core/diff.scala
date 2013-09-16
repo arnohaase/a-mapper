@@ -7,9 +7,14 @@ class ADiff(val elements: Iterable[ADiffElement]) {
   def isEmpty = elements.isEmpty
 
   val paths: Set[APath] = elements.map(_.path).toSet
-  val byPath: Map[APath, Iterable[ADiffElement]] = paths.map(p => p -> elements.filter(_.path == p)).toMap
-  val byPathString: Map[String, Iterable[ADiffElement]] = byPath.map(e => e._1.segments.map(_.name).mkString(".") -> e._2)
-  def getSingle(path: APath): Option[ADiffElement] = byPath.get(path).map(_.find(_ => true)).getOrElse(None)
+  val byPath: Map[APath, ADiffElement] = paths.map(p => p -> elements.find(_.path == p).get).toMap
+
+  private def asPathString(p: APath) = p.segments.map(_.name).mkString(".")
+
+  val pathStrings = paths.map(asPathString)
+  val byPathString: Map[String, Iterable[ADiffElement]] = pathStrings.map (ps => ps -> byPath.filter(p => asPathString(p._1) == ps).flatMap(e => Some(e._2))).toMap
+
+  def getSingle(path: APath): Option[ADiffElement] = byPath.get(path)
   def getSingle(path: String): Option[ADiffElement] = byPathString.get(path).map(_.find(_ => true)).getOrElse(None)
 }
 

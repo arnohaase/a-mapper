@@ -7,9 +7,6 @@ todo
 * tests
   * diff
     * deferred
-    * derived
-    * add / remove / change ref
-    * collections
     * JApi
 
 * thoughts
@@ -71,5 +68,6 @@ todo
   * diff:
     * target values
     * target path
+    * path string: segments only, no parameters etc.
 
 

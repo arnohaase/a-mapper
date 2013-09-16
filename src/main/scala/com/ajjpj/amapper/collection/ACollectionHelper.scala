@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.collection
 
-import com.ajjpj.amapper.core.AType
+import com.ajjpj.amapper.core.{IdentifierExtractor, AType}
 import scala.collection.mutable.ArrayBuffer
 import com.ajjpj.amapper.util.Identity
 
@@ -10,7 +10,7 @@ import com.ajjpj.amapper.util.Identity
 trait ACollectionHelper {
   def createEmptyMutableCollection[T](tpe: AType, sourceTpe: AType): AMutableCollection[T]
   def elementType(tpe: AType): AType
-  def equivalenceMap[S,T](sourceColl: Iterable[S], sourceType: AType, targetColl: Iterable[T], targetType: AType): EquivalenceMap[S, T]
+  def equivalenceMap[S<:AnyRef,T<:AnyRef](sourceColl: Iterable[S], sourceType: AType, targetColl: Iterable[T], targetType: AType, identifierExtractor: IdentifierExtractor): EquivalenceMap[S, T]
 }
 
 

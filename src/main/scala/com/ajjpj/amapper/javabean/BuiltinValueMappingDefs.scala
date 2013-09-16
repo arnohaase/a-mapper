@@ -68,8 +68,11 @@ abstract class PassThroughValueType[T<:AnyRef](implicit clsTag: ClassTag[T]) ext
 abstract class FromNumberValueType[T<:AnyRef](extractor: Number => T)(implicit clsTag: ClassTag[T]) extends AbstractValueMappingDef[Number, T, AnyRef] {
   override def map(sourceValue: Number, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: AnyRef], context: Map[String, AnyRef]) = extractor(sourceValue)
   override def diff(diff: ADiffBuilder, sourceOld: Number, sourceNew: Number, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: AnyRef], oldContext: Map[String, AnyRef], newContext: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {
-    if(extractor(sourceOld) != extractor(sourceNew)) {
-      diff.add(AttributeDiffElement(path.build, extractor(sourceOld), extractor(sourceNew), isDerived))
+    val extractedOld = if (sourceOld != null) extractor(sourceOld) else null
+    val extractedNew = if (sourceNew != null) extractor(sourceNew) else null
+
+    if(extractedOld != extractedNew) {
+      diff.add(AttributeDiffElement(path.build, extractedOld, extractedNew, isDerived))
     }
   }
 }

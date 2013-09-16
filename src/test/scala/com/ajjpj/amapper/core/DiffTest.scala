@@ -6,7 +6,7 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 import com.ajjpj.amapper.javabean.builder.{JavaBeanMapping, JavaBeanMapperBuilder}
 import com.ajjpj.amapper.javabean.japi.classes._
-import com.ajjpj.amapper.javabean.JavaBeanTypes
+import com.ajjpj.amapper.javabean.{BuiltinCollectionMappingDefs, JavaBeanTypes}
 
 /**
  * @author arno
@@ -50,6 +50,7 @@ class DiffTest extends FunSuite with ShouldMatchers {
       case x: DiffTarget => x.getOid
       case x: DiffSourceChild => x.getOid
       case x: DiffTargetChild => x.getOid
+      case x: java.util.Collection[_] => "" // all collections are 'equal' as and of themselves
     }
   }
 
@@ -207,5 +208,74 @@ class DiffTest extends FunSuite with ShouldMatchers {
     diff.getSingle("derivedTargetNum").map(_.oldValue) should equal (Some(1))
     diff.getSingle("derivedTargetNum").map(_.newValue) should equal (Some(2))
     diff.getSingle("derivedTargetNum").map(_.isDerived) should equal (Some(false))
+  }
+
+  test("diff merge list") {
+    val mapper = JavaBeanMapperBuilder.create()
+      .withIdentifierExtractor(ie)
+      .addObjectMapping(BuiltinCollectionMappingDefs.MergingListMappingDef)
+      .addBeanMapping(JavaBeanMapping.create(classOf[DiffSource], classOf[DiffTarget])
+        .addMapping("sourceChildren", classOf[java.util.List[_<:AnyRef]], classOf[DiffSourceChild], "targetChildren", classOf[java.util.List[_<:AnyRef]], classOf[DiffTargetChild])
+      )
+      .addBeanMapping(JavaBeanMapping.create(classOf[DiffSourceChild], classOf[DiffTargetChild])
+        .addMapping("oid", classOf[java.lang.String], "oid", classOf[java.lang.Long])
+        .addMapping("sourceNum", classOf[java.lang.Double], "targetNum", classOf[java.lang.Integer])
+      )
+      .build
+
+    val s1 = new DiffSource(1, "", null)
+    val s2 = new DiffSource(1, "", null)
+
+    s1.getSourceChildren.add(new DiffSourceChild(1, 1.0))
+    s1.getSourceChildren.add(new DiffSourceChild(2, 2.0))
+    s1.getSourceChildren.add(new DiffSourceChild(3, 3.0))
+
+    s2.getSourceChildren.add(new DiffSourceChild(1, 1.0))
+    s2.getSourceChildren.add(new DiffSourceChild(2, 20.0))
+    s2.getSourceChildren.add(new DiffSourceChild(4, 4.0))
+
+    val diff = mapper.diff(s1, s2, JavaBeanTypes[DiffSource], NoQualifier, JavaBeanTypes[DiffTarget], NoQualifier)
+
+    diff.elements.size should equal (7)
+
+    val childSeg = SimplePathSegment("targetChildren")
+    def elSeg(oid: Long) = ParameterizedPathSegment("elements", java.lang.Long.valueOf(oid))
+
+    diff.byPath(APath(List(childSeg, elSeg(2), SimplePathSegment("targetNum")))).isDerived should equal (false)
+    diff.byPath(APath(List(childSeg, elSeg(2), SimplePathSegment("targetNum")))).newValue should equal (20)
+    diff.byPath(APath(List(childSeg, elSeg(2), SimplePathSegment("targetNum")))).newValue should equal (20)
+
+
+    diff.byPath(APath(List(childSeg, elSeg(3)))).isInstanceOf[RemoveDiffElement] should equal (true)
+    diff.byPath(APath(List(childSeg, elSeg(3)))).isDerived should equal (false)
+    diff.byPath(APath(List(childSeg, elSeg(3)))).oldValue should equal (3L)
+    diff.byPath(APath(List(childSeg, elSeg(3)))).newValue should equal (null)
+
+    diff.byPath(APath(List(childSeg, elSeg(3), SimplePathSegment("oid")))).oldValue should equal (3L)
+    diff.byPath(APath(List(childSeg, elSeg(3), SimplePathSegment("oid")))).newValue should equal (null)
+    diff.byPath(APath(List(childSeg, elSeg(3), SimplePathSegment("oid")))).isDerived should equal (true)
+
+    diff.byPath(APath(List(childSeg, elSeg(3), SimplePathSegment("targetNum")))).oldValue should equal (3)
+    diff.byPath(APath(List(childSeg, elSeg(3), SimplePathSegment("targetNum")))).newValue should equal (null)
+    diff.byPath(APath(List(childSeg, elSeg(3), SimplePathSegment("targetNum")))).isDerived should equal (true)
+
+
+    diff.byPath(APath(List(childSeg, elSeg(4)))).isInstanceOf[AddDiffElement] should equal (true)
+    diff.byPath(APath(List(childSeg, elSeg(4)))).isDerived should equal (false)
+    diff.byPath(APath(List(childSeg, elSeg(4)))).oldValue should equal (null)
+    diff.byPath(APath(List(childSeg, elSeg(4)))).newValue should equal (4L)
+
+    diff.byPath(APath(List(childSeg, elSeg(4), SimplePathSegment("oid")))).oldValue should equal (null)
+    diff.byPath(APath(List(childSeg, elSeg(4), SimplePathSegment("oid")))).newValue should equal (4L)
+    diff.byPath(APath(List(childSeg, elSeg(4), SimplePathSegment("oid")))).isDerived should equal (true)
+
+    diff.byPath(APath(List(childSeg, elSeg(4), SimplePathSegment("targetNum")))).oldValue should equal (null)
+    diff.byPath(APath(List(childSeg, elSeg(4), SimplePathSegment("targetNum")))).newValue should equal (4)
+    diff.byPath(APath(List(childSeg, elSeg(4), SimplePathSegment("targetNum")))).isDerived should equal (true)
+
+    diff.pathStrings should equal (Set ("targetChildren.elements", "targetChildren.elements.oid", "targetChildren.elements.targetNum"))
+    diff.byPathString("targetChildren.elements")          .size should equal (2)
+    diff.byPathString("targetChildren.elements.oid")      .size should equal (2)
+    diff.byPathString("targetChildren.elements.targetNum").size should equal (3)
   }
 }

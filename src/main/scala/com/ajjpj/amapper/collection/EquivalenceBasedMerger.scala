@@ -1,7 +1,6 @@
 package com.ajjpj.amapper.collection
 
 import com.ajjpj.amapper.core._
-import com.ajjpj.amapper.core.ParameterizedPathSegment
 
 
 /**
@@ -13,10 +12,9 @@ class EquivalenceBasedMerger[SE <: AnyRef, S<:Iterable[SE], T <: AMutableCollect
 
     val sourceElementType = worker.helpers.elementType(types.sourceType)
     val targetElementType = worker.helpers.elementType(types.targetType)
-
     val elementTypes = types.copy(sourceType = sourceElementType, targetType = targetElementType)
 
-    val equiv = h.equivalenceMap(source, types.sourceType, target.asIterable, types.targetType)
+    val equiv = h.equivalenceMap(source, types.sourceType, target.asIterable, types.targetType, worker.identifierExtractor)
 
     if(target.asIterable.isEmpty)  // this is a performance optimization
       addNewElements(equiv, worker, path, elementTypes, target, context)
@@ -39,6 +37,36 @@ class EquivalenceBasedMerger[SE <: AnyRef, S<:Iterable[SE], T <: AMutableCollect
     }
 
     target
+  }
+
+  def diff(diff: ADiffBuilder, source1: S, source2: S, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {
+    val h = worker.helpers
+
+    val sourceElementType = worker.helpers.elementType(types.sourceType)
+    val targetElementType = worker.helpers.elementType(types.targetType)
+    val elementTypes = types.copy(sourceType = sourceElementType, targetType = targetElementType)
+
+    val equiv = h.equivalenceMap(source1, types.sourceType, source2, types.sourceType, worker.identifierExtractor)
+
+    // elements present in both old and new collection: no difference as far as the collection is concerned, recursive diff
+    equiv.sourcesWithTargetEquivalent.foreach (oldElement => {
+      val newElement = equiv.targetEquivalents(oldElement).iterator.next().el //TODO deal with non-unique equivalents
+      worker.diff(ACollectionSupport.elementPath (path, worker, oldElement, sourceElementType), oldElement, newElement, elementTypes, contextOld, contextNew, isDerived)
+    })
+
+    // elements only in the new collection: 'added' diff element + recursive diff with 'derived' = true
+    equiv.targetWithoutSource.foreach (newElement => {
+      val newPathBuilder = ACollectionSupport.elementPath(path, worker, newElement, sourceElementType)
+//      diff.add(AddDiffElement(newPathBuilder.build, newElement, isDerived))
+      worker.diff(newPathBuilder, null, newElement, elementTypes, contextOld, contextNew, isDerived)
+    })
+
+    // elements only in the old collection: 'removed' diff element + recursive diff with 'derived' = true
+    equiv.sourceWithoutTarget.foreach (oldElement => {
+      val newPathBuilder = ACollectionSupport.elementPath(path, worker, oldElement, sourceElementType)
+      //      diff.add(AddDiffElement(newPathBuilder.build, newElement, isDerived))
+      worker.diff(newPathBuilder, oldElement, null, elementTypes, contextOld, contextNew, isDerived)
+    })
   }
 
   private def addNewElements (equiv: EquivalenceMap[SE, TE], worker: AMapperWorker[_ <: H], path: PathBuilder, elementTypes: QualifiedSourceAndTargetType, target: T, context: Map[String, AnyRef]) {

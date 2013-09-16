@@ -135,11 +135,11 @@ private[impl] class AMapperWorkerImpl[H] (valueMappings: CanHandleSourceAndTarge
 
     var causesDerived = false
     if(sourceOld == null && sourceNew != null) {
-      diffBuilder.add (AddDiffElement (path.build, sourceNew, isDerived))
+      diffBuilder.add (AddDiffElement (path.build, identifierExtractor.uniqueIdentifier(sourceNew, types.sourceType), isDerived))
       causesDerived = true
     }
     else if(sourceOld != null && sourceNew == null) {
-      diffBuilder.add (RemoveDiffElement (path.build, sourceOld, isDerived))
+      diffBuilder.add (RemoveDiffElement (path.build, identifierExtractor.uniqueIdentifier(sourceOld, types.sourceType), isDerived))
       causesDerived = true
     }
     else {

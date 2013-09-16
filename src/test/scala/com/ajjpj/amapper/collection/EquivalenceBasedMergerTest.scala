@@ -16,7 +16,7 @@ class EquivalenceBasedMergerTest extends FunSuite with ShouldMatchers with Mocki
   val helper = new ACollectionHelper {
     def createEmptyMutableCollection[T](tpe: AType, sourceTpe: AType): AMutableCollection[T] = ACollectionAdapter (ArrayBuffer[T]())
     def elementType(tpe: AType): AType = null
-    def equivalenceMap[S, T](sourceColl: Iterable[S], sourceType: AType, targetColl: Iterable[T], targetType: AType): EquivalenceMap[S, T] = new ComparisonBasedEquivalenceMap[S,T](sourceColl, targetColl, "#"+_ == _)
+    def equivalenceMap[S, T](sourceColl: Iterable[S], sourceType: AType, targetColl: Iterable[T], targetType: AType, identifierExtractor: IdentifierExtractor): EquivalenceMap[S, T] = new ComparisonBasedEquivalenceMap[S,T](sourceColl, targetColl, "#"+_ == _)
   }
 
   var logCountSeveral = 0

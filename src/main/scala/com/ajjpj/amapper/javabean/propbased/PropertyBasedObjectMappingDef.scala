@@ -51,10 +51,14 @@ case class SourceAndTargetProp[S<:AnyRef, T<:AnyRef] (sourceProp: PropertyAccess
   }
 
   def doDiff(diff: ADiffBuilder, sourceOld: S, sourceNew: S, worker: AMapperWorker[_ <: JavaBeanMappingHelper], contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean) {
+    //TODO use 'default values' (e.g. based on an 'empty' target object) instead of this 'null' default
+    val oldProp = if(sourceOld != null) sourceProp.get(sourceOld) else null
+    val newProp = if(sourceNew != null) sourceProp.get(sourceNew) else null
+
     if(isDeferred)
-      worker.diffDeferred (newPath(path, isSourceSide=false), sourceProp.get(sourceOld), sourceProp.get(sourceNew), types, contextOld, contextNew, isDerived)
+      worker.diffDeferred (newPath(path, isSourceSide=false), oldProp, newProp, types, contextOld, contextNew, isDerived)
     else
-      worker.diff (newPath(path, isSourceSide=false), sourceProp.get(sourceOld), sourceProp.get(sourceNew), types, contextOld, contextNew, isDerived)
+      worker.diff (newPath(path, isSourceSide=false), oldProp, newProp, types, contextOld, contextNew, isDerived)
   }
 }
 

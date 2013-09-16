@@ -1,5 +1,8 @@
 package com.ajjpj.amapper.javabean.japi.classes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author arno
  */
@@ -8,6 +11,7 @@ public class DiffTarget {
     private String targetName;
     private DiffTargetChild targetChild;
     private int derivedTargetNum;
+    private List<DiffTargetChild> targetChildren = new ArrayList<DiffTargetChild>();
 
     public DiffTarget(long oid, String targetName, DiffTargetChild targetChild) {
         this.oid = oid;
@@ -45,5 +49,13 @@ public class DiffTarget {
 
     public void setDerivedTargetNum(int derivedTargetNum) {
         this.derivedTargetNum = derivedTargetNum;
+    }
+
+    public List<DiffTargetChild> getTargetChildren() {
+        return targetChildren;
+    }
+
+    public void setTargetChildren(List<DiffTargetChild> targetChildren) {
+        this.targetChildren = targetChildren;
     }
 }
