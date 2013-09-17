@@ -4,7 +4,7 @@ import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
-import com.ajjpj.amapper.javabean.unittest.ForTypeTests
+import com.ajjpj.amapper.javabean.japi.classes.ForTypeTests
 
 /**
  * @author arno

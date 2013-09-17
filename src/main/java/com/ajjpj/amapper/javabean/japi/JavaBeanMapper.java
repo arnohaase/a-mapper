@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.javabean.japi;
 
+import com.ajjpj.amapper.core.ADiff;
 import com.ajjpj.amapper.core.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
 
@@ -27,4 +28,11 @@ public interface JavaBeanMapper {
     <S,T> Set<T> mapSet(Collection<?> source, Class<S> sourceElementClass, Class<T> targetElementClass);
 
     <T> T map(Object source, JavaBeanType<?> sourceType, T target, JavaBeanType<T> targetType); //TODO verify Java API for creating JavaBeanType
+
+    ADiff diff(Object sourceOld, Object sourceNew, JavaBeanType<?> sourceType, AQualifier sourceQualifier, JavaBeanType<?> targetType, AQualifier targetQualifier);
+    ADiff diff(Object sourceOld, Object sourceNew, JavaBeanType<?> sourceType, JavaBeanType<?> targetType);
+    ADiff diff(Object sourceOld, Object sourceNew, Class<?> sourceType, Class<?> targetType);
+
+    ADiff diffList(List<?> sourceOld, List<?> sourceNew, Class<?> sourceElementType, Class<?> targetElementType);
+    ADiff diffSet (Set<?>  sourceOld, Set<?>  sourceNew, Class<?> sourceElementType, Class<?> targetElementType);
 }

@@ -1,6 +1,7 @@
 package com.ajjpj.amapper.javabean.japi;
 
 import com.ajjpj.amapper.AMapper;
+import com.ajjpj.amapper.core.ADiff;
 import com.ajjpj.amapper.core.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
 import com.ajjpj.amapper.javabean.JavaBeanTypes;
@@ -90,5 +91,30 @@ class JavaBeanMapperImpl implements JavaBeanMapper {
         else {
             return null;
         }
+    }
+
+    @Override
+    public ADiff diff(Object sourceOld, Object sourceNew, JavaBeanType<?> sourceType, AQualifier sourceQualifier, JavaBeanType<?> targetType, AQualifier targetQualifier) {
+        return inner.diff(sourceOld, sourceNew, sourceType, sourceQualifier, targetType, targetQualifier);
+    }
+
+    @Override
+    public ADiff diff(Object sourceOld, Object sourceNew, JavaBeanType<?> sourceType, JavaBeanType<?> targetType) {
+        return diff(sourceOld, sourceNew, sourceType, JApi.noQualifier(), targetType, JApi.noQualifier());
+    }
+
+    @Override
+    public ADiff diff(Object sourceOld, Object sourceNew, Class<?> sourceType, Class<?> targetType) {
+        return diff(sourceOld, sourceNew, JavaBeanTypes.create(sourceType), JavaBeanTypes.create(targetType));
+    }
+
+    @Override
+    public ADiff diffList(List<?> sourceOld, List<?> sourceNew, Class<?> sourceElementType, Class<?> targetElementType) {
+        return diff(sourceOld, sourceNew, JavaBeanTypes.create(java.util.List.class, sourceElementType), JavaBeanTypes.create(java.util.List.class, targetElementType));
+    }
+
+    @Override
+    public ADiff diffSet(Set<?> sourceOld, Set<?> sourceNew, Class<?> sourceElementType, Class<?> targetElementType) {
+        return diff(sourceOld, sourceNew, JavaBeanTypes.create(java.util.Set.class, sourceElementType), JavaBeanTypes.create(java.util.Set.class, targetElementType));
     }
 }

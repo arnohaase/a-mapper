@@ -278,4 +278,39 @@ class DiffTest extends FunSuite with ShouldMatchers {
     diff.byPathString("targetChildren.elements.oid")      .size should equal (2)
     diff.byPathString("targetChildren.elements.targetNum").size should equal (3)
   }
+
+  test("diff deferred") {
+    val mapper = JavaBeanMapperBuilder.create()
+        .withIdentifierExtractor(ie)
+        .addObjectMapping(BuiltinCollectionMappingDefs.MergingListMappingDef)
+        .addBeanMapping(JavaBeanMapping.create(classOf[DiffSource], classOf[DiffTarget])
+        .addMapping("sourceName", classOf[String], "targetName", classOf[String])
+        .addMapping("sourceChildren", classOf[java.util.List[_<:AnyRef]], classOf[DiffSourceChild], "targetChildren", classOf[java.util.List[_<:AnyRef]], classOf[DiffTargetChild])
+      )
+        .addBeanMapping(JavaBeanMapping.create(classOf[DiffSourceChild], classOf[DiffTargetChild])
+        .addMapping("oid", classOf[java.lang.String], "oid", classOf[java.lang.Long])
+        .addMapping("sourceNum", classOf[java.lang.Double], "targetNum", classOf[java.lang.Integer])
+        .addMapping("sourceParent", classOf[DiffSource], "targetParent", classOf[DiffTarget])
+      )
+      .build
+
+    val s11 = new DiffSource(1, "", new DiffSourceChild(3, 3))
+    val s12 = new DiffSource(2, "old", null)
+    s11.getSourceChild.setSourceParent(s12)
+
+    val s21 = new DiffSource(1, "", new DiffSourceChild(3, 3))
+    val s22 = new DiffSource(2, "new", null)
+    s21.getSourceChild.setSourceParent(s22)
+
+    val list1 = java.util.Arrays.asList(s11, s12)
+    val list2 = java.util.Arrays.asList(s21, s22)
+
+    val diff = mapper.diff(list1, list2, JavaBeanTypes[java.util.List[_], DiffSource], NoQualifier, JavaBeanTypes[java.util.List[_], DiffTarget], NoQualifier)
+
+    //
+    diff.elements.size should equal (1)
+    diff.getSingle("elements.targetName").map(_.oldValue) should equal (Some("old"))
+    diff.getSingle("elements.targetName").map(_.newValue) should equal (Some("new"))
+    diff.getSingle("elements.targetName").map(_.isDerived) should equal (Some(false))
+  }
 }

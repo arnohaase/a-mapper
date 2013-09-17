@@ -4,10 +4,10 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
-import com.ajjpj.amapper.javabean.unittest.{PartOfPropPath, WithProperties}
 import com.ajjpj.amapper.javabean.JavaBeanTypes
 import com.ajjpj.amapper.javabean.builder.{NoQualifierExtractor, AMapperExpressionParser}
 import com.ajjpj.amapper.core.NoQualifier
+import com.ajjpj.amapper.javabean.japi.classes.{WithProperties, PartOfPropPath}
 
 /**
  * @author arno

@@ -5,9 +5,6 @@ todo
   * log exception including path in worker --> configurable: log and maintain old exception, wrap, ...
 
 * tests
-  * diff
-    * deferred
-    * JApi
 
 * thoughts
   * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)
@@ -69,5 +66,6 @@ todo
     * target values
     * target path
     * path string: segments only, no parameters etc.
+    * deferred --> order
 
 

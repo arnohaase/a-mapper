@@ -1,9 +1,14 @@
 package com.ajjpj.amapper.core
 
+import scala.collection.convert.Wrappers
+
 /**
  * @author arno
  */
 case class APath(segments: List[PathSegment]) {
+  def this(segments: PathSegment*) = this(segments.toList)
+  def this(segments: java.util.List[_ <: PathSegment]) = this(Wrappers.JListWrapper(segments).toList)
+
   def parent = APath(segments.reverse.tail.reverse)
   def last = segments.reverse.head
 

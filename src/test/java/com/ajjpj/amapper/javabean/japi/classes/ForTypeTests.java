@@ -1,4 +1,4 @@
-package com.ajjpj.amapper.javabean.unittest;
+package com.ajjpj.amapper.javabean.japi.classes;
 
 import java.util.List;
 import java.util.Map;
