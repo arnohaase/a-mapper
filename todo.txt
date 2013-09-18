@@ -38,6 +38,7 @@ todo
   * upload to maven central
 
 * documentation
+  * Scala / Java API in parallel
   * Java Bean mapping: sourceCls == targetClass --> only 'forward' mapping is registered
   * examples for qualifiers
     * 'list' mapping strategy
