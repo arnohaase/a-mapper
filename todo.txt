@@ -5,6 +5,7 @@ todo
   * log exception including path in worker --> configurable: log and maintain old exception, wrap, ...
 
 * tests
+  * without ognl!
 
 * thoughts
   * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)
@@ -12,6 +13,9 @@ todo
   * separate 'create' and 'merge' modes (instead of 'map')?
   * special kind of 'mapping def' for multi-valued / indexed properties
   * separate 'transformation' step between source and target access?
+  * @WithDefaultValue / Wrapper around value mapping defs? --> qualifier
+  * all annotations as qualifiers?
+  * validation?
 
 * features
   * for java beans / first shot
