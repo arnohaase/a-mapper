@@ -59,7 +59,7 @@ public class JavaBeanMapperBuilder<H extends JavaBeanMappingHelper> {
         return this;
     }
 
-    public JavaBeanMapperBuilder<H> withContextExtractor(IdentifierExtractor identifierExtractor) {
+    public JavaBeanMapperBuilder<H> withIdentifierExtractor(IdentifierExtractor identifierExtractor) {
         inner.withIdentifierExtractor(identifierExtractor);
         return this;
     }

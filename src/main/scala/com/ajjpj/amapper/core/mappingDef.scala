@@ -21,14 +21,7 @@ case class MapBasedQualifier (map: Map[String, String]) extends AQualifier {
  *  values are the same, e.g. strings, numbers or timestamps.
  */
 trait AValueMappingDef [S, T, H] extends CanHandleSourceAndTarget {
-  /**
-   * 'true' means a source value of <code>null</code> is passed to this mapping def, 'false' causes shortcut evaluation to
-   *  return <code>null</code> immediately
-   */
-  def handlesNull: Boolean
-
   def map(sourceValue: S, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], context: Map[String, AnyRef]): T
-
   def diff(diff: ADiffBuilder, sourceOld: S, sourceNew: S, types: QualifiedSourceAndTargetType, worker: AMapperWorker[_ <: H], contextOld: Map[String, AnyRef], contextNew: Map[String, AnyRef], path: PathBuilder, isDerived: Boolean): Unit
 }
 

@@ -44,6 +44,8 @@ class JavaBeanMapping[S<:AnyRef,T<:AnyRef](isPropDeferred: IsDeferredStrategy, l
     if(targetAccessor.isReadable && sourceAccessor.isWritable)
       backwardProps = SourceAndTargetProp[T,S](targetAccessor, sourceAccessor) :: backwardProps
 
+    //TODO warn if neither direction matches
+
     this
   }
 

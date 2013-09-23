@@ -97,13 +97,8 @@ public class CoreTest {
 
         final AValueMappingDef<Number, String, JavaBeanMappingHelper> numberToString = new AValueMappingDef<Number, String, JavaBeanMappingHelper>() {
             @Override
-            public boolean handlesNull() {
-                return false;
-            }
-
-            @Override
             public String map(Number sourceValue, QualifiedSourceAndTargetType types, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context) {
-                return sourceValue.toString();
+                return sourceValue == null ? null : sourceValue.toString();
             }
 
             @Override

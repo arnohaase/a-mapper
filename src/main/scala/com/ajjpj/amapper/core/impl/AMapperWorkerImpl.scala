@@ -25,7 +25,7 @@ private[impl] class AMapperWorkerImpl[H] (valueMappings: CanHandleSourceAndTarge
   override def mapValue(path: PathBuilder, source: AnyRef, types: QualifiedSourceAndTargetType, context: Map[String, AnyRef]) = {
     logger.debug ("map: " + source + " @ " + path.build)
     val m = valueMappingFor(types, path)
-    if(source == null && ! m.handlesNull) null else m.asInstanceOf[AValueMappingDef[AnyRef, AnyRef, H]].map(source, types, this, context)
+    m.asInstanceOf[AValueMappingDef[AnyRef, AnyRef, H]].map(source, types, this, context)
   }
 
   private def valueMappingFor(types: QualifiedSourceAndTargetType, path: PathBuilder) = valueMappings.entryFor(types) match {

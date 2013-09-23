@@ -24,7 +24,7 @@ class JavaBeanSupport {
     val getters = asGetterMethods(cls, name).flatMap(x => asGetter(x, isPropDeferred, qualifierExtractor))
 
     (getters.size, setters.size) match {
-      case (1, 1) => Some (getters(0).copy(setter = setters(0).setter, setterType = setters(0).setterType).asProperty)
+      case (1, 1) => Some (getters(0).copy(setter = setters(0).setter, setterType = setters(0).setterType, targetQualifier = setters(0).targetQualifier).asProperty)
       case (1, 0) => Some (getters(0).asProperty)
       case (0, 1) => Some (setters(0).asProperty)
       case _      => None

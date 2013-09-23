@@ -51,7 +51,6 @@ abstract class AbstractValueMappingDef[S<:AnyRef, T<:AnyRef, H<:AnyRef](implicit
     case (st: JavaBeanType[_], tt: JavaBeanType[_]) => sourceTpe.isAssignableFrom(st) && targetTpe.isAssignableFrom(tt)
     case _ => false
   }
-  override def handlesNull = true
 }
 
 abstract class PassThroughValueType[T<:AnyRef](implicit clsTag: ClassTag[T]) extends AbstractValueMappingDef[T, T, AnyRef] {

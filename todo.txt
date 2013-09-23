@@ -18,6 +18,8 @@ todo
   * validation?
 
 * features
+  * warn if an object has several "parents"
+    * how to handle several "dealer refs" well? collections with duplicates?
   * for java beans / first shot
     * PropertyBasedMappingDef:
       * differentiate between value and object props
