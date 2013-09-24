@@ -5,7 +5,8 @@ todo
   * log exception including path in worker --> configurable: log and maintain old exception, wrap, ...
 
 * tests
-  * without ognl!
+  * child referenced by several parents
+  * deployment without ognl!
 
 * thoughts
   * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)
