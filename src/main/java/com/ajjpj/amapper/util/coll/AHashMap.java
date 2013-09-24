@@ -128,6 +128,10 @@ public class AHashMap<K, V> implements AMap<K,V> {
             this.value = value;
         }
 
+        @Override public int size() {
+            return 1;
+        }
+
         @Override AOption<V> doGet(K key, int hash, int level) {
             if(this.key.equals (key)) {
                 return AOption.some(value);

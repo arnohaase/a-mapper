@@ -20,4 +20,7 @@ public interface AMap<K,V> {
     // elements();
 
     //TODO ACollection
+
+    //TODO toString implementations
+    //TODO equals implementations for collections?
 }

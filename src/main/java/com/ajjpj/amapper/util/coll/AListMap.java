@@ -38,10 +38,10 @@ public class AListMap <K,V> implements AMap<K,V> {
         return 0;
     }
     public boolean isEmpty() {
-        return size() == 0;
+        return true;
     }
     public boolean nonEmpty() {
-        return size() > 0;
+        return false;
     }
 
     public AOption<V> get(K key) {
@@ -84,6 +84,13 @@ public class AListMap <K,V> implements AMap<K,V> {
             this.key = key;
             this.value = value;
             this.tail = tail;
+        }
+
+        @Override public boolean isEmpty() {
+            return false;
+        }
+        @Override public boolean nonEmpty() {
+            return true;
         }
 
         @Override public K key() {
@@ -129,10 +136,10 @@ public class AListMap <K,V> implements AMap<K,V> {
             AListMap<K,V> remaining = this;
 
             while(remaining.nonEmpty()) {
-                if(equality.equals(remaining.key().equals(key))) {
-                    raw = raw.cons(new APair<K,V>(remaining.key(), remaining.value()));
-                    remaining = remaining.tail();
+                if(! equality.equals(remaining.key(), key)) {
+                    raw = raw.cons(new APair<K,V>(remaining.key(), remaining.value())); //TODO terminate - the key should have been unique
                 }
+                remaining = remaining.tail();
             }
 
             return AListMap.create(raw.reverse().asJavaUtilList());
