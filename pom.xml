@@ -26,8 +26,9 @@
         </license>
     </licenses>
     <scm>
-        <url>https://github.com/arnohaase/a-mapper</url>
-        <connection>https://github.com/arnohaase/a-mapper.git</connection>
+      <connection>scm:git:git@github.com:arnohaase/a-mapper.git</connection>
+      <developerConnection>scm:git:git@github.com:arnohaase/a-mapper.git</developerConnection>
+      <url>git@github.com:arnohaase/a-mapper.git</url>
     </scm>
     <developers>
         <developer>
