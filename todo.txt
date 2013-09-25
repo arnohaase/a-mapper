@@ -5,8 +5,9 @@ todo
   * log exception including path in worker --> configurable: log and maintain old exception, wrap, ...
 
 * tests
+  * deferred, esp. for diff
   * child referenced by several parents
-  * deployment without ognl!
+  * deployment without ognl / without Log4J
 
 * thoughts
   * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)
@@ -18,7 +19,11 @@ todo
   * all annotations as qualifiers?
   * validation?
 
+* --> Java
+  * ThrowingRunnable for deferred work
+
 * features
+  * exception handling
   * warn if an object has several "parents"
     * how to handle several "dealer refs" well? collections with duplicates?
   * for java beans / first shot

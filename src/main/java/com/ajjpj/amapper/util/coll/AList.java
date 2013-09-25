@@ -1,6 +1,9 @@
 package com.ajjpj.amapper.util.coll;
 
 
+import com.ajjpj.amapper.util.func.AFunction1;
+import com.ajjpj.amapper.util.func.APredicate;
+
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -11,7 +14,7 @@ import java.util.*;
  *
  * @author arno
  */
-abstract public class AList<T> {
+abstract public class AList<T> implements Iterable<T> {
     private final int size;
 
     protected AList(int size) {
@@ -28,6 +31,15 @@ abstract public class AList<T> {
 
         for(T el: elements) {
             result = result.cons(el);
+        }
+        return result.reverse();
+    }
+
+    public static <T> AList<T> create(List<T> elements) {
+        AList<T> result = nil();
+
+        for(int i=elements.size()-1; i>=0; i--) {
+            result = result.cons(elements.get(i));
         }
         return result;
     }
@@ -58,9 +70,98 @@ abstract public class AList<T> {
     public boolean isEmpty() {
         return size == 0;
     }
+    public boolean nonEmpty() {
+        return size != 0;
+    }
 
     public int size() {
         return size;
+    }
+
+    //TODO mkString
+
+    public AHashSet<T> toSet() {
+        return AHashSet.create(this);
+    }
+
+    public AList<T> filter (APredicate<T> cond) {
+        final List<T> result = new ArrayList<T>();
+
+        for(T el: this) {
+            if(cond.apply(el)) {
+                result.add(el);
+            }
+        }
+
+        return create(result);
+    }
+
+    public AOption<T> find (APredicate<T> cond) {
+        for(T el: this) {
+            if(cond.apply(el)) {
+                return AOption.some(el);
+            }
+        }
+        return AOption.none();
+    }
+
+    public <X> AList<X> map (AFunction1<X, T> f) {
+        final List<X> result = new ArrayList<X>(size());
+
+        for(T el: this) {
+            result.add(f.apply(el));
+        }
+        return create(result);
+    }
+
+    @Override public boolean equals (Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AList<?> _this = this;
+        AList<?> _that = (AList<?>) o;
+        if(size() != _that.size()) return false;
+
+        while(_this.nonEmpty()) {
+            if(! AEquality.EQUALS.equals(_this.head(), _that.head())) {
+                return false;
+            }
+
+            _this = _this.tail();
+            _that = _that.tail();
+        }
+        return true;
+    }
+
+    @Override public int hashCode() {
+        int result = 0;
+        AList<T> pos = this;
+
+        while(pos.nonEmpty()) {
+            final T head = pos.head();
+            result = 31*result + (head != null ? head.hashCode() : 0);
+        }
+        return result;
+    }
+
+    @Override public Iterator<T> iterator() {
+        return new Iterator<T> () {
+            AList<T> pos;
+
+            @Override public boolean hasNext() {
+                return pos.nonEmpty();
+            }
+
+            @Override public T next() {
+                final T result = pos.head();
+                pos = pos.tail();
+                return result;
+            }
+
+            @Override public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
 

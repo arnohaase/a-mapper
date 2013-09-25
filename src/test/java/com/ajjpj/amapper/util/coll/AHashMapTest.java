@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.Assert.*;
 
@@ -60,6 +61,99 @@ public class AHashMapTest {
         assertEquals(false, m4.containsKey(1));
         assertEquals(false, m4.get(1).isDefined());
         assertEquals(false, m4.containsKey(2));
+    }
+
+    final int size = 1000;
+    final int numIter = 100*1000;
+
+    private Map<Integer, Integer> createJu() {
+        final Random rand = new Random(12345);
+        final Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+
+        for(int i=0; i<numIter; i++) {
+            final int key = rand.nextInt(size);
+            final boolean add = rand.nextBoolean();
+
+            if(add)
+                result.put(key, key);
+            else
+                result.remove(key);
+        }
+        return result;
+    }
+    private Map<Integer, Integer> createConc() {
+        final Random rand = new Random(12345);
+        final Map<Integer, Integer> result = new ConcurrentHashMap<Integer, Integer>();
+
+        for(int i=0; i<numIter; i++) {
+            final int key = rand.nextInt(size);
+            final boolean add = rand.nextBoolean();
+
+            if(add)
+                result.put(key, key);
+            else
+                result.remove(key);
+        }
+        return result;
+    }
+    private AMap<Integer, Integer> createA() {
+        final Random rand = new Random(12345);
+        AMap<Integer, Integer> result = AHashMap.empty();
+
+        for(int i=0; i<numIter; i++) {
+            final int key = rand.nextInt(size);
+            final boolean add = rand.nextBoolean();
+
+            if(add)
+                result = result.updated(key, key);
+            else
+                result = result.removed(key);
+        }
+        return result;
+    }
+
+    private void doReadJu(Map<Integer, Integer> m) {
+        for (int i=0; i<numIter; i++) {
+            for(int j=0; j<size; j++) {
+                m.get(j);
+            }
+        }
+    }
+    private void doReadA(AMap<Integer, Integer> m) {
+        for (int i=0; i<numIter; i++) {
+            for(int j=0; j<size; j++) {
+                m.get(j);
+            }
+        }
+    }
+
+//TODO extract to a performance test suite
+//    @Test
+    public void testReadWritePerf() {
+        doReadJu(createJu());
+        doReadJu(createConc());
+        doReadA(createA());
+
+        final long t0 = System.currentTimeMillis();
+        final Map<Integer, Integer> ju = createJu();
+        final long t1 = System.currentTimeMillis();
+        final Map<Integer, Integer> conc = createConc();
+        final long t2 = System.currentTimeMillis();
+        final AMap<Integer, Integer> a = createA();
+        final long t3 = System.currentTimeMillis();
+        doReadJu(ju);
+        final long t4 = System.currentTimeMillis();
+        doReadJu(conc);
+        final long t5 = System.currentTimeMillis();
+        doReadA(a);
+        final long t6 = System.currentTimeMillis();
+
+        System.out.println((t1 - t0));
+        System.out.println((t2 - t1));
+        System.out.println((t3 - t2));
+        System.out.println((t4 - t3));
+        System.out.println((t5 - t4));
+        System.out.println((t6 - t5));
     }
 
     @Test

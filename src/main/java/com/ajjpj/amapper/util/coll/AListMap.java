@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.util.coll;
 
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * @author arno
@@ -34,17 +34,17 @@ public class AListMap <K,V> implements AMap<K,V> {
         this.equality = equality;
     }
 
-    public int size() {
+    @Override public int size() {
         return 0;
     }
-    public boolean isEmpty() {
+    @Override public boolean isEmpty() {
         return true;
     }
-    public boolean nonEmpty() {
+    @Override public boolean nonEmpty() {
         return false;
     }
 
-    public AOption<V> get(K key) {
+    @Override public AOption<V> get(K key) {
         return AOption.none();
     }
 
@@ -56,15 +56,19 @@ public class AListMap <K,V> implements AMap<K,V> {
         throw new NoSuchElementException("empty map");
     }
 
-    public boolean containsKey(K key) {
+    @Override public boolean containsKey(K key) {
         return get(key).isDefined();
     }
 
-    public AListMap<K,V> updated(K key, V value) {
+    @Override public boolean containsValue(V value) {
+        return false;
+    }
+
+    @Override public AListMap<K,V> updated(K key, V value) {
         return new Node<K,V>(key, value, this);
     }
 
-    public AListMap<K,V> removed(K key) {
+    @Override public AListMap<K,V> removed(K key) {
         return this;
     }
 
@@ -72,6 +76,13 @@ public class AListMap <K,V> implements AMap<K,V> {
         throw new NoSuchElementException("empty map");
     }
 
+    @Override public Map<K, V> asJavaUtilMap() {
+        return new JavaUtilMapWrapper<K,V>(this);
+    }
+
+    @Override public Iterator<APair<K,V>> iterator() {
+        return new ListMapIterator<K, V>(this);
+    }
 
     static class Node<K,V> extends AListMap<K,V> {
         private final K key;
@@ -126,6 +137,10 @@ public class AListMap <K,V> implements AMap<K,V> {
             return AOption.none();
         }
 
+        @Override public boolean containsValue(V value) {
+            return equality.equals(this.value, value) || tail().containsValue(value);
+        }
+
         @Override public AListMap<K,V> updated(K key, V value) {
             final AListMap<K,V> m = removed(key);
             return new Node<K,V>(key, value, m);
@@ -143,6 +158,29 @@ public class AListMap <K,V> implements AMap<K,V> {
             }
 
             return AListMap.create(raw.reverse().asJavaUtilList());
+        }
+    }
+
+    static class ListMapIterator<K,V> implements Iterator<APair<K,V>> {
+        private AListMap<K,V> pos;
+
+        ListMapIterator(AListMap<K, V> pos) {
+            this.pos = pos;
+        }
+
+        @Override public boolean hasNext() {
+            return pos.nonEmpty();
+        }
+
+        @Override public APair<K, V> next() {
+            final APair<K,V> result = new APair<K,V> (pos.key(), pos.value());
+            pos = pos.tail();
+            return result;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
         }
     }
 }

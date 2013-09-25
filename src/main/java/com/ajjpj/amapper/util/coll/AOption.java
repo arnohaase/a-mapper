@@ -1,5 +1,8 @@
 package com.ajjpj.amapper.util.coll;
 
+import com.ajjpj.amapper.util.func.AFunction1;
+import com.ajjpj.amapper.util.func.APredicate;
+
 import java.util.NoSuchElementException;
 
 /**
@@ -20,6 +23,12 @@ public abstract class AOption<T> {
     }
 
     public abstract boolean isDefined();
+    public boolean isEmpty() {
+        return !isDefined();
+    }
+
+    public abstract <X> AOption<X> map(AFunction1<X, T> f);
+    public abstract AOption<T> filter(APredicate<T> pred);
 
     public abstract T get();
     public T getOrElse(T el) {
@@ -41,6 +50,17 @@ public abstract class AOption<T> {
             return true;
         }
 
+        @Override public <X> AOption<X> map(AFunction1<X, T> f) {
+            return some(f.apply(el));
+        }
+
+        @Override public AOption<T> filter(APredicate<T> pred) {
+            if(pred.apply(el))
+                return this;
+            else
+                return none();
+        }
+
         @Override public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
@@ -60,12 +80,22 @@ public abstract class AOption<T> {
     static class ANone extends AOption<Object> {
         public static final ANone INSTANCE = new ANone();
 
+        private ANone() {}
+
         @Override public Object get() {
             throw new NoSuchElementException("no value for ANone");
         }
 
         @Override public boolean isDefined() {
             return false;
+        }
+
+        @Override public <X> AOption<X> map(AFunction1<X, Object> f) {
+            return none();
+        }
+
+        @Override public AOption<Object> filter(APredicate<Object> pred) {
+            return none();
         }
     }
 }

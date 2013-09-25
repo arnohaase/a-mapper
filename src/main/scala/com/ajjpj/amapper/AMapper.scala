@@ -2,6 +2,7 @@ package com.ajjpj.amapper
 
 import com.ajjpj.amapper.core.{ADiff, AQualifier, AType}
 
+
 /**
  * @author arno
  */

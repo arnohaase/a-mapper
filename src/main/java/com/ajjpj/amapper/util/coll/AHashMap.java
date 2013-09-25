@@ -1,6 +1,10 @@
 package com.ajjpj.amapper.util.coll;
 
 
+import com.ajjpj.amapper.util.func.AFunction1;
+
+import java.util.*;
+
 /**
  * This is an immutable hash map based on 32-way hash tries.
  *
@@ -25,27 +29,99 @@ public class AHashMap<K, V> implements AMap<K,V> {
         return new AHashMap<K, V>(equality);
     }
 
+    public static <K,V> AHashMap<K,V> fromKeysAndValues(Iterable<K> keys, Iterable<V> values) {
+        return fromKeysAndValues(AEquality.EQUALS, keys, values);
+    }
+    public static <K,V> AHashMap<K,V> fromKeysAndValues(AEquality equality, Iterable<K> keys, Iterable<V> values) {
+        final Iterator<K> ki = keys.iterator();
+        final Iterator<V> vi = values.iterator();
+
+        AHashMap<K,V> result = AHashMap.empty(equality);
+
+        while(ki.hasNext()) {
+            final K key = ki.next();
+            final V value = vi.next();
+
+            result = result.updated(key, value);
+        }
+        return result;
+    }
+    public static <K,V> AHashMap<K,V> fromKeysAndFunction(Iterable<K> keys, AFunction1<V, K> f) {
+        return fromKeysAndFunction(AEquality.EQUALS, keys, f);
+    }
+    public static <K,V> AHashMap<K,V> fromKeysAndFunction(AEquality equality, Iterable<K> keys, AFunction1<V, K> f) {
+        final Iterator<K> ki = keys.iterator();
+
+        AHashMap<K,V> result = AHashMap.empty(equality);
+
+        while(ki.hasNext()) {
+            final K key = ki.next();
+            final V value = f.apply(key);
+
+            result = result.updated(key, value);
+        }
+        return result;
+    }
+
 
     public AHashMap(AEquality equality) {
         this.equality = equality;
     }
 
-    public int size() {
+    @Override public int size() {
         return 0;
     }
-    public boolean isEmpty() {
+    @Override public boolean isEmpty() {
         return size() == 0;
     }
-    public boolean nonEmpty() {
+    @Override public boolean nonEmpty() {
         return size() > 0;
     }
 
-    public boolean containsKey(K key) {
+    @Override public boolean containsKey(K key) {
         return get(key).isDefined();
     }
 
-    public AOption<V> get(K key) {
+    @Override public boolean containsValue(V value) {
+        final Iterator<APair<K,V>> iter = iterator();
+        while (iter.hasNext()) {
+            if(equality.equals(value, iter.next())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override public AOption<V> get(K key) {
         return doGet(key, computeHash(key, equality), 0);
+    }
+
+    @Override public AHashMap<K,V> updated(K key, V value) {
+        return doUpdated(key, computeHash(key, equality), 0, value);
+    }
+
+    @Override public AHashMap<K,V> removed(K key) {
+        return doRemoved(key, computeHash(key, equality), 0);
+    }
+
+    @Override public Iterator<APair<K, V>> iterator() {
+        return new Iterator<APair<K, V>>() {
+            @Override public boolean hasNext() {
+                return false;
+            }
+
+            @Override public APair<K, V> next() {
+                throw new NoSuchElementException();
+            }
+
+            @Override public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
+
+    @Override public Map<K, V> asJavaUtilMap() {
+        return new JavaUtilMapWrapper<K, V>(this); //TODO override keySet() for improved performance
     }
 
     /**
@@ -54,14 +130,6 @@ public class AHashMap<K, V> implements AMap<K,V> {
      */
     AOption<V> doGet(K key, int hash, int level) {
         return AOption.none();
-    }
-
-    public AHashMap<K,V> updated(K key, V value) {
-        return doUpdated(key, computeHash(key, equality), 0, value);
-    }
-
-    public AHashMap<K,V> removed(K key) {
-        return doRemoved(key, computeHash(key, equality), 0);
     }
 
     AHashMap<K,V> doUpdated(K key, int hash, int level, V value) {
@@ -169,6 +237,28 @@ public class AHashMap<K, V> implements AMap<K,V> {
                 return this;
             }
         }
+
+        @Override public Iterator<APair<K, V>> iterator() {
+            return new Iterator<APair<K, V>>() {
+                boolean initial = true;
+
+                @Override public boolean hasNext() {
+                    return initial;
+                }
+
+                @Override public APair<K, V> next() {
+                    if(initial) {
+                        initial = false;
+                        return new APair<K,V> (key, value);
+                    }
+                    throw new NoSuchElementException();
+                }
+
+                @Override public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        }
     }
 
     static class HashMapCollision1<K,V> extends AHashMap<K,V> {
@@ -222,6 +312,10 @@ public class AHashMap<K, V> implements AMap<K,V> {
                 return this;
             }
         }
+
+        @Override public Iterator<APair<K, V>> iterator() {
+            return kvs.iterator();
+        }
     }
 
 
@@ -240,6 +334,14 @@ public class AHashMap<K, V> implements AMap<K,V> {
 
         @Override public int size() {
             return size;
+        }
+
+        @Override public Iterator<APair<K, V>> iterator() {
+            final List<Iterator<APair<K,V>>> innerIter = new ArrayList<Iterator<APair<K, V>>>(elems.length);
+            for(AHashMap<K,V> m: elems)  {
+                innerIter.add(m.iterator());
+            }
+            return new CompositeIterator<APair<K, V>>(innerIter);
         }
 
         @Override AOption<V> doGet(K key, int hash, int level) {
