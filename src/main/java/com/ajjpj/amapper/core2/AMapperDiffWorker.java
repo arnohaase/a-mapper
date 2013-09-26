@@ -4,9 +4,6 @@ import com.ajjpj.amapper.core2.exclog.AMapperLogger;
 import com.ajjpj.amapper.core2.path.APath;
 import com.ajjpj.amapper.core2.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.util.coll.AMap;
-import com.ajjpj.amapper.util.coll.AOption;
-import com.ajjpj.amapper.util.func.AFunction0;
-import com.ajjpj.amapper.util.func.AVoidFunction1;
 
 /**
  * A 'worker' is created per mapping execution. It has mutable state and is <em>not</em> thread safe.

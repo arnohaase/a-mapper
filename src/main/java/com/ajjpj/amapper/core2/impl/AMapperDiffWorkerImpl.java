@@ -109,16 +109,16 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
 
         boolean causesDerived = false;
         if(sourceOld == null && sourceNew != null) {
-            diffBuilder.add (ADiffElement.added(path, isDerived, identifierExtractor.uniqueIdentifier(sourceNew, types.sourceType)));
+            diffBuilder.add (ADiffElement.added(path, isDerived, identifierExtractor.uniqueIdentifier(sourceNew, types)));
             causesDerived = true;
         }
         else if(sourceOld != null && sourceNew == null) {
-            diffBuilder.add (ADiffElement.removed(path, isDerived, identifierExtractor.uniqueIdentifier(sourceOld, types.sourceType)));
+            diffBuilder.add (ADiffElement.removed(path, isDerived, identifierExtractor.uniqueIdentifier(sourceOld, types)));
             causesDerived = true;
         }
         else {
-            final Object oldIdent = identifierExtractor.uniqueIdentifier (sourceOld, types.sourceType);
-            final Object newIdent = identifierExtractor.uniqueIdentifier (sourceNew, types.sourceType);
+            final Object oldIdent = identifierExtractor.uniqueIdentifier (sourceOld, types);
+            final Object newIdent = identifierExtractor.uniqueIdentifier (sourceNew, types);
             if (! oldIdent.equals(newIdent)) {
                 diffBuilder.add(ADiffElement.refChanged(path, isDerived, oldIdent, newIdent));
                 causesDerived = true;

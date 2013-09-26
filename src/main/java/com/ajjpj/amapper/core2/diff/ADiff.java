@@ -3,6 +3,10 @@ package com.ajjpj.amapper.core2.diff;
 import com.ajjpj.amapper.core2.path.APath;
 import com.ajjpj.amapper.core2.path.APathSegment;
 import com.ajjpj.amapper.util.coll.*;
+import com.ajjpj.amapper.util.coll.AHashMap;
+import com.ajjpj.amapper.util.coll.AHashSet;
+import com.ajjpj.amapper.util.coll.AList;
+import com.ajjpj.amapper.util.coll.AMap;
 import com.ajjpj.amapper.util.func.AFunction1;
 import com.ajjpj.amapper.util.func.APredicate;
 
@@ -26,9 +30,11 @@ public class ADiff {
             }
         }).toSet();
         this.byPath = AHashMap.fromKeysAndFunction(paths, new AFunction1<ADiffElement, APath>() {
-            @Override public ADiffElement apply(final APath path) {
+            @Override
+            public ADiffElement apply(final APath path) {
                 return elements.find(new APredicate<ADiffElement>() {
-                    @Override public boolean apply(ADiffElement o) {
+                    @Override
+                    public boolean apply(ADiffElement o) {
                         return o.path.equals(path);
                     }
                 }).get();

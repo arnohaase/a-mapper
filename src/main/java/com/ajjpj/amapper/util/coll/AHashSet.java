@@ -7,8 +7,6 @@ import com.ajjpj.amapper.util.func.APredicate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author arno

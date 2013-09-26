@@ -22,6 +22,7 @@ public interface AMap<K,V> extends Iterable<APair<K,V>> {
 
     java.util.Map<K,V> asJavaUtilMap();
 
+    //TODO withDefault, withDefaultValue
     //TODO toString implementations
     //TODO equals implementations for collections?
 }
