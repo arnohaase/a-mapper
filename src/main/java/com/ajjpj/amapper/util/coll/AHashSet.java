@@ -60,7 +60,7 @@ public class AHashSet<T> implements Iterable<T> {
         return AList.create(this);
     }
 
-    public AOption<T> find(APredicate<T> pred) {
+    public <E extends Exception> AOption<T> find(APredicate<T, E> pred) throws E {
         for(T el: this) {
             if(pred.apply(el)) {
                 return AOption.some(el);
@@ -69,7 +69,7 @@ public class AHashSet<T> implements Iterable<T> {
         return AOption.none();
     }
 
-    public <X> AHashSet<X> map(AFunction1<X, T> f) {
+    public <X, E extends Exception> AHashSet<X> map(AFunction1<X, T, E> f) throws E {
         final List<X> result = new ArrayList<X>(); // list instead of set to support arbitrary equality implementations
         for(T el: this) {
             result.add(f.apply(el));
@@ -77,7 +77,7 @@ public class AHashSet<T> implements Iterable<T> {
         return create(inner.equality, result);
     }
 
-    public AHashSet<T> filter(APredicate<T> pred) {
+    public <E extends Exception> AHashSet<T> filter(APredicate<T, E> pred) throws E {
         final List<T> result = new ArrayList<T>();
         for(T el: this) {
             if(pred.apply(el)) {

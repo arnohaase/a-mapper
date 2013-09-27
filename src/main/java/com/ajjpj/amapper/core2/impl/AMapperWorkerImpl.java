@@ -10,6 +10,7 @@ import com.ajjpj.amapper.util.coll.AMap;
 import com.ajjpj.amapper.util.coll.AOption;
 import com.ajjpj.amapper.util.func.AFunction0;
 import com.ajjpj.amapper.util.func.AStringFunction0;
+import com.ajjpj.amapper.util.func.AVoidFunction0;
 import com.ajjpj.amapper.util.func.AVoidFunction1;
 
 import java.util.Queue;
@@ -26,7 +27,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
     private final AContextExtractor contextExtractor;
     private final CanHandleSourceAndTargetCache<APreProcessor, APreProcessor> preProcessors;
     private final CanHandleSourceAndTargetCache<APostProcessor, APostProcessor> postProcessors;
-    private final Queue<Runnable>  deferredWork;
+    private final Queue<AVoidFunction0<Exception>> deferredWork;
 
     private final IdentityCache identityCache = new IdentityCache();
 
@@ -36,7 +37,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
                              AIdentifierExtractor identifierExtractor, AContextExtractor contextExtractor,
                              CanHandleSourceAndTargetCache<APreProcessor, APreProcessor> preProcessor,
                              CanHandleSourceAndTargetCache<APostProcessor, APostProcessor> postProcessor,
-                             Queue<Runnable> deferredWork) {
+                             Queue<AVoidFunction0<Exception>> deferredWork) {
         this.valueMappings = valueMappings;
         this.objectMappings = objectMappings;
         this.logger = logger;
@@ -60,7 +61,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
         return identifierExtractor;
     }
 
-    @Override public AOption<Object> map(APath path, Object source, Object target, AQualifiedSourceAndTargetType types, AMap<String, Object> context) {
+    @Override public AOption<Object> map(APath path, Object source, Object target, AQualifiedSourceAndTargetType types, AMap<String, Object> context) throws Exception {
         final AOption<AValueMappingDef<Object, Object, H>> vm = valueMappings.tryEntryFor(types);
         if(vm.isDefined()) {
             return AOption.some(vm.get().map(source, types, this, context));
@@ -70,7 +71,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
         }
     }
 
-    @Override public AOption<Object> mapObject(final APath path, final Object sourceRaw, Object target, AQualifiedSourceAndTargetType types, AMap<String, Object> context) {
+    @Override public AOption<Object> mapObject(final APath path, final Object sourceRaw, Object target, AQualifiedSourceAndTargetType types, AMap<String, Object> context) throws Exception {
         logger.debug (new AStringFunction0() {
             @Override
             public String apply() {
@@ -111,15 +112,15 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
         return vm.map(source, types, this, context);
     }
 
-    @Override public void mapDeferred(final APath path, final Object sourceRaw, final AFunction0<Object> target, final AQualifiedSourceAndTargetType types, final AVoidFunction1<Object> callback) {
+    @Override public void mapDeferred(final APath path, final Object sourceRaw, final AFunction0<Object, Exception> target, final AQualifiedSourceAndTargetType types, final AVoidFunction1<Object, Exception> callback) {
         logger.debug (new AStringFunction0() {
             @Override public String apply() {
                 return "map deferred: " + types + " @ " + path;
             }
         });
 
-        deferredWork.add(new Runnable() {
-            @Override public void run() {
+        deferredWork.add(new AVoidFunction0<Exception>() {
+            @Override public void apply() throws Exception {
                 logger.debug(new AStringFunction0() {
                     @Override
                     public String apply() {

@@ -14,7 +14,6 @@ class JavaBeanMapping[S<:AnyRef,T<:AnyRef](isPropDeferred: IsDeferredStrategy, l
   type THIS = JavaBeanMapping[S,T]
   type Type = JavaBeanType[_<:AnyRef]
   type Cls = Class[_<:AnyRef]
-  //TODO filter by 'isReadable' / 'isWritable'
 
   val sourceCls = sourceTag.runtimeClass.asInstanceOf[Class[S]]
   val targetCls = targetTag.runtimeClass.asInstanceOf[Class[T]]

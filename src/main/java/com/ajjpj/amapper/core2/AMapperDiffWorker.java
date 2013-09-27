@@ -21,9 +21,9 @@ public interface AMapperDiffWorker<H> {
 
     AIdentifierExtractor getIdentifierExtractor();
 
-    void diff(APath path, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> oldContext, AMap<String, Object> newContext, boolean isDerived);
-    void diffValue(APath path, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> oldContext, AMap<String, Object> newContext, boolean isDerived);
-    void diffObject(APath path, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> oldContext, AMap<String, Object> newContext, boolean isDerived);
+    void diff(APath path, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOld, AMap<String, Object> contextNew, boolean isDerived) throws Exception;
+    void diffValue(APath path, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOld, AMap<String, Object> contextNew, boolean isDerived);
+    void diffObject(APath path, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOld, AMap<String, Object> contextNew, boolean isDerived) throws Exception;
 
-    void diffDeferred(APath path, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> oldContext, AMap<String, Object> newContext, boolean isDerived);
+    void diffDeferred(APath path, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOld, AMap<String, Object> contextNew, boolean isDerived);
 }

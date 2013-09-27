@@ -11,6 +11,7 @@ import com.ajjpj.amapper.util.coll.AEquality;
 import com.ajjpj.amapper.util.coll.AMap;
 import com.ajjpj.amapper.util.coll.AOption;
 import com.ajjpj.amapper.util.func.AStringFunction0;
+import com.ajjpj.amapper.util.func.AVoidFunction0;
 
 import java.util.HashSet;
 import java.util.Queue;
@@ -27,7 +28,7 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
     private final AIdentifierExtractor identifierExtractor;
     private final AContextExtractor contextExtractor;
     private final CanHandleSourceAndTargetCache<APreProcessor, APreProcessor> preProcessor;
-    private final Queue<Runnable>  deferredWork;
+    private final Queue<AVoidFunction0<Exception>>  deferredWork;
 
     private final Set<IdentityPair> identityCache = new HashSet<IdentityPair>();
     private final ADiffBuilder diffBuilder = new ADiffBuilder();
@@ -37,7 +38,7 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
                                  AMapperLogger logger, H helpers,
                                  AIdentifierExtractor identifierExtractor, AContextExtractor contextExtractor,
                                  CanHandleSourceAndTargetCache<APreProcessor, APreProcessor> preProcessor,
-                                 Queue<Runnable> deferredWork) {
+                                 Queue<AVoidFunction0<Exception>> deferredWork) {
         this.valueMappings = valueMappings;
         this.objectMappings = objectMappings;
         this.logger = logger;
@@ -60,7 +61,7 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
         return identifierExtractor;
     }
 
-    @Override public void diff(APath path, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOld, AMap<String, Object> contextNew, boolean isDerived) {
+    @Override public void diff(APath path, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOld, AMap<String, Object> contextNew, boolean isDerived) throws Exception {
         final AOption<AValueMappingDef<Object, Object, H>> vm = valueMappings.tryEntryFor(types);
         if(vm.isDefined()) {
             vm.get().diff(diffBuilder, sourceOld, sourceNew, types, this, contextOld, contextNew, path, isDerived);
@@ -74,7 +75,7 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
         valueMappings.expectedEntryFor(types, path).diff(diffBuilder, sourceOld, sourceNew, types, this, contextOld, contextNew, path, isDerived);
     }
 
-    @Override public void diffObject(final APath path, final Object sourceOldRaw, final Object sourceNewRaw, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOld, AMap<String, Object> contextNew, boolean isDerived) {
+    @Override public void diffObject(final APath path, final Object sourceOldRaw, final Object sourceNewRaw, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOld, AMap<String, Object> contextNew, boolean isDerived) throws Exception {
         logger.debug (new AStringFunction0() {
             @Override
             public String apply() {
@@ -103,7 +104,7 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
     }
 
 
-    private void doDiffObject(APath path, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOldOrig, AMap<String, Object> contextNewOrig, boolean isDerived) {
+    private void doDiffObject(APath path, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOldOrig, AMap<String, Object> contextNewOrig, boolean isDerived) throws Exception {
         final AMap<String, Object> oldContext = contextExtractor.withContext (contextOldOrig, sourceOld, types.sourceType);
         final AMap<String, Object> newContext = contextExtractor.withContext (contextNewOrig, sourceNew, types.sourceType);
 
@@ -140,8 +141,8 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
             }
         });
 
-        deferredWork.add(new Runnable() {
-            @Override public void run() {
+        deferredWork.add(new AVoidFunction0<Exception>() {
+            @Override public void apply() throws Exception {
                 logger.debug(new AStringFunction0() {
                     @Override
                     public String apply() {

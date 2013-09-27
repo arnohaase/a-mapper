@@ -24,8 +24,8 @@ public interface AMapperWorker<H> {
 
     AIdentifierExtractor getIdentifierExtractor();
 
-    AOption<Object> map      (APath path, Object source, Object target, AQualifiedSourceAndTargetType types, AMap<String, Object> context);
-    AOption<Object> mapObject(APath path, Object source, Object target, AQualifiedSourceAndTargetType types, AMap<String, Object> context);
+    AOption<Object> map      (APath path, Object source, Object target, AQualifiedSourceAndTargetType types, AMap<String, Object> context) throws Exception;
+    AOption<Object> mapObject(APath path, Object source, Object target, AQualifiedSourceAndTargetType types, AMap<String, Object> context) throws Exception;
     Object          mapValue (APath path, Object source,                AQualifiedSourceAndTargetType types, AMap<String, Object> context);
 
     /**
@@ -39,5 +39,5 @@ public interface AMapperWorker<H> {
      *  mapping is created after the initial object structure is complete. This also prevents streaming processing.
      *
      */
-    void mapDeferred(APath path, Object source, AFunction0<Object> target, AQualifiedSourceAndTargetType types, AVoidFunction1<Object> callback);
+    void mapDeferred(APath path, Object source, AFunction0<Object,Exception> target, AQualifiedSourceAndTargetType types, AVoidFunction1<Object,Exception> callback);
 }

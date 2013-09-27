@@ -46,10 +46,10 @@ public class AHashMap<K, V> implements AMap<K,V> {
         }
         return result;
     }
-    public static <K,V> AHashMap<K,V> fromKeysAndFunction(Iterable<K> keys, AFunction1<V, K> f) {
+    public static <K,V, E extends Exception> AHashMap<K,V> fromKeysAndFunction(Iterable<K> keys, AFunction1<V, K, E> f) throws E {
         return fromKeysAndFunction(AEquality.EQUALS, keys, f);
     }
-    public static <K,V> AHashMap<K,V> fromKeysAndFunction(AEquality equality, Iterable<K> keys, AFunction1<V, K> f) {
+    public static <K,V, E extends Exception> AHashMap<K,V> fromKeysAndFunction(AEquality equality, Iterable<K> keys, AFunction1<V, K, E> f) throws E {
         final Iterator<K> ki = keys.iterator();
 
         AHashMap<K,V> result = AHashMap.empty(equality);

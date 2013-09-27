@@ -84,7 +84,7 @@ abstract public class AList<T> implements Iterable<T> {
         return AHashSet.create(this);
     }
 
-    public AList<T> filter (APredicate<T> cond) {
+    public <E extends Exception> AList<T> filter (APredicate<T,E> cond) throws E {
         final List<T> result = new ArrayList<T>();
 
         for(T el: this) {
@@ -96,7 +96,7 @@ abstract public class AList<T> implements Iterable<T> {
         return create(result);
     }
 
-    public AOption<T> find (APredicate<T> cond) {
+    public <E extends Exception> AOption<T> find (APredicate<T,E> cond) throws E{
         for(T el: this) {
             if(cond.apply(el)) {
                 return AOption.some(el);
@@ -105,7 +105,7 @@ abstract public class AList<T> implements Iterable<T> {
         return AOption.none();
     }
 
-    public <X> AList<X> map (AFunction1<X, T> f) {
+    public <X,E extends Exception> AList<X> map (AFunction1<X, T, E> f) throws E{
         final List<X> result = new ArrayList<X>(size());
 
         for(T el: this) {

@@ -3,7 +3,7 @@ package com.ajjpj.amapper.javabean.builder
 import com.ajjpj.amapper.core.{NoQualifier, MapBasedQualifier, AQualifier}
 import java.lang.reflect.{Field, Method}
 import java.lang.annotation.Annotation
-import com.ajjpj.amapper.javabean.japi.QualifierAnnotation
+import com.ajjpj.amapper.javabean.japi.AQualifierAnnotation
 
 
 /**
@@ -21,7 +21,7 @@ class DefaultQualifierExtractor extends QualifierExtractor {
   private def extract(annotations: Iterable[Annotation]) = {
     //TODO caching of whether annotations designate qualifiers or not
 
-    def key(a: Annotation) = a.annotationType().getAnnotation(classOf[QualifierAnnotation]).name()
+    def key(a: Annotation) = a.annotationType().getAnnotation(classOf[AQualifierAnnotation]).name()
     def value(a: Annotation) = try {
       a.annotationType().getMethod("value").invoke(a).toString
     }
@@ -30,7 +30,7 @@ class DefaultQualifierExtractor extends QualifierExtractor {
     }
 
     val map = annotations
-      .filter(_.annotationType().getAnnotation(classOf[QualifierAnnotation]) != null)
+      .filter(_.annotationType().getAnnotation(classOf[AQualifierAnnotation]) != null)
       .map(a => key(a) -> value(a))
       .toMap
 

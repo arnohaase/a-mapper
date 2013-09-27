@@ -23,31 +23,29 @@ public class ADiff {
 
     public ADiff(final AList<ADiffElement> elements) {
         this.elements = elements;
-        this.paths = elements.map(new AFunction1<APath, ADiffElement>() {
+        this.paths = elements.map(new AFunction1<APath, ADiffElement, RuntimeException>() {
             @Override
             public APath apply(ADiffElement param) {
                 return param.path;
             }
         }).toSet();
-        this.byPath = AHashMap.fromKeysAndFunction(paths, new AFunction1<ADiffElement, APath>() {
-            @Override
-            public ADiffElement apply(final APath path) {
-                return elements.find(new APredicate<ADiffElement>() {
-                    @Override
-                    public boolean apply(ADiffElement o) {
+        this.byPath = AHashMap.fromKeysAndFunction(paths, new AFunction1<ADiffElement, APath, RuntimeException>() {
+            @Override public ADiffElement apply(final APath path) {
+                return elements.find(new APredicate<ADiffElement, RuntimeException>() {
+                    @Override public boolean apply(ADiffElement o) {
                         return o.path.equals(path);
                     }
                 }).get();
             }
         });
-        this.pathStrings = paths.map(new AFunction1<String, APath>() {
+        this.pathStrings = paths.map(new AFunction1<String, APath, RuntimeException>() {
             @Override public String apply(APath param) {
                 return asPathString(param);
             }
         });
-        this.byPathString = AHashMap.fromKeysAndFunction(pathStrings, new AFunction1<AList<ADiffElement>, String>() {
+        this.byPathString = AHashMap.fromKeysAndFunction(pathStrings, new AFunction1<AList<ADiffElement>, String, RuntimeException>() {
             @Override public AList<ADiffElement> apply(final String path) {
-                return elements.filter(new APredicate<ADiffElement>() {
+                return elements.filter(new APredicate<ADiffElement, RuntimeException>() {
                     @Override public boolean apply(ADiffElement o) {
                         return asPathString(o.path).equals(path);
                     }

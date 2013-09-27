@@ -27,8 +27,8 @@ public abstract class AOption<T> {
         return !isDefined();
     }
 
-    public abstract <X> AOption<X> map(AFunction1<X, T> f);
-    public abstract AOption<T> filter(APredicate<T> pred);
+    public abstract <X,E extends Exception> AOption<X> map(AFunction1<X, T, E> f) throws E;
+    public abstract <E extends Exception> AOption<T> filter(APredicate<T, E> pred) throws E;
 
     public abstract T get();
     public T getOrElse(T el) {
@@ -50,11 +50,11 @@ public abstract class AOption<T> {
             return true;
         }
 
-        @Override public <X> AOption<X> map(AFunction1<X, T> f) {
+        @Override public <X,E extends Exception> AOption<X> map(AFunction1<X, T, E> f) throws E {
             return some(f.apply(el));
         }
 
-        @Override public AOption<T> filter(APredicate<T> pred) {
+        @Override public <E extends Exception> AOption<T> filter(APredicate<T, E> pred) throws E {
             if(pred.apply(el))
                 return this;
             else
@@ -90,11 +90,11 @@ public abstract class AOption<T> {
             return false;
         }
 
-        @Override public <X> AOption<X> map(AFunction1<X, Object> f) {
+        @Override public <X,E extends Exception> AOption<X> map(AFunction1<X, Object, E> f) {
             return none();
         }
 
-        @Override public AOption<Object> filter(APredicate<Object> pred) {
+        @Override public <E extends Exception> AOption<Object> filter(APredicate<Object, E> pred) {
             return none();
         }
     }

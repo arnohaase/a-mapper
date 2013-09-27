@@ -1,7 +1,7 @@
 package com.ajjpj.amapper.examples.doubleToBigDecimalQualifier;
 
 
-import com.ajjpj.amapper.javabean.japi.QualifierAnnotation;
+import com.ajjpj.amapper.javabean.japi.AQualifierAnnotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,6 +13,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = ElementType.METHOD)
-@QualifierAnnotation(name = "Currency Rounding")
+@AQualifierAnnotation(name = "Currency Rounding")
 public @interface TwoDigitsRoundEven {
 }

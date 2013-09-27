@@ -40,7 +40,7 @@ public class IdentifierBasedCollectionMappingDef implements AObjectMappingDef<Ob
     /**
      * handles nothing by default - specialize this using TODO in order to use it
      */
-    @Override public boolean canHandle(AQualifiedSourceAndTargetType sourceAndTarget) {
+    @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
         return false;
     }
 
@@ -48,7 +48,7 @@ public class IdentifierBasedCollectionMappingDef implements AObjectMappingDef<Ob
         return true;
     }
 
-    @Override public Object map(Object source, Object target, AQualifiedSourceAndTargetType types, AMapperWorker<? extends ACollectionHelper> worker, AMap<String, Object> context, APath path) {
+    @Override public Object map(Object source, Object target, AQualifiedSourceAndTargetType types, AMapperWorker<? extends ACollectionHelper> worker, AMap<String, Object> context, APath path) throws Exception {
         final ACollectionHelper h = worker.getHelpers();
 
         final Collection<Object> sourceColl = h.asJuCollection(source, types.source());
@@ -121,7 +121,7 @@ public class IdentifierBasedCollectionMappingDef implements AObjectMappingDef<Ob
         }
     }
 
-    @Override public void diff(ADiffBuilder diff, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMapperDiffWorker<? extends ACollectionHelper> worker, AMap<String, Object> contextOld, AMap<String, Object> contextNew, APath path, boolean isDerived) {
+    @Override public void diff(ADiffBuilder diff, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMapperDiffWorker<? extends ACollectionHelper> worker, AMap<String, Object> contextOld, AMap<String, Object> contextNew, APath path, boolean isDerived) throws Exception {
         final ACollectionHelper h = worker.getHelpers();
 
         final Collection<Object> sourceOldColl = h.asJuCollection(sourceOld, types.source());

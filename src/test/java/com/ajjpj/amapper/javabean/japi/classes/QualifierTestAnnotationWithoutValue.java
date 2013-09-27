@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.javabean.japi.classes;
 
-import com.ajjpj.amapper.javabean.japi.QualifierAnnotation;
+import com.ajjpj.amapper.javabean.japi.AQualifierAnnotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-@QualifierAnnotation(name = "qualifier-test")
+@AQualifierAnnotation(name = "qualifier-test")
 public @interface QualifierTestAnnotationWithoutValue {
 }
