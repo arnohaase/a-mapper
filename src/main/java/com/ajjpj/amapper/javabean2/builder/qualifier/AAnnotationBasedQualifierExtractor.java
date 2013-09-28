@@ -15,6 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author arno
  */
 public class AAnnotationBasedQualifierExtractor implements AQualifierExtractor {
+    public static final AAnnotationBasedQualifierExtractor INSTANCE = new AAnnotationBasedQualifierExtractor();
+
     private static final QualAnnotDesc NO_QUAL_ANNOT = new QualAnnotDesc(false, null, null);
     private static class QualAnnotDesc {
         public final boolean isQualifier;

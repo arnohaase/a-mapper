@@ -1,6 +1,7 @@
 package com.ajjpj.amapper.core2.impl;
 
 import com.ajjpj.amapper.core2.*;
+import com.ajjpj.amapper.core2.diff.ADiff;
 import com.ajjpj.amapper.core2.diff.ADiffBuilder;
 import com.ajjpj.amapper.core2.diff.ADiffElement;
 import com.ajjpj.amapper.core2.exclog.AMapperLogger;
@@ -47,6 +48,10 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
         this.contextExtractor = contextExtractor;
         this.preProcessor = preProcessor;
         this.deferredWork = deferredWork;
+    }
+
+    public ADiff getDiffResult() {
+        return diffBuilder.build();
     }
 
     @Override public AMapperLogger getLogger() {

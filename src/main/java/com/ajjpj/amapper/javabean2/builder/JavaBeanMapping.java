@@ -1,16 +1,15 @@
 package com.ajjpj.amapper.javabean2.builder;
 
-import com.ajjpj.amapper.core2.exclog.AMapperLogger;
 import com.ajjpj.amapper.javabean2.JavaBeanType;
 import com.ajjpj.amapper.javabean2.JavaBeanTypes;
+import com.ajjpj.amapper.javabean2.builder.qualifier.AAnnotationBasedQualifierExtractor;
 import com.ajjpj.amapper.javabean2.builder.qualifier.AQualifierExtractor;
 import com.ajjpj.amapper.javabean2.propbased.APartialBeanMapping;
+import com.ajjpj.amapper.javabean2.propbased.APropertyBasedObjectMappingDef;
 import com.ajjpj.amapper.javabean2.propbased.ASourceAndTargetProp;
 import com.ajjpj.amapper.javabean2.propbased.accessors.APropertyAccessor;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author arno
@@ -20,27 +19,67 @@ public class JavaBeanMapping<S,T> {
     private final Class<T> targetCls;
 
     private final AIsDeferredStrategy deferredStrategy;
-    private final AMapperLogger logger;
     private final AQualifierExtractor qualifierExtractor;
 
     private List<APartialBeanMapping<S,T,?>> forwardProps  = new ArrayList<APartialBeanMapping<S, T, ?>>();
     private List<APartialBeanMapping<T,S,?>> backwardProps = new ArrayList<APartialBeanMapping<T, S, ?>>();
 
 
-    public JavaBeanMapping(Class<S> sourceCls, Class<T> targetCls, AIsDeferredStrategy deferredStrategy, AMapperLogger logger, AQualifierExtractor qualifierExtractor) {
+    public static <S,T> JavaBeanMapping<S,T> create(Class<S> sourceCls, Class<T> targetCls) {
+        return create(sourceCls, targetCls, AIsDeferredStrategy.ANNOTATION_BASED, AAnnotationBasedQualifierExtractor.INSTANCE);
+    }
+
+    public static <S,T> JavaBeanMapping<S,T> create(Class<S> sourceCls, Class<T> targetCls, AIsDeferredStrategy deferredStrategy, AQualifierExtractor qualifierExtractor) {
+        return new JavaBeanMapping<S, T>(sourceCls, targetCls, deferredStrategy, qualifierExtractor);
+    }
+
+    public JavaBeanMapping(Class<S> sourceCls, Class<T> targetCls, AIsDeferredStrategy deferredStrategy, AQualifierExtractor qualifierExtractor) {
         this.sourceCls = sourceCls;
         this.targetCls = targetCls;
         this.deferredStrategy = deferredStrategy;
-        this.logger = logger;
         this.qualifierExtractor = qualifierExtractor;
     }
 
-    public JavaBeanMapping<S,T> withMatchingPropsMappings() {
-        //TODO implement this
-//        val sharedProps = PropertyAccessor.sharedProperties(sourceCls, targetCls, isPropDeferred, logger, qualifierExtractor)
-//        forwardProps  ++= sharedProps.               filter(p => p.sourceProp.isReadable && p.targetProp.isWritable).asInstanceOf[Iterable[PartialMapping[S,T]]]
-//        backwardProps ++= sharedProps.map(_.reverse).filter(p => p.sourceProp.isReadable && p.targetProp.isWritable).asInstanceOf[Iterable[PartialMapping[T,S]]]
-//        this
+    public JavaBeanMapping<S,T> withMatchingPropsMappings() throws Exception {
+        return withMatchingPropsMappings(true);
+    }
+
+    /**
+     * This method compares all Java Bean properties of source and target class, registering a bidirectional mapping if
+     *  a source and target property have the same name. <p />
+     *
+     * This heuristic is by no means fail-safe. There may happen to be properties that have the same name but should or can not
+     *  be mapped. Or some properties should only be mapped one-way. <p />
+     *
+     * So be aware of this method's limitations. That said, it is often a good starting point - call it early, and then
+     *  customize the mapping using the more detailed methods of <code>JavaBeanMapping</code>.<p />
+     *
+     * @param removeReadOnly The Java Bean standard says that a bean property is read-only if there is no setter for it. If
+     *                        'removeReadOnly' is set to 'true', mappings to these read-only properties are not registered. That
+     *                        is the default if you leave this parameter out.<p />
+     *                       In some domains however it may not be necessary to modify properties because there is always
+     *                        an existing object to modify. There may e.g. not be a setter for a collection because that
+     *                        collections is always modified using 'add' and 'remove'. If you want mappings to be automatically
+     *                        registered to those 'read-only' properties as well, pass 'false' for this parameter.
+     */
+    public JavaBeanMapping<S,T> withMatchingPropsMappings(boolean removeReadOnly) throws Exception {
+        final Map<String, APropertyAccessor> sourceProps = new JavaBeanSupport(deferredStrategy, qualifierExtractor).getAllProperties(sourceCls);
+        final Map<String, APropertyAccessor> targetProps = new JavaBeanSupport(deferredStrategy, qualifierExtractor).getAllProperties(targetCls);
+
+        final Set<String> shared = new HashSet<String>(sourceProps.keySet());
+        shared.retainAll(targetProps.keySet());
+
+        for(String propName: shared) {
+            final APropertyAccessor sourceProp = sourceProps.get(propName);
+            final APropertyAccessor targetProp = targetProps.get(propName);
+
+            if(targetProp.isWritable() || !removeReadOnly) {
+                forwardProps. add(new ASourceAndTargetProp<S, T>(sourceProp, targetProp));
+            }
+            if(sourceProp.isWritable() && !removeReadOnly) {
+                backwardProps.add(new ASourceAndTargetProp<T, S>(targetProp, sourceProp));
+            }
+        }
         return this;
     }
 
@@ -174,6 +213,13 @@ public class JavaBeanMapping<S,T> {
         backwardProps.add(mapping);
         return this;
     }
+
+    public APropertyBasedObjectMappingDef build() {
+        return new APropertyBasedObjectMappingDef(sourceCls, targetCls, forwardProps);
+    }
+    public APropertyBasedObjectMappingDef buildBackward() {
+        return new APropertyBasedObjectMappingDef(targetCls, sourceCls, backwardProps);
+    }
 }
 
 //        def withForwardGuardBySourceExpression(sourceExpr: String, shouldMap: ShouldMap[S,T]) = {
@@ -204,27 +250,3 @@ public class JavaBeanMapping<S,T> {
 //        })
 //        this
 //        }
-//
-//        //TODO log warning if there is no such mapping
-//
-//        def build = PropertyBasedObjectMappingDef[S,T](forwardProps)
-//        def buildBackward = PropertyBasedObjectMappingDef[T,S](backwardProps)
-//        }
-//
-//        object JavaBeanMapping {
-//        def create[S<:AnyRef, T<:AnyRef] (sourceClass: Class[S], targetClass: Class[T]): JavaBeanMapping[S,T]                                         = create(sourceClass, targetClass, AMapperLogger.defaultLogger)
-//        def create[S<:AnyRef, T<:AnyRef] (sourceClass: Class[S], targetClass: Class[T], logger: AMapperLogger): JavaBeanMapping[S,T]                  = create(sourceClass, targetClass, DefaultIsDeferredStrategy, logger, DefaultQualifierExtractor)
-//        def create[S<:AnyRef, T<:AnyRef] (sourceClass: Class[S], targetClass: Class[T], isDeferredStrategy: IsDeferredStrategy): JavaBeanMapping[S,T] = create(sourceClass, targetClass, isDeferredStrategy, AMapperLogger.defaultLogger, DefaultQualifierExtractor)
-//
-//        def create[S<:AnyRef, T<:AnyRef] (sourceClass: Class[S], targetClass: Class[T], isPropDeferred: IsDeferredStrategy, logger: AMapperLogger, qualifierExtractor: QualifierExtractor): JavaBeanMapping[S,T] = {
-//        implicit val st = ClassTag[S](sourceClass)
-//        implicit val tt = ClassTag[T](targetClass)
-//        new JavaBeanMapping[S,T](isPropDeferred, logger, qualifierExtractor)
-//        }
-//        }
-//
-////TODO test for write-only property
-//
-//
-//
-//

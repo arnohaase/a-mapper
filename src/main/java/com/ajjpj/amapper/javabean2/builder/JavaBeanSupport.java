@@ -58,6 +58,9 @@ public class JavaBeanSupport {
             if(mtd.getParameterTypes().length > 0) {
                 continue;
             }
+            if(mtd.getDeclaringClass() == Object.class) {
+                continue;
+            }
 
             for(String prefix: GETTER_PREFIXES) {
                 if(mtd.getName().startsWith(prefix)) {
