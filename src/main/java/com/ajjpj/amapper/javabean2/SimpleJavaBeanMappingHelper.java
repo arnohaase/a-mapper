@@ -11,6 +11,8 @@ import java.util.Collection;
  * @author arno
  */
 public class SimpleJavaBeanMappingHelper implements JavaBeanMappingHelper{
+    public static SimpleJavaBeanMappingHelper INSTANCE = new SimpleJavaBeanMappingHelper();
+
     @Override public Object createInstance(JavaBeanType<?> tpe, JavaBeanType<?> forSourceType) throws Exception {
         return tpe.cls.newInstance();
     }

@@ -21,6 +21,18 @@ public class PerfTest extends Assert {
             .withBeanMapping(JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
             .build();
 
+    private final com.ajjpj.amapper.javabean2.JavaBeanMapper mapper2;
+
+    {
+        try {
+            mapper2 = com.ajjpj.amapper.javabean2.builder.JavaBeanMapperBuilder.create()
+                    .withBeanMapping(com.ajjpj.amapper.javabean2.builder.JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 	private A a;
 	
 	private static final Method get0 = mtd("getA0");
@@ -255,9 +267,27 @@ public class PerfTest extends Assert {
         System.out.println("Mapper: \t" + (end - start) + "ms: \t\t" + copied);
     }
 
+    @Test
+    public void testMapper2() throws Exception {
+        for (int i=0; i<100; i++) {
+            System.out.print(".");
+            copyWithMapper2(a);
+        }
+        System.out.println();
+
+        final long start = System.currentTimeMillis();
+        final A copied = copyWithMapper2(a);
+        final long end = System.currentTimeMillis();
+        System.out.println("Mapper 2: \t" + (end - start) + "ms: \t\t" + copied);
+    }
+
 
     private A copyWithMapper(A orig) {
         return mapper.map(orig, A.class);
+    }
+
+    private A copyWithMapper2(A orig) throws Exception {
+        return mapper2.map(orig, A.class);
     }
 
 	private static void copyAttributesExplicit(A source, A target) {
