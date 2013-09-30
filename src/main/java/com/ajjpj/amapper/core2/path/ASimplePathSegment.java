@@ -7,4 +7,9 @@ public class ASimplePathSegment extends APathSegment {
     ASimplePathSegment(String name) {
         super(name);
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

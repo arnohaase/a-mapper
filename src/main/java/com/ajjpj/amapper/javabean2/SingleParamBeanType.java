@@ -4,27 +4,26 @@ package com.ajjpj.amapper.javabean2;
  * @author arno
  */
 public class SingleParamBeanType<T,P> extends JavaBeanType<T> {
-    public final Class<P> param;
+    public final Class<P> paramCls;
 
     public SingleParamBeanType(Class<T> cls, Class<P> param) {
         super(cls);
-        this.param = JavaBeanTypes.normalized(param);
+        this.paramCls = JavaBeanTypes.normalized(param);
     }
 
     @Override public String getName() {
-        return cls.getName() + "<" + param.getName() + ">";
+        return cls.getName() + "<" + paramCls.getName() + ">";
     }
 
     public JavaBeanType<P> getParamType() {
-        return JavaBeanTypes.create(param);
+        return JavaBeanTypes.create(paramCls);
     }
 
     @Override
     public String toString() {
         return "SingleParamBeanType{" +
-                "cls=" + cls.getName() +
-                "param=" + param.getName() +
-                "}";
+                cls.getName() + "<" +
+                paramCls.getName() + ">}";
     }
 
     @Override
@@ -35,7 +34,7 @@ public class SingleParamBeanType<T,P> extends JavaBeanType<T> {
 
         SingleParamBeanType that = (SingleParamBeanType) o;
 
-        if (!param.equals(that.param)) return false;
+        if (!paramCls.equals(that.paramCls)) return false;
 
         return true;
     }
@@ -43,7 +42,7 @@ public class SingleParamBeanType<T,P> extends JavaBeanType<T> {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + param.hashCode();
+        result = 31 * result + paramCls.hashCode();
         return result;
     }
 }

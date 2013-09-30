@@ -5,7 +5,7 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 import com.ajjpj.amapper.javabean.builder.{JavaBeanMapping, JavaBeanMapperBuilder}
-import com.ajjpj.amapper.javabean.japi.classes._
+import com.ajjpj.amapper.classes._
 import com.ajjpj.amapper.javabean.{BuiltinCollectionMappingDefs, JavaBeanTypes}
 
 /**

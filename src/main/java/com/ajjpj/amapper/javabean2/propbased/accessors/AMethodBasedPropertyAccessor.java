@@ -58,4 +58,9 @@ public class AMethodBasedPropertyAccessor implements APropertyAccessor {
     @Override public void set(Object o, Object newValue) throws Exception {
         setter.invoke(o, newValue);
     }
+
+    @Override
+    public String toString() {
+        return "MtdProp{" + name + ": " + isWritable() + "}";
+    }
 }

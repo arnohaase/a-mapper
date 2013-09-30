@@ -44,7 +44,7 @@ public class AAnnotationBasedQualifierExtractor implements AQualifierExtractor {
                 map = map.updated(desc.name, value);
             }
         }
-        return new AQualifier(map);
+        return AQualifier.create(map);
     }
 
     private QualAnnotDesc isQualifierAnnotation(Class<?> annotClass) {

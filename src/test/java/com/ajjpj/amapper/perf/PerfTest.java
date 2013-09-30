@@ -1,8 +1,10 @@
 package com.ajjpj.amapper.perf;
 
+import com.ajjpj.amapper.core2.exclog.AMapperLogger;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.japi.JavaBeanMapper;
 import com.ajjpj.amapper.javabean.japi.JavaBeanMapperBuilder;
+import com.ajjpj.amapper.javabean2.mappingdef.BuiltinCollectionMappingDefs;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -15,7 +17,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 
-//@Ignore
+@Ignore
 public class PerfTest extends Assert {
     private final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
             .withBeanMapping(JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
@@ -26,6 +28,8 @@ public class PerfTest extends Assert {
     {
         try {
             mapper2 = com.ajjpj.amapper.javabean2.builder.JavaBeanMapperBuilder.create()
+                    .withLogger(AMapperLogger.StdOut)
+                    .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
                     .withBeanMapping(com.ajjpj.amapper.javabean2.builder.JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
                     .build();
         } catch (Exception e) {

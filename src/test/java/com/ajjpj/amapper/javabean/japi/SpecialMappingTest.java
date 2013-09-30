@@ -5,19 +5,24 @@ import com.ajjpj.amapper.core.AMapperWorker;
 import com.ajjpj.amapper.core.PathBuilder;
 import com.ajjpj.amapper.javabean.JavaBeanMappingHelper;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
-import com.ajjpj.amapper.javabean.japi.classes.ClassA;
-import com.ajjpj.amapper.javabean.japi.classes.ClassB;
+import com.ajjpj.amapper.classes.ClassA;
+import com.ajjpj.amapper.classes.ClassB;
 import com.ajjpj.amapper.javabean.propbased.ExplicitPartialMapping;
 import com.ajjpj.amapper.javabean.propbased.ShouldMap;
 import org.junit.Test;
 import scala.collection.immutable.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author arno
  */
 public class SpecialMappingTest {
+    @Test
+    public void testFail() {
+        fail("todo");
+    }
+
     @Test
     public void testSpecialMappingForward() {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()

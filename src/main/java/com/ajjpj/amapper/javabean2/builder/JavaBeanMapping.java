@@ -77,10 +77,11 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> {
             if(targetProp.isWritable() || !removeReadOnly) {
                 forwardProps. add(new ASourceAndTargetProp<S, T>(sourceProp, targetProp));
             }
-            if(sourceProp.isWritable() && !removeReadOnly) {
+            if(sourceProp.isWritable() || !removeReadOnly) {
                 backwardProps.add(new ASourceAndTargetProp<T, S>(targetProp, sourceProp));
             }
         }
+
         return this;
     }
 
@@ -215,9 +216,19 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> {
         return this;
     }
 
+    public Class<S> getSourceClass() {
+        return sourceCls;
+    }
+
+    public Class<T> getTargetClass() {
+        return targetCls;
+    }
+
+    @SuppressWarnings("unchecked")
     public APropertyBasedObjectMappingDef<S,T,H> build() {
         return new APropertyBasedObjectMappingDef(sourceCls, targetCls, forwardProps);
     }
+    @SuppressWarnings("unchecked")
     public APropertyBasedObjectMappingDef<T,S,H> buildBackward() {
         return new APropertyBasedObjectMappingDef(targetCls, sourceCls, backwardProps);
     }

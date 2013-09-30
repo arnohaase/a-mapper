@@ -2,8 +2,8 @@ package com.ajjpj.amapper.javabean.japi;
 
 import com.ajjpj.amapper.core.*;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
-import com.ajjpj.amapper.javabean.japi.classes.ClassA;
-import com.ajjpj.amapper.javabean.japi.classes.ClassB;
+import com.ajjpj.amapper.classes.ClassA;
+import com.ajjpj.amapper.classes.ClassB;
 import org.junit.Test;
 import scala.Option;
 

@@ -46,6 +46,6 @@ public class AnnotationBasedContextExtractor implements AContextExtractor {
             }
         }
 
-        return AList.nil();
+        return result;
     }
 }

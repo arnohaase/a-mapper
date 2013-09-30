@@ -21,7 +21,7 @@ todo
 
 
 * features
-  * check if target prop is read-only - *may* make sense, but runtime check if the property was actually changed. Or maybe that's the default behavior anyway?
+  * list and set mapping for Java Bean mappings by default
   * exception handling
   * warn if an object has several "parents"
     * how to handle several "dealer refs" well? collections with duplicates?

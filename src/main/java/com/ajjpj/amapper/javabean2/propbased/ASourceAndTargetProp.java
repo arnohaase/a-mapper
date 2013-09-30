@@ -49,6 +49,11 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
         return path.withChild(APathSegment.simple(isSourceSide ? getSourceName() : getTargetName()));
     }
 
+    @Override
+    public String toString() {
+        return "SourceAndTarget{" + sourceProp + " / " + targetProp + "}";
+    }
+
     @Override public void doMap(S source, final T target, AMapperWorker<? extends JavaBeanMappingHelper> worker, AMap<String, Object> context, APath path) throws Exception {
         if(sourceProp.isDeferred()) {
             final AFunction0<Object,Exception> tp = new AFunction0<Object,Exception>() {
@@ -67,7 +72,7 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
             final Object oldTargetValue = targetProp.get(target);
             final AOption<Object> opt = worker.map(childPath(path, true), sourceProp.get(source), oldTargetValue, types, context);
             if(opt.isDefined() && opt.get() != oldTargetValue) {
-                targetProp.set(target, opt);
+                targetProp.set(target, opt.get());
             }
         }
     }

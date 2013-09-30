@@ -7,7 +7,7 @@ import org.scalatest.FunSuite
 import com.ajjpj.amapper.javabean.JavaBeanTypes
 import com.ajjpj.amapper.javabean.builder.{NoQualifierExtractor, AMapperExpressionParser}
 import com.ajjpj.amapper.core.NoQualifier
-import com.ajjpj.amapper.javabean.japi.classes.{WithProperties, PartOfPropPath}
+import com.ajjpj.amapper.classes.{WithProperties, PartOfPropPath}
 
 /**
  * @author arno

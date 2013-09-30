@@ -4,6 +4,7 @@ import com.ajjpj.amapper.core2.*;
 import com.ajjpj.amapper.core2.exclog.AMapperLogger;
 import com.ajjpj.amapper.core2.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.core2.tpe.CanHandleSourceAndTargetCache;
+import com.ajjpj.amapper.javabean2.AnnotationBasedContextExtractor;
 import com.ajjpj.amapper.javabean2.JavaBeanMapper;
 import com.ajjpj.amapper.javabean2.JavaBeanMappingHelper;
 import com.ajjpj.amapper.javabean2.SimpleJavaBeanMappingHelper;
@@ -46,7 +47,7 @@ public class JavaBeanMapperBuilder <H extends JavaBeanMappingHelper> {
             return o.toString();
         }
     };
-    private AContextExtractor contextExtractor = NoContextExtractor.INSTANCE;
+    private AContextExtractor contextExtractor = new AnnotationBasedContextExtractor();
 
     private final List<APreProcessor> preProcessors = new ArrayList<APreProcessor>();
     private final List<APostProcessor> postProcessors = new ArrayList<APostProcessor>();
@@ -71,8 +72,9 @@ public class JavaBeanMapperBuilder <H extends JavaBeanMappingHelper> {
     public JavaBeanMapperBuilder<H> withBeanMapping(JavaBeanMapping m) {
         objectMappings.add(m.build());
 
-        //TODO only if sourceCls != targetCls
-        objectMappings.add(m.buildBackward());
+        if(m.getSourceClass() != m.getTargetClass()) {
+            objectMappings.add(m.buildBackward());
+        }
         return this;
     }
 

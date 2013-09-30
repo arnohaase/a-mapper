@@ -4,7 +4,7 @@ import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
-import com.ajjpj.amapper.javabean.japi.classes.ForTypeTests
+import com.ajjpj.amapper.classes.ForTypeTests
 
 /**
  * @author arno
@@ -19,7 +19,7 @@ class JavaBeanTypesTest extends FunSuite with ShouldMatchers {
     SimpleJavaBeanType(classOf[String]).cls should be (classOf[String])
   }
 
-  test("single param") {
+  test("single paramCls") {
     SimpleSingleParamBeanType(classOf[java.util.List[_]], classOf[String]).isAssignableFrom(SimpleSingleParamBeanType(classOf[java.util.List[_]],       classOf[String])) should equal(true)
     SimpleSingleParamBeanType(classOf[java.util.List[_]], classOf[String]).isAssignableFrom(SimpleSingleParamBeanType(classOf[java.util.Collection[_]], classOf[String])) should equal(false)
     SimpleSingleParamBeanType(classOf[java.util.List[_]], classOf[String]).isAssignableFrom(SimpleSingleParamBeanType(classOf[java.util.List[_]],       classOf[AnyRef])) should equal(false)

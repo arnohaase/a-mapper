@@ -52,11 +52,27 @@ public class IdentifierBasedCollectionMappingDef implements AObjectMappingDef<Ob
         final ACollectionHelper h = worker.getHelpers();
 
         final Collection<Object> sourceColl = h.asJuCollection(source, types.source());
-        final Collection<Object> targetColl = h.asJuCollection(target, types.target());
+        if(source == null) {
+            return null;
+        }
+
+        final Collection<Object> targetColl = target != null ? h.asJuCollection(target, types.target()) : h.createEmptyCollection(types.target());
+        final AQualifiedSourceAndTargetType elementTypes = new AQualifiedSourceAndTargetType(h.elementType(types.sourceType), types.sourceQualifier, h.elementType(types.targetType), types.targetQualifier);
+
+        if(targetColl.isEmpty()) {
+            // this is an optimization for the common case that the target collection is initially empty
+            for(Object s: sourceColl) {
+                final APath elPath = ACollectionMappingTools.elementPath(path, worker.getIdentifierExtractor().uniqueIdentifier(s, types));
+
+                final AOption<Object> optT = worker.map(elPath, s, null, elementTypes, context);
+                if(optT.isDefined()) {
+                    targetColl.add(optT.get());
+                }
+            }
+            return h.fromJuCollection(targetColl, types.target());
+        }
 
         final Equiv equiv = new Equiv(sourceColl, targetColl, types, worker.getIdentifierExtractor());
-
-        final AQualifiedSourceAndTargetType elementTypes = new AQualifiedSourceAndTargetType(h.elementType(types.sourceType), types.sourceQualifier, h.elementType(types.targetType), types.targetQualifier);
 
         // now apply the changes to the target collection
         targetColl.removeAll(equiv.targetWithoutSource);

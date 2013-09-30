@@ -153,6 +153,25 @@ public class AHashMap<K, V> implements AMap<K,V> {
         return new AHashMap[size];
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder result = new StringBuilder("AHashMap{");
+        boolean first = true;
+
+        for(APair<K,V> e: this) {
+            if(first) {
+                first = false;
+            }
+            else {
+                result.append(", ");
+            }
+
+            result.append(e._1 + "->" + e._2);
+        }
+
+        result.append("}");
+        return result.toString();
+    }
 
     /**
      * very internal method. It assumes hash0 != hash1.

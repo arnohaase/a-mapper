@@ -78,7 +78,27 @@ abstract public class AList<T> implements Iterable<T> {
         return size;
     }
 
-    //TODO mkString
+    public String mkString(String prefix, String infix, String postfix) {
+        final StringBuilder result = new StringBuilder(prefix);
+
+        boolean first = true;
+        for(T o: this) {
+            if(first) {
+                first = false;
+            }
+            else {
+                result.append(infix);
+            }
+            result.append(o);
+        }
+
+        result.append(postfix);
+        return result.toString();
+    }
+
+    public String mkString(String infix) {
+        return mkString("", infix, "");
+    }
 
     public AHashSet<T> toSet() {
         return AHashSet.create(this);
@@ -146,7 +166,7 @@ abstract public class AList<T> implements Iterable<T> {
 
     @Override public Iterator<T> iterator() {
         return new Iterator<T> () {
-            AList<T> pos;
+            AList<T> pos = AList.this;
 
             @Override public boolean hasNext() {
                 return pos.nonEmpty();

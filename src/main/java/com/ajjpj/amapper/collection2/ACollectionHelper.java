@@ -33,5 +33,5 @@ public interface ACollectionHelper {
     <T> Collection<T> asJuCollection(Object coll, AQualifiedType tpe);
     Object fromJuCollection(Collection<?> coll, AQualifiedType tpe);
 
-//    def equivalenceMap[S<:AnyRef,T<:AnyRef](sourceColl: Iterable[S], sourceType: AType, targetColl: Iterable[T], targetType: AType, identifierExtractor: IdentifierExtractor): EquivalenceMap[S, T]
+    <T> Collection<T> createEmptyCollection(AQualifiedType tpe) throws Exception;
 }

@@ -3,7 +3,7 @@ package com.ajjpj.amapper.javabean2;
 import com.ajjpj.amapper.core2.tpe.AQualifiedType;
 import com.ajjpj.amapper.core2.tpe.AType;
 
-import java.util.Collection;
+import java.util.*;
 
 /**
  * This is a simple default implementation of the required helper methods for Java Bean mapping.
@@ -13,8 +13,8 @@ import java.util.Collection;
 public class SimpleJavaBeanMappingHelper implements JavaBeanMappingHelper{
     public static SimpleJavaBeanMappingHelper INSTANCE = new SimpleJavaBeanMappingHelper();
 
-    @Override public Object createInstance(JavaBeanType<?> tpe, JavaBeanType<?> forSourceType) throws Exception {
-        return tpe.cls.newInstance();
+    @Override public Object createInstance(JavaBeanType<?> sourceType, JavaBeanType<?> targetType) throws Exception {
+        return targetType.cls.newInstance();
     }
 
     @Override public AType elementType(AType tpe) {
@@ -28,5 +28,23 @@ public class SimpleJavaBeanMappingHelper implements JavaBeanMappingHelper{
 
     @Override public Object fromJuCollection(Collection<?> coll, AQualifiedType tpe) {
         return coll;
+    }
+
+    @Override public <T> Collection<T> createEmptyCollection(AQualifiedType tpe) throws Exception {
+        if(tpe.tpe instanceof SingleParamBeanType) {
+            final Class<?> collClass = ((SingleParamBeanType) tpe.tpe).cls;
+            if(collClass == List.class) {
+                return new ArrayList<T>();
+            }
+            if(collClass == Set.class) {
+                return new HashSet<T>();
+            }
+            if(collClass == SortedSet.class) {
+                return new TreeSet<T>();
+            }
+            return (Collection<T>) collClass.newInstance();
+        }
+
+        throw new IllegalArgumentException("unsupported collection type " + tpe);
     }
 }

@@ -5,7 +5,7 @@ import org.junit.runner.RunWith
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 import com.ajjpj.amapper.javabean.builder.{NoQualifierExtractor, DefaultIsDeferredStrategy, JavaBeanMapping}
-import com.ajjpj.amapper.javabean.japi.classes.Person
+import com.ajjpj.amapper.classes.Person
 import com.ajjpj.amapper.core.{QualifiedSourceAndTargetType, NoQualifier, AMapperLogger}
 import com.ajjpj.amapper.javabean.JavaBeanTypes
 import java.text.DateFormat
