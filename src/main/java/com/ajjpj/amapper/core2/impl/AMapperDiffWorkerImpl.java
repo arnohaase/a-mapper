@@ -76,7 +76,13 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
         }
     }
 
-    @Override public void diffValue(APath path, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOld, AMap<String, Object> contextNew, boolean isDerived) {
+    @Override public void diffValue(final APath path, final Object sourceOld, final Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOld, AMap<String, Object> contextNew, boolean isDerived) {
+        logger.debug (new AStringFunction0() {
+            @Override
+            public String apply() {
+                return "diff value: " + sourceOld + " <-> " + sourceNew + " @ " + path;
+            }
+        });
         valueMappings.expectedEntryFor(types, path).diff(diffBuilder, sourceOld, sourceNew, types, this, contextOld, contextNew, path, isDerived);
     }
 
@@ -84,7 +90,7 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
         logger.debug (new AStringFunction0() {
             @Override
             public String apply() {
-                return "diff: " + sourceOldRaw + " <-> " + sourceNewRaw + " @ " + path;
+                return "diff object: " + sourceOldRaw + " <-> " + sourceNewRaw + " @ " + path;
             }
         });
 

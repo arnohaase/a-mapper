@@ -89,6 +89,11 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
         }
 
         final Object source = preProcessed.get();
+        final AOption<Object> cached = identityCache.get(source);
+        if(cached.isDefined()) {
+            return cached;
+        }
+
         final AMap<String, Object> newContext = contextExtractor.withContext(context, sourceRaw, types.sourceType);
         final Object resultRaw = m.map(source, target, types, this, newContext, path);
 

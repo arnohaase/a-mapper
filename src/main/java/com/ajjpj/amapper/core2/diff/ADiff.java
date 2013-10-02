@@ -30,16 +30,19 @@ public class ADiff {
             }
         }).toSet();
         this.byPath = AHashMap.fromKeysAndFunction(paths, new AFunction1<ADiffElement, APath, RuntimeException>() {
-            @Override public ADiffElement apply(final APath path) {
+            @Override
+            public ADiffElement apply(final APath path) {
                 return elements.find(new APredicate<ADiffElement, RuntimeException>() {
-                    @Override public boolean apply(ADiffElement o) {
+                    @Override
+                    public boolean apply(ADiffElement o) {
                         return o.path.equals(path);
                     }
                 }).get();
             }
         });
         this.pathStrings = paths.map(new AFunction1<String, APath, RuntimeException>() {
-            @Override public String apply(APath param) {
+            @Override
+            public String apply(APath param) {
                 return asPathString(param);
             }
         });
@@ -70,6 +73,14 @@ public class ADiff {
         return result.toString();
     }
 
+    public AList<ADiffElement> getElements() {
+        return elements;
+    }
+
+    public AHashSet<APath> getPaths() {
+        return paths;
+    }
+
     public boolean isEmpty() {
         return elements.isEmpty();
     }
@@ -87,5 +98,10 @@ public class ADiff {
         else {
             return AOption.none();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ADiff[" + elements + "]";
     }
 }

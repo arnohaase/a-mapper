@@ -8,6 +8,7 @@ todo
   * deferred, esp. for diff
   * child referenced by several parents
   * deployment without ognl / without Log4J
+  * diff with path with several segments
 
 * thoughts
   * mapping defs: annotation based 'canHandle' via mix-in trait (?!?!?!)

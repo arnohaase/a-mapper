@@ -2,6 +2,8 @@ package com.ajjpj.amapper.core2.path;
 
 import com.ajjpj.amapper.util.coll.AList;
 
+import java.util.Arrays;
+
 /**
  * @author arno
  */
@@ -13,6 +15,10 @@ public class APath {
 
     public APath(AList<APathSegment> segments) {
         this.segments = segments;
+    }
+
+    public APath(APathSegment... segments) {
+        this(AList.create(Arrays.asList(segments)));
     }
 
     public APath withChild (APathSegment child) {

@@ -36,6 +36,16 @@ public class AHashSet<T> implements Iterable<T> {
         this.inner = inner;
     }
 
+    public int size() {
+        return inner.size();
+    }
+    public boolean isEmpty() {
+        return inner.isEmpty();
+    }
+    public boolean nonEmpty() {
+        return inner.nonEmpty();
+    }
+
     public boolean contains(T el) {
         return inner.containsKey(el);
     }
@@ -56,8 +66,44 @@ public class AHashSet<T> implements Iterable<T> {
         return asJavaUtilSet().iterator();
     }
 
+    @Override public int hashCode() {
+        return inner.hashCode();
+    }
+
+    @Override public boolean equals(Object o) {
+        if(o == this) {
+            return true;
+        }
+        if(! (o instanceof AHashSet)) {
+            return false;
+        }
+        return inner.equals(((AHashSet)o).inner);
+    }
+
     public AList<T> toList() {
         return AList.create(this);
+    }
+
+    public String mkString(String prefix, String infix, String postfix) {
+        final StringBuilder result = new StringBuilder(prefix);
+
+        boolean first = true;
+        for(T o: this) {
+            if(first) {
+                first = false;
+            }
+            else {
+                result.append(infix);
+            }
+            result.append(o);
+        }
+
+        result.append(postfix);
+        return result.toString();
+    }
+
+    public String mkString(String infix) {
+        return mkString("", infix, "");
     }
 
     public <E extends Exception> AOption<T> find(APredicate<T, E> pred) throws E {

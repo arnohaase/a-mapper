@@ -35,6 +35,9 @@ public abstract class AOption<T> {
         return isDefined() ? get() : el;
     }
 
+    public abstract boolean equals(Object o);
+    public abstract int hashCode();
+
     static class ASome<T> extends AOption<T> {
         private final T el;
 
@@ -96,6 +99,15 @@ public abstract class AOption<T> {
 
         @Override public <E extends Exception> AOption<Object> filter(APredicate<Object, E> pred) {
             return none();
+        }
+
+        @Override public boolean equals(Object o) {
+            return o == this;
+        }
+
+        @Override
+        public int hashCode() {
+            return 0;
         }
     }
 }

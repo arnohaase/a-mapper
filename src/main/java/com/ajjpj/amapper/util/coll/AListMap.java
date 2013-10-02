@@ -84,6 +84,56 @@ public class AListMap <K,V> implements AMap<K,V> {
         return new ListMapIterator<K, V>(this);
     }
 
+    @Override public String toString() {
+        final StringBuilder result = new StringBuilder("{");
+
+        boolean first = true;
+        for(APair<K,V> el: this) {
+            if(first) {
+                first = false;
+            }
+            else {
+                result.append(", ");
+            }
+            result.append(el._1 + " -> " + el._2);
+        }
+
+        result.append("}");
+        return result.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override public boolean equals(Object o) {
+        if(o == this) {
+            return true;
+        }
+        if(! (o instanceof AListMap)) {
+            return false;
+        }
+        final AListMap other = (AListMap) o;
+
+        if(size() != other.size()) {
+            return false;
+        }
+
+        for(APair<K,V> el: this) {
+            if(! equality.equals(other.get(el._1), AOption.some(el._2))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override public int hashCode() {
+        int result = 0;
+
+        //TODO cache the result?
+        for(APair<K,V> el: this) {
+            result = result ^ (31*equality.hashCode(el._1) + equality.hashCode(el._2));
+        }
+        return result;
+    }
+
     static class Node<K,V> extends AListMap<K,V> {
         private final K key;
         private final V value;

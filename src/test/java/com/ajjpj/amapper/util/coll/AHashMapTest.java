@@ -157,6 +157,41 @@ public class AHashMapTest {
     }
 
     @Test
+    public void testEquals() {
+        assertEquals(AHashMap.empty(), AHashMap.empty());
+        assertEquals(AHashMap.empty().hashCode(), AHashMap.empty().hashCode());
+
+        assertEquals(AHashMap.empty().updated("a", "a1"),
+                     AHashMap.empty().updated("a", "a1"));
+        assertEquals(AHashMap.empty().updated("a", "a1").updated("b", "b1"),
+                     AHashMap.empty().updated("a", "a1").updated("b", "b1"));
+        assertEquals(AHashMap.empty().updated("a", "a1").updated("b", "b1").updated("a", "a2").removed("b"),
+                     AHashMap.empty().updated("a", "a1").updated("b", "b1").updated("a", "a2").removed("b"));
+        assertEquals(AHashMap.empty().updated("a", "a1").hashCode(),
+                     AHashMap.empty().updated("a", "a1").hashCode());
+        assertEquals(AHashMap.empty().updated("a", "a1").updated("b", "b1").hashCode(),
+                     AHashMap.empty().updated("a", "a1").updated("b", "b1").hashCode());
+        assertEquals(AHashMap.empty().updated("a", "a1").updated("b", "b1").updated("a", "a2").removed("b").hashCode(),
+                     AHashMap.empty().updated("a", "a1").updated("b", "b1").updated("a", "a2").removed("b").hashCode());
+
+        assertEquals(AHashMap.empty().updated("a", "a").updated("b", "b"),
+                     AHashMap.empty().updated("b", "b").updated("a", "a"));
+        assertEquals(AHashMap.empty().updated("a", "a").updated("b", "b").hashCode(),
+                     AHashMap.empty().updated("b", "b").updated("a", "a").hashCode());
+
+        assertNotEquals(AHashMap.empty().updated("a", "1"),
+                        AHashMap.empty().updated("a", "2"));
+        assertNotEquals(AHashMap.empty().updated("a", "1"),
+                        AHashMap.empty().updated("b", "1"));
+        assertNotEquals(AHashMap.empty().updated("a", "1").hashCode(),
+                        AHashMap.empty().updated("a", "2").hashCode());
+        assertNotEquals(AHashMap.empty().updated("a", "1").hashCode(),
+                        AHashMap.empty().updated("b", "1").hashCode());
+    }
+
+    //TODO equality
+
+    @Test
     public void testShotgun() {
         final Random rand = new Random(12345);
 

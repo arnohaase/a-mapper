@@ -75,7 +75,6 @@ public class CoreTest {
                     final SingleParamBeanType sourceType = (SingleParamBeanType) types.sourceType;
                     final SingleParamBeanType targetType = (SingleParamBeanType) types.targetType;
 
-                    System.out.println(types);
                     return sourceType.cls == List.class && sourceType.paramCls == Integer.class && targetType.cls == List.class && targetType.paramCls == String.class;
                 }
 

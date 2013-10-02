@@ -35,7 +35,6 @@ public class ContextTest {
             .withValueMapping(new AbstractJavaBeanValueMappingDef<Double, PriceClass, Object>(Double.class, PriceClass.class) {
                 @Override
                 public PriceClass map(Double sourceValue, AQualifiedSourceAndTargetType types, AMapperWorker<?> worker, AMap<String, Object> context) {
-                    System.out.println("context: " + context);
                     final TestCurrencyProvider tcp = (TestCurrencyProvider) context.get(TestCurrencyProvider.class.getName()).get();
                     return new PriceClass(sourceValue, tcp.getCurrency());
                 }

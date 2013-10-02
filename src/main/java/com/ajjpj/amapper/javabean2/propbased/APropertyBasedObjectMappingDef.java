@@ -20,7 +20,6 @@ public class APropertyBasedObjectMappingDef<S,T,H extends JavaBeanMappingHelper>
     public APropertyBasedObjectMappingDef(Class<S> sourceClass, Class<T> targetClass, Collection<? extends APartialBeanMapping<S, T, ? super H>> parts) {
         super(sourceClass, targetClass);
         this.parts = parts;
-        System.out.println(sourceClass.getName() + "-> " + targetClass.getName() + ": " + parts);
     }
 
     @Override protected void doMap(S source, T target, AQualifiedSourceAndTargetType types, AMapperWorker<? extends H> worker, AMap<String, Object> context, APath path) throws Exception {

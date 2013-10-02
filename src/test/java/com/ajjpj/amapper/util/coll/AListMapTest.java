@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 
 /**
@@ -61,6 +62,41 @@ public class AListMapTest {
         assertEquals(false, m4.get(1).isDefined());
         assertEquals(false, m4.containsKey(2));
     }
+
+    @Test
+    public void testEquals() {
+        assertEquals(AListMap.empty(), AListMap.empty());
+        assertEquals(AListMap.empty().hashCode(), AListMap.empty().hashCode());
+
+        assertEquals(AListMap.empty().updated("a", "a1"),
+                     AListMap.empty().updated("a", "a1"));
+        assertEquals(AListMap.empty().updated("a", "a1").updated("b", "b1"),
+                     AListMap.empty().updated("a", "a1").updated("b", "b1"));
+        assertEquals(AListMap.empty().updated("a", "a1").updated("b", "b1").updated("a", "a2").removed("b"),
+                     AListMap.empty().updated("a", "a1").updated("b", "b1").updated("a", "a2").removed("b"));
+        assertEquals(AListMap.empty().updated("a", "a1").hashCode(),
+                     AListMap.empty().updated("a", "a1").hashCode());
+        assertEquals(AListMap.empty().updated("a", "a1").updated("b", "b1").hashCode(),
+                     AListMap.empty().updated("a", "a1").updated("b", "b1").hashCode());
+        assertEquals(AListMap.empty().updated("a", "a1").updated("b", "b1").updated("a", "a2").removed("b").hashCode(),
+                     AListMap.empty().updated("a", "a1").updated("b", "b1").updated("a", "a2").removed("b").hashCode());
+
+        assertEquals(AListMap.empty().updated("a", "a").updated("b", "b"),
+                     AListMap.empty().updated("b", "b").updated("a", "a"));
+        assertEquals(AListMap.empty().updated("a", "a").updated("b", "b").hashCode(),
+                     AListMap.empty().updated("b", "b").updated("a", "a").hashCode());
+
+        assertNotEquals(AListMap.empty().updated("a", "1"),
+                        AListMap.empty().updated("a", "2"));
+        assertNotEquals(AListMap.empty().updated("a", "1"),
+                        AListMap.empty().updated("b", "1"));
+        assertNotEquals(AListMap.empty().updated("a", "1").hashCode(),
+                        AListMap.empty().updated("a", "2").hashCode());
+        assertNotEquals(AListMap.empty().updated("a", "1").hashCode(),
+                        AListMap.empty().updated("b", "1").hashCode());
+    }
+
+    //TODO equality
 
     @Test
     public void testShotgun() {

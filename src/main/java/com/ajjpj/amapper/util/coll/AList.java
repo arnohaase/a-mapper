@@ -134,6 +134,11 @@ abstract public class AList<T> implements Iterable<T> {
         return create(result);
     }
 
+    @Override
+    public String toString() {
+        return mkString("[", ", ", "]");
+    }
+
     @Override public boolean equals (Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -155,12 +160,11 @@ abstract public class AList<T> implements Iterable<T> {
 
     @Override public int hashCode() {
         int result = 0;
-        AList<T> pos = this;
 
-        while(pos.nonEmpty()) {
-            final T head = pos.head();
-            result = 31*result + (head != null ? head.hashCode() : 0);
+        for(T o: this) {
+            result = 31*result + (o != null ? o.hashCode() : 0);
         }
+
         return result;
     }
 
