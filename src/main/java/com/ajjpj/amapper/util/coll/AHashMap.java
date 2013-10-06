@@ -96,6 +96,10 @@ public class AHashMap<K, V> implements AMap<K,V> {
         return doGet(key, computeHash(key, equality), 0);
     }
 
+    @Override public V getRequired(K key) {
+        return get(key).get();
+    }
+
     @Override public AHashMap<K,V> updated(K key, V value) {
         return doUpdated(key, computeHash(key, equality), 0, value);
     }

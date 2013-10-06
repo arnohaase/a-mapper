@@ -8,11 +8,11 @@ public class WithProperties {
 
     private String theString;
 
-    String getAbc() {
+    public String getAbc() {
         return theString;
     }
 
-    void setAbc(String s) {
+    public void setAbc(String s) {
         theString = s;
     }
 

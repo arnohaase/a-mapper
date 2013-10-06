@@ -1,4 +1,4 @@
-package com.ajjpj.amapper.javabean2;
+package com.ajjpj.amapper.core2;
 
 import com.ajjpj.amapper.classes.ClassRequiringContext;
 import com.ajjpj.amapper.classes.ClassWithContext;
@@ -9,6 +9,7 @@ import com.ajjpj.amapper.core2.AMapperWorker;
 import com.ajjpj.amapper.core2.diff.ADiffBuilder;
 import com.ajjpj.amapper.core2.path.APath;
 import com.ajjpj.amapper.core2.tpe.AQualifiedSourceAndTargetType;
+import com.ajjpj.amapper.javabean2.JavaBeanMapper;
 import com.ajjpj.amapper.javabean2.builder.JavaBeanMapperBuilder;
 import com.ajjpj.amapper.javabean2.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean2.mappingdef.AbstractJavaBeanValueMappingDef;

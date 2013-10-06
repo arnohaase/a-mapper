@@ -79,8 +79,13 @@ public class JavaBeanMapperBuilder <H extends JavaBeanMappingHelper> {
     }
 
 
-    public JavaBeanMapperBuilder withLogger(AMapperLogger logger) {
+    public JavaBeanMapperBuilder<H> withLogger(AMapperLogger logger) {
         this.logger = logger;
+        return this;
+    }
+
+    public JavaBeanMapperBuilder<H> withIdentifierExtractor(AIdentifierExtractor ie) {
+        this.identifierExtractor = ie;
         return this;
     }
 
@@ -109,11 +114,9 @@ public class JavaBeanMapperBuilder <H extends JavaBeanMappingHelper> {
         Collections.reverse(valueMappings);
 
         return new JavaBeanMapperImpl<H>(
-                new CanHandleSourceAndTargetCache<AObjectMappingDef<?,?,? super H>, AObjectMappingDef<Object,Object,H>> ("No object mapping found for ", objectMappings),
-                new CanHandleSourceAndTargetCache<AValueMappingDef <?,?,? super H>, AValueMappingDef <Object,Object,H>> ("No value mapping found for ",  valueMappings),
+                objectMappings, valueMappings,
                 logger, helperFactory, identifierExtractor, contextExtractor,
-                new CanHandleSourceAndTargetCache<APreProcessor, APreProcessor>("no preprocessor for ", preProcessors),
-                new CanHandleSourceAndTargetCache<APostProcessor, APostProcessor>("no postprocessor for ", postProcessors)
+                preProcessors, postProcessors
         );
     }
 }

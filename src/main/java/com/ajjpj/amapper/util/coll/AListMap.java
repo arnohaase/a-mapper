@@ -48,6 +48,10 @@ public class AListMap <K,V> implements AMap<K,V> {
         return AOption.none();
     }
 
+    @Override public V getRequired(K key) {
+        return get(key).get();
+    }
+
     public K key() {
         throw new NoSuchElementException("empty map");
     }

@@ -23,7 +23,7 @@ public class DiffTarget {
         return oid;
     }
 
-    public void setOid(long oid) {
+    public void setOid(Long oid) {
         this.oid = oid;
     }
 

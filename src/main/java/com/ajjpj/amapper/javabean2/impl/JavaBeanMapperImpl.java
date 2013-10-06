@@ -24,14 +24,14 @@ import java.util.Set;
 public class JavaBeanMapperImpl<H extends JavaBeanMappingHelper> implements JavaBeanMapper {
     private final AMapper inner;
 
-    public JavaBeanMapperImpl(CanHandleSourceAndTargetCache<AObjectMappingDef<?, ?, ? super H>, AObjectMappingDef<Object, Object, H>> objectMappings,
-                              CanHandleSourceAndTargetCache<AValueMappingDef <?, ?, ? super H>, AValueMappingDef <Object, Object, H>> valueMappings,
+    public JavaBeanMapperImpl(Iterable<AObjectMappingDef<?, ?, ? super H>> objectMappings,
+                              Iterable<AValueMappingDef <?, ?, ? super H>> valueMappings,
                               AMapperLogger logger,
                               AFunction0<H, Exception> helperFactory,
                               AIdentifierExtractor identifierExtractor,
                               AContextExtractor contextExtractor,
-                              CanHandleSourceAndTargetCache<APreProcessor, APreProcessor> preProcessors,
-                              CanHandleSourceAndTargetCache<APostProcessor, APostProcessor> postProcessors) {
+                              Iterable<APreProcessor> preProcessors,
+                              Iterable<APostProcessor> postProcessors) {
         this.inner = new AMapperImpl<H, Exception> (objectMappings, valueMappings, logger, helperFactory, identifierExtractor, contextExtractor, preProcessors, postProcessors);
     }
 

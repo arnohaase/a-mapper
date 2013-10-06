@@ -19,7 +19,7 @@ public class DiffSourceChild {
         return oid;
     }
 
-    public void setOid(long oid) {
+    public void setOid(Long oid) {
         this.oid = oid;
     }
 

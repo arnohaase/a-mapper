@@ -33,15 +33,21 @@ public class AMapperImpl<H,E extends Exception> implements AMapper {
     private final CanHandleSourceAndTargetCache<APreProcessor, APreProcessor> preProcessors;
     private final CanHandleSourceAndTargetCache<APostProcessor, APostProcessor> postProcessors;
 
-    public AMapperImpl(CanHandleSourceAndTargetCache<AObjectMappingDef<?, ?, ? super H>, AObjectMappingDef<Object, Object, H>> objectMappings, CanHandleSourceAndTargetCache<AValueMappingDef<?, ?, ? super H>, AValueMappingDef<Object, Object, H>> valueMappings, AMapperLogger logger, AFunction0<H, E> helperFactory, AIdentifierExtractor identifierExtractor, AContextExtractor contextExtractor, CanHandleSourceAndTargetCache<APreProcessor, APreProcessor> preProcessors, CanHandleSourceAndTargetCache<APostProcessor, APostProcessor> postProcessors) {
-        this.objectMappings = objectMappings;
-        this.valueMappings = valueMappings;
+    public AMapperImpl(Iterable<AObjectMappingDef<?, ?, ? super H>> objectMappings,
+                       Iterable<AValueMappingDef<?, ?, ? super H>> valueMappings,
+                       AMapperLogger logger, AFunction0<H, E> helperFactory,
+                       AIdentifierExtractor identifierExtractor,
+                       AContextExtractor contextExtractor,
+                       Iterable<APreProcessor> preProcessors,
+                       Iterable<APostProcessor> postProcessors) {
+        this.objectMappings = new CanHandleSourceAndTargetCache<AObjectMappingDef<?, ?, ? super H>, AObjectMappingDef<Object, Object, H>>("no object mapping found for ", objectMappings);
+        this.valueMappings = new CanHandleSourceAndTargetCache<AValueMappingDef<?, ?, ? super H>, AValueMappingDef<Object, Object, H>>("no value mapping found for ", valueMappings);
         this.logger = logger;
         this.helperFactory = helperFactory;
         this.identifierExtractor = identifierExtractor;
         this.contextExtractor = contextExtractor;
-        this.preProcessors = preProcessors;
-        this.postProcessors = postProcessors;
+        this.preProcessors = new CanHandleSourceAndTargetCache<APreProcessor, APreProcessor>("no preprocessor found for ", preProcessors);
+        this.postProcessors = new CanHandleSourceAndTargetCache<APostProcessor, APostProcessor>("no postprocessor found for ", postProcessors);
     }
 
     @Override public AOption<Object> map(Object source, AType sourceType, AQualifier sourceQualifier, Object target, AType targetType, AQualifier targetQualifier) throws Exception {

@@ -24,7 +24,7 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
 
     public ASourceAndTargetProp(APropertyAccessor sourceProp, APropertyAccessor targetProp) {
         if(! targetProp.isWritable()) {
-            throw new IllegalArgumentException("target property is not writable: " + targetProp);
+            throw new IllegalArgumentException("target property is not writable: " + targetProp); //TODO weaken this condition
         }
 
         this.sourceProp = sourceProp;

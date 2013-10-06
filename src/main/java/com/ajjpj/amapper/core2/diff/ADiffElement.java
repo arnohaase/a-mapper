@@ -61,7 +61,7 @@ public class ADiffElement {
                 ", isDerived=" + isDerived +
                 ", oldValue=" + oldValue +
                 ", newValue=" + newValue +
-                "} " + super.toString();
+                "}";
     }
 
     @Override

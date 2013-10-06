@@ -61,7 +61,7 @@ public class ADiff {
         final StringBuilder result = new StringBuilder();
         boolean first = true;
 
-        for(APathSegment seg: p.segments) {
+        for(APathSegment seg: p.getSegments()) {
             if(first) {
                 first = false;
             }

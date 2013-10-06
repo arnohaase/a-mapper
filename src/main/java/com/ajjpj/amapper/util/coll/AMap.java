@@ -15,6 +15,12 @@ public interface AMap<K,V> extends Iterable<APair<K,V>> {
     boolean containsValue(V value);
     AOption<V> get(K key);
 
+    /**
+     * This is the equivalent of calling get(...).get(); implementations throw
+     * a NoSuchElementException if there is not entry for the key
+     */
+    V getRequired(K key);
+
     AMap<K,V> updated(K key, V value);
     AMap<K,V> removed(K key);
 
