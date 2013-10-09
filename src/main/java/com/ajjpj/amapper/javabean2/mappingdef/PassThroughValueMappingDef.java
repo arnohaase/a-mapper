@@ -16,7 +16,7 @@ import com.ajjpj.amapper.util.coll.AMap;
 /**
  * @author arno
  */
-class PassThroughValueMappingDef<T> implements AValueMappingDef<T,T,Object> {
+public class PassThroughValueMappingDef<T> implements AValueMappingDef<T,T,Object> { //TODO show this in the documentation
     protected final JavaBeanType<T> tpe;
 
     PassThroughValueMappingDef(Class<T> cls) {

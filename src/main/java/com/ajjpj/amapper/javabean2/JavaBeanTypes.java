@@ -49,22 +49,6 @@ public class JavaBeanTypes {
         return tpe instanceof JavaBeanType && cls.isAssignableFrom(((JavaBeanType) tpe).cls);
     }
 
-    public static JavaBeanType<?> singleCommonType(AOption<Type>... javaTypes) {
-        final Set<JavaBeanType> set = new HashSet<JavaBeanType>();
-
-        for(AOption<Type> tpe: javaTypes) {
-            if(tpe.isDefined()) {
-                set.add (create (tpe.get ()));
-            }
-        }
-
-        switch(set.size()) {
-            case 0: throw new IllegalArgumentException("no type");
-            case 1: return set.iterator().next();
-            default: throw new IllegalArgumentException("non-unique type: " + set);
-        }
-    }
-
     @SuppressWarnings("unchecked")
     public static <T> Class<T> normalized (Class<T> cls) {
         final Class<?> boxed = boxedEquivalents.get(cls);

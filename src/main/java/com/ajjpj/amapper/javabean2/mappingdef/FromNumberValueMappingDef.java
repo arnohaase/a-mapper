@@ -16,7 +16,7 @@ import com.ajjpj.amapper.util.coll.AMap;
 /**
  * @author arno
  */
-abstract class FromNumberValueMappingDef<T> implements AValueMappingDef<Number, T, Object> {
+public abstract class FromNumberValueMappingDef<T> implements AValueMappingDef<Number, T, Object> {
     protected final JavaBeanType<T> tpe;
 
     protected FromNumberValueMappingDef(Class<T> cls) {

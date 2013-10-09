@@ -17,8 +17,6 @@ public class BuiltinValueMappingDefs {
     public static final AValueMappingDef<String,     String,     Object> StringMappingDef     = new PassThroughValueMappingDef <String>     (String.class);
     public static final AValueMappingDef<Boolean,    Boolean,    Object> BooleanMappingDef    = new PassThroughValueMappingDef <Boolean>    (Boolean.class);
     public static final AValueMappingDef<Character , Character,  Object> CharacterMappingDef  = new PassThroughValueMappingDef <Character>  (Character.class);
-    public static final AValueMappingDef<BigDecimal, BigDecimal, Object> BigDecimalMappingDef = new PassThroughValueMappingDef <BigDecimal> (BigDecimal.class);
-    public static final AValueMappingDef<BigInteger, BigInteger, Object> BigIntegerMappingDef = new PassThroughValueMappingDef <BigInteger> (BigInteger.class);
 
     public static final AValueMappingDef<Date,     Date,     Object> DateMappingDef     = new PassThroughValueMappingDef <Date>     (Date.class);
     public static final AValueMappingDef<Locale,   Locale,   Object> LocaleMappingDef   = new PassThroughValueMappingDef <Locale>   (Locale.class);
@@ -49,5 +47,30 @@ public class BuiltinValueMappingDefs {
     };
     public static final FromNumberValueMappingDef<Double> DoubleMappingDef = new FromNumberValueMappingDef<Double>(Double.class) {
         @Override protected Double fromNumber(Number n) { return n.doubleValue(); }
+    };
+    public static final FromNumberValueMappingDef<BigInteger> BigIntegerMappingDef = new FromNumberValueMappingDef<BigInteger> (BigInteger.class) {
+        @Override protected BigInteger fromNumber(Number n) {
+            if(n instanceof BigInteger) {
+                return (BigInteger) n;
+            }
+            if(n instanceof BigDecimal) {
+                return ((BigDecimal) n).toBigInteger();
+            }
+            return BigInteger.valueOf(n.longValue());
+        }
+    };
+    public static final FromNumberValueMappingDef<BigDecimal> BigDecimalMappingDef = new FromNumberValueMappingDef<BigDecimal> (BigDecimal.class) {
+        @Override protected BigDecimal fromNumber(Number n) {
+            if(n instanceof BigDecimal) {
+                return (BigDecimal) n;
+            }
+            if(n instanceof BigInteger) {
+                return new BigDecimal((BigInteger)n);
+            }
+            if(n instanceof Double || n instanceof Float) {
+                return new BigDecimal(n.doubleValue());
+            }
+            return BigDecimal.valueOf(n.longValue());
+        }
     };
 }
