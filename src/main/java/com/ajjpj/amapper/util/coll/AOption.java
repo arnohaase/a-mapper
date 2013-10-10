@@ -64,6 +64,11 @@ public abstract class AOption<T> {
                 return none();
         }
 
+        @Override
+        public String toString() {
+            return "AOption.some(" + el + ")";
+        }
+
         @Override public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
@@ -99,6 +104,11 @@ public abstract class AOption<T> {
 
         @Override public <E extends Exception> AOption<Object> filter(APredicate<Object, E> pred) {
             return none();
+        }
+
+        @Override
+        public String toString() {
+            return "AOption.none()";
         }
 
         @Override public boolean equals(Object o) {

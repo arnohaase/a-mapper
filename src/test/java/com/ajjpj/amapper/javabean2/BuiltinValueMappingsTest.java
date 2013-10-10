@@ -10,7 +10,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.RetentionPolicy;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Currency;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 
@@ -75,7 +78,7 @@ public class BuiltinValueMappingsTest {
 
     @Test
     public void testEnum() {
-        assertTrue (BuiltinValueMappingDefs.EnumMappingDef.canHandle(tpe(RetentionPolicy.class, RetentionPolicy.class)));
+        assertTrue(BuiltinValueMappingDefs.EnumMappingDef.canHandle(tpe(RetentionPolicy.class, RetentionPolicy.class)));
         assertTrue(BuiltinValueMappingDefs.EnumMappingDef.canHandle(tpe(ElementType.class, ElementType.class)));
 
         assertFalse(BuiltinValueMappingDefs.EnumMappingDef.canHandle(tpe(ElementType.class, RetentionPolicy.class)));
@@ -86,22 +89,55 @@ public class BuiltinValueMappingsTest {
 
     @Test
     public void testDate() {
-        fail("todo");
+        assertTrue(BuiltinValueMappingDefs.DateMappingDef.canHandle(tpe(java.util.Date.class,  java.util.Date.class)));
+
+        assertFalse(BuiltinValueMappingDefs.DateMappingDef.canHandle(tpe(java.util.Date.class, String.class)));
+        assertFalse(BuiltinValueMappingDefs.DateMappingDef.canHandle(tpe(String.class, java.util.Date.class)));
+
+        // no built-in support for java.sql.* classes that extends java.util.Date - implicit conversion is a snake pit of ugly
+        //  surprises, e.g. differing precision etc.
+
+        assertFalse(BuiltinValueMappingDefs.DateMappingDef.canHandle(tpe(java.sql.Date.class,  java.sql.Date.class)));
+        assertFalse(BuiltinValueMappingDefs.DateMappingDef.canHandle(tpe(java.sql.Date.class,  java.util.Date.class)));
+        assertFalse(BuiltinValueMappingDefs.DateMappingDef.canHandle(tpe(java.util.Date.class, java.sql.Date.class)));
+
+        assertEquals(new Date(12345),  BuiltinValueMappingDefs.DateMappingDef.map(new Date(12345),  null, null, null));
+        assertEquals(new Date(-12345), BuiltinValueMappingDefs.DateMappingDef.map(new Date(-12345), null, null, null));
+        assertEquals(null, BuiltinValueMappingDefs.DateMappingDef.map(null, null, null, null));
     }
 
     @Test
     public void testLocale() {
-        fail("todo");
+        assertTrue(BuiltinValueMappingDefs.LocaleMappingDef.canHandle(tpe(Locale.class, Locale.class)));
+
+        assertFalse(BuiltinValueMappingDefs.LocaleMappingDef.canHandle(tpe(Locale.class, String.class)));
+        assertFalse(BuiltinValueMappingDefs.LocaleMappingDef.canHandle(tpe(String.class, Locale.class)));
+
+        assertEquals(Locale.CANADA,        BuiltinValueMappingDefs.LocaleMappingDef.map(Locale.CANADA,        null, null, null));
+        assertEquals(Locale.CANADA_FRENCH, BuiltinValueMappingDefs.LocaleMappingDef.map(Locale.CANADA_FRENCH, null, null, null));
+        assertEquals(Locale.GERMAN,        BuiltinValueMappingDefs.LocaleMappingDef.map(Locale.GERMAN,        null, null, null));
     }
 
     @Test
     public void testTimeZone() {
-        fail("todo");
+        assertTrue(BuiltinValueMappingDefs.TimeZoneMappingDef.canHandle(tpe(TimeZone.class, TimeZone.class)));
+
+        assertFalse(BuiltinValueMappingDefs.TimeZoneMappingDef.canHandle(tpe(TimeZone.class, String.class)));
+        assertFalse(BuiltinValueMappingDefs.TimeZoneMappingDef.canHandle(tpe(String.class,   TimeZone.class)));
+
+        assertEquals(TimeZone.getTimeZone("UTC"), BuiltinValueMappingDefs.TimeZoneMappingDef.map(TimeZone.getTimeZone("UTC"), null, null, null));
+        assertEquals(TimeZone.getTimeZone("PST"), BuiltinValueMappingDefs.TimeZoneMappingDef.map(TimeZone.getTimeZone("PST"), null, null, null));
     }
 
     @Test
     public void testCurrency() {
-        fail("todo");
+        assertTrue(BuiltinValueMappingDefs.CurrencyMappingDef.canHandle(tpe(Currency.class, Currency.class)));
+
+        assertFalse(BuiltinValueMappingDefs.CurrencyMappingDef.canHandle(tpe(Currency.class, String.class)));
+        assertFalse(BuiltinValueMappingDefs.CurrencyMappingDef.canHandle(tpe(String.class,   Currency.class)));
+
+        assertEquals(Currency.getInstance("USD"), BuiltinValueMappingDefs.CurrencyMappingDef.map(Currency.getInstance("USD"), null, null, null));
+        assertEquals(Currency.getInstance("EUR"), BuiltinValueMappingDefs.CurrencyMappingDef.map(Currency.getInstance("EUR"), null, null, null));
     }
 
     private void checkNumber(AValueMappingDef vm, Class<?> cls, Object expected) {

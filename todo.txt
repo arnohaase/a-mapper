@@ -23,6 +23,7 @@ todo
 
 * features
   * list and set mapping for Java Bean mappings by default
+  * "list as set" (--> actively remove target duplicates)
   * exception handling
   * warn if an object has several "parents"
     * how to handle several "dealer refs" well? collections with duplicates?

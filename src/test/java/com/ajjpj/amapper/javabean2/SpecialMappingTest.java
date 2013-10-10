@@ -1,41 +1,38 @@
-package com.ajjpj.amapper.javabean.japi;
+package com.ajjpj.amapper.javabean2;
 
-import com.ajjpj.amapper.core.ADiffBuilder;
-import com.ajjpj.amapper.core.AMapperWorker;
-import com.ajjpj.amapper.core.PathBuilder;
-import com.ajjpj.amapper.javabean.JavaBeanMappingHelper;
-import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.classes.ClassA;
 import com.ajjpj.amapper.classes.ClassB;
-import com.ajjpj.amapper.javabean.propbased.ExplicitPartialMapping;
-import com.ajjpj.amapper.javabean.propbased.ShouldMap;
+import com.ajjpj.amapper.core2.AMapperDiffWorker;
+import com.ajjpj.amapper.core2.AMapperWorker;
+import com.ajjpj.amapper.core2.diff.ADiffBuilder;
+import com.ajjpj.amapper.core2.path.APath;
+import com.ajjpj.amapper.javabean2.builder.JavaBeanMapperBuilder;
+import com.ajjpj.amapper.javabean2.builder.JavaBeanMapping;
+import com.ajjpj.amapper.javabean2.mappingdef.BuiltinCollectionMappingDefs;
+import com.ajjpj.amapper.javabean2.propbased.AExplicitPartialMapping;
+import com.ajjpj.amapper.javabean2.propbased.AGuardCondition;
+import com.ajjpj.amapper.util.coll.AMap;
 import org.junit.Test;
-import scala.collection.immutable.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
 
 /**
  * @author arno
  */
 public class SpecialMappingTest {
-    @Test
-    public void testFail() {
-        fail("todo");
-    }
 
     @Test
-    public void testSpecialMappingForward() {
+    public void testSpecialMappingForward() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
-                        .withForwardSpecialMapping(new ExplicitPartialMapping<ClassA, ClassB>() {
-                            @Override
-                            public void doMap(ClassA source, ClassB target, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context, PathBuilder path) {
+                        .addForwardSpecialMapping(new AExplicitPartialMapping<ClassA, ClassB, Object>() {
+                            @Override public void doMap(ClassA source, ClassB target, AMapperWorker<?> worker, AMap<String, Object> context, APath path) throws Exception {
                                 target.setFirstName("X. Y. Z.");
                                 target.setLastName(source.getFirstName() + " " + source.getLastName());
                             }
 
-                            @Override
-                            public void doDiff(ADiffBuilder diff, ClassA sourceOld, ClassA sourceNew, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> contextOld, Map<String, Object> contextNew, PathBuilder path, boolean isDerived) {
+                            @Override public void doDiff(ADiffBuilder diff, ClassA sourceOld, ClassA sourceNew, AMapperDiffWorker<?> worker, AMap<String, Object> contextOld, AMap<String, Object> contextNew, APath path, boolean isDerived) throws Exception {
                             }
                         })
                 ).build();
@@ -50,18 +47,16 @@ public class SpecialMappingTest {
     }
 
     @Test
-    public void testSpecialMappingBackward() {
+    public void testSpecialMappingBackward() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
-                        .withBackwardSpecialMapping(new ExplicitPartialMapping<ClassB, ClassA>() {
-                            @Override
-                            public void doMap(ClassB source, ClassA target, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context, PathBuilder path) {
+                        .addBackwardSpecialMapping(new AExplicitPartialMapping<ClassB, ClassA, Object>() {
+                            @Override public void doMap(ClassB source, ClassA target, AMapperWorker<?> worker, AMap<String, Object> context, APath path) throws Exception {
                                 target.setFirstName("X. Y. Z.");
                                 target.setLastName(source.getFirstName() + " " + source.getLastName());
                             }
 
-                            @Override
-                            public void doDiff(ADiffBuilder diff, ClassB sourceOld, ClassB sourceNew, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> contextOld, Map<String, Object> contextNew, PathBuilder path, boolean isDerived) {
+                            @Override public void doDiff(ADiffBuilder diff, ClassB sourceOld, ClassB sourceNew, AMapperDiffWorker<?> worker, AMap<String, Object> contextOld, AMap<String, Object> contextNew, APath path, boolean isDerived) throws Exception {
                             }
                         })
                 ).build();
@@ -78,13 +73,14 @@ public class SpecialMappingTest {
     boolean shouldMap = true;
 
     @Test
-    public void testGuardForward() {
+    public void testGuardForward() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
+                .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
                 .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                         .withMatchingPropsMappings()
-                        .withForwardGuardBySourceExpression("firstName", new ShouldMap<ClassA,ClassB>() {
+                        .withForwardGuardBySourceExpression("firstName", new AGuardCondition<ClassA, ClassB, Object>() {
                             @Override
-                            public boolean shouldMap(ClassA source, ClassB target, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context, PathBuilder path) {
+                            public boolean shouldMap(ClassA source, ClassB target, Object helper, AMap<String, Object> context, APath path) {
                                 return shouldMap;
                             }
                         })
@@ -94,6 +90,7 @@ public class SpecialMappingTest {
         o.setFirstName("Arno");
         o.setLastName("Haase");
 
+        shouldMap = true;
         final ClassB mapped1 = new ClassB();
         mapped1.setFirstName("old first name");
         mapper.map(o, mapped1);
@@ -112,13 +109,14 @@ public class SpecialMappingTest {
     }
 
     @Test
-    public void testGuardBackward() {
+    public void testGuardBackward() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
+                .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
                 .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                         .withMatchingPropsMappings()
-                        .withBackwardGuardBySourceExpression("firstName", new ShouldMap<ClassB, ClassA>() {
+                        .withBackwardGuardBySourceExpression("firstName", new AGuardCondition<ClassB, ClassA, Object>() {
                             @Override
-                            public boolean shouldMap(ClassB source, ClassA target, AMapperWorker<? extends JavaBeanMappingHelper> worker, Map<String, Object> context, PathBuilder path) {
+                            public boolean shouldMap(ClassB source, ClassA target, Object helper, AMap<String, Object> context, APath path) {
                                 return shouldMap;
                             }
                         })
@@ -128,6 +126,7 @@ public class SpecialMappingTest {
         o.setFirstName("Arno");
         o.setLastName("Haase");
 
+        shouldMap = true;
         final ClassA mapped1 = new ClassA();
         mapped1.setFirstName("old first name");
         mapper.map(o, mapped1);

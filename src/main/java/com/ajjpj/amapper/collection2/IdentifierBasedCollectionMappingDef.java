@@ -73,6 +73,9 @@ public class IdentifierBasedCollectionMappingDef implements AObjectMappingDef<Ob
         }
 
         final Equiv equiv = new Equiv(sourceColl, targetColl, types, worker.getIdentifierExtractor());
+        System.out.println(equiv);
+        System.out.println(equiv.equiv.containsKey("a"));
+        System.out.println(equiv.equiv.get("a") == "a");
 
         // now apply the changes to the target collection
         targetColl.removeAll(equiv.targetWithoutSource);
@@ -86,6 +89,7 @@ public class IdentifierBasedCollectionMappingDef implements AObjectMappingDef<Ob
         for (Map.Entry<Object, Object> e: equiv.equiv.entrySet()) {
             final APath elPath = ACollectionMappingTools.elementPath(path, worker.getIdentifierExtractor().uniqueIdentifier(e.getKey(), types));
             final AOption<Object> tc = worker.map(elPath, e.getKey(), e.getValue(), elementTypes, context);
+            System.out.println(tc + ": " + (tc.get() == "a"));
 
             if(tc.isEmpty()) {
                 targetColl.remove(e.getValue());
@@ -134,6 +138,11 @@ public class IdentifierBasedCollectionMappingDef implements AObjectMappingDef<Ob
                 }
             }
             return AOption.none();
+        }
+
+        @Override
+        public String toString() {
+            return "Equiv{" + sourceWithoutTarget + " / " + targetWithoutSource + " | " + equiv + "}";
         }
     }
 

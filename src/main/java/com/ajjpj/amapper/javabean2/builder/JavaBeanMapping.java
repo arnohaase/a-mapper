@@ -5,17 +5,26 @@ import com.ajjpj.amapper.javabean2.JavaBeanType;
 import com.ajjpj.amapper.javabean2.JavaBeanTypes;
 import com.ajjpj.amapper.javabean2.builder.qualifier.AAnnotationBasedQualifierExtractor;
 import com.ajjpj.amapper.javabean2.builder.qualifier.AQualifierExtractor;
-import com.ajjpj.amapper.javabean2.propbased.APartialBeanMapping;
-import com.ajjpj.amapper.javabean2.propbased.APropertyBasedObjectMappingDef;
-import com.ajjpj.amapper.javabean2.propbased.ASourceAndTargetProp;
+import com.ajjpj.amapper.javabean2.propbased.*;
 import com.ajjpj.amapper.javabean2.propbased.accessors.APropertyAccessor;
 
 import java.util.*;
 
 /**
+ * This class is actually a builder for Java Bean mapping defs. It is part of the most widely-used public API however,
+ *  and therefore a simple and intuitive name was chosen.<p />
+ *
+ * To use it, create an instance by calling the static create() method with 'source' and 'target' types. 'Source' and
+ *  'target' are just labels to readily identify the two sides of the mapping - a single instance of JavaBeanMapping
+ *  keeps track of mappings in both directions, and registering it with a JavaBeanMapperBuilder instance registers
+ *  mappings in both directions.<p />
+ *
+ * By default, no properties are registered for mapping. If you want properties with matching names to be mapped,
+ *  call <code>withMatchingPropsMappings()</code>.
+ *
  * @author arno
  */
-public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> {
+public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag to create only a unidirectional mapping?
     private final Class<S> sourceCls;
     private final Class<T> targetCls;
 
@@ -187,7 +196,6 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> {
         return addBackwardsOneWayMapping(sourceExpression, sourceType, targetExpression, targetType, isDeferred);
     }
 
-
     public JavaBeanMapping<S,T,H> makeOneWay(String sourceExpression) {
         for(Iterator<APartialBeanMapping<T,S,?>> iter=backwardProps.iterator(); iter.hasNext(); ) {
             if(iter.next().getTargetName().equals(sourceExpression)) {
@@ -216,6 +224,70 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> {
         return this;
     }
 
+    @SuppressWarnings("unchecked")
+    public JavaBeanMapping<S,T,H> withForwardGuardBySourceExpression(String sourceExpression, AGuardCondition<S,T,?> guard) {
+        final List<APartialBeanMapping<S, T, Object>> replacements = new ArrayList<APartialBeanMapping<S, T, Object>>();
+
+        for(Iterator<APartialBeanMapping<S, T, ?>> iter = forwardProps.iterator(); iter.hasNext(); ) {
+            final APartialBeanMapping<S, T, ?> cur = iter.next();
+            if(cur.getSourceName().equals(sourceExpression)) {
+                iter.remove();
+                replacements.add(new AGuardedPartialMapping<S, T, Object>((APartialBeanMapping) cur, (AGuardCondition) guard));
+            }
+        }
+
+        forwardProps.addAll(replacements);
+        return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public JavaBeanMapping<S,T,H> withForwardGuardByTargetExpression(String targetExpression, AGuardCondition<S,T,?> guard) {
+        final List<APartialBeanMapping<S, T, Object>> replacements = new ArrayList<APartialBeanMapping<S, T, Object>>();
+
+        for(Iterator<APartialBeanMapping<S, T, ?>> iter = forwardProps.iterator(); iter.hasNext(); ) {
+            final APartialBeanMapping<S, T, ?> cur = iter.next();
+            if(cur.getTargetName().equals(targetExpression)) {
+                iter.remove();
+                replacements.add(new AGuardedPartialMapping<S, T, Object>((APartialBeanMapping) cur, (AGuardCondition) guard));
+            }
+        }
+
+        forwardProps.addAll(replacements);
+        return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public JavaBeanMapping<S,T,H> withBackwardGuardBySourceExpression(String sourceExpression, AGuardCondition<T,S,?> guard) {
+        final List<APartialBeanMapping<T, S, Object>> replacements = new ArrayList<APartialBeanMapping<T, S, Object>>();
+
+        for(Iterator<APartialBeanMapping<T, S, ?>> iter = backwardProps.iterator(); iter.hasNext(); ) {
+            final APartialBeanMapping<T, S, ?> cur = iter.next();
+            if(cur.getSourceName().equals(sourceExpression)) {
+                iter.remove();
+                replacements.add(new AGuardedPartialMapping<T, S, Object>((APartialBeanMapping) cur, (AGuardCondition) guard));
+            }
+        }
+
+        backwardProps.addAll(replacements);
+        return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public JavaBeanMapping<S,T,H> withBackwardGuardByTargetExpression(String targetExpression, AGuardCondition<T,S,?> guard) {
+        final List<APartialBeanMapping<T, S, Object>> replacements = new ArrayList<APartialBeanMapping<T, S, Object>>();
+
+        for(Iterator<APartialBeanMapping<T, S, ?>> iter = backwardProps.iterator(); iter.hasNext(); ) {
+            final APartialBeanMapping<T, S, ?> cur = iter.next();
+            if(cur.getTargetName().equals(targetExpression)) {
+                iter.remove();
+                replacements.add(new AGuardedPartialMapping<T, S, Object>((APartialBeanMapping) cur, (AGuardCondition) guard));
+            }
+        }
+
+        backwardProps.addAll(replacements);
+        return this;
+    }
+
     public Class<S> getSourceClass() {
         return sourceCls;
     }
@@ -234,31 +306,3 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> {
     }
 }
 
-//        def withForwardGuardBySourceExpression(sourceExpr: String, shouldMap: ShouldMap[S,T]) = {
-//        forwardProps = forwardProps.map (_ match {
-//        case p if p.sourceName == sourceExpr => new GuardedPartialMapping(p, shouldMap)
-//        case p => p
-//        })
-//        this
-//        }
-//        def withForwardGuardByTargetExpression(targetExpr: String, shouldMap: ShouldMap[S,T]) = {
-//        forwardProps = forwardProps.map (_ match {
-//        case p if p.targetName == targetExpr => new GuardedPartialMapping(p, shouldMap)
-//        case p => p
-//        })
-//        this
-//        }
-//        def withBackwardGuardBySourceExpression(sourceExpr: String, shouldMap: ShouldMap[T,S]) = {
-//        backwardProps = backwardProps.map (_ match {
-//        case p if p.sourceName == sourceExpr => new GuardedPartialMapping(p, shouldMap)
-//        case p => p
-//        })
-//        this
-//        }
-//        def withBackwardGuardByTargetExpression(targetExpr: String, shouldMap: ShouldMap[T,S]) = {
-//        backwardProps = backwardProps.map (_ match {
-//        case p if p.targetName == targetExpr => new GuardedPartialMapping(p, shouldMap)
-//        case p => p
-//        })
-//        this
-//        }
