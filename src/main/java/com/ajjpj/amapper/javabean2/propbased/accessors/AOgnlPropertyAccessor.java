@@ -25,8 +25,6 @@ public class AOgnlPropertyAccessor implements APropertyAccessor {
         this.tpe = tpe;
         this.sourceQualifier = sourceQualifier;
         this.targetQualifier = targetQualifier;
-
-
     }
 
     private static boolean guessWritable(Class<?> parentClass, Object parsedExpr) {
@@ -71,5 +69,10 @@ public class AOgnlPropertyAccessor implements APropertyAccessor {
 
     @Override public void set(Object o, Object newValue) throws Exception {
         Ognl.setValue(parsedExpr, o, newValue);
+    }
+
+    @Override
+    public String toString() {
+        return "AOgnlPropertyAccessor{" + name + "}";
     }
 }

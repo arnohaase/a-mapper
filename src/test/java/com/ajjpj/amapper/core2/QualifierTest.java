@@ -2,8 +2,6 @@ package com.ajjpj.amapper.core2;
 
 import com.ajjpj.amapper.classes.WithQualifiers;
 import com.ajjpj.amapper.classes.WithoutQualifiers;
-import com.ajjpj.amapper.core2.AMapperDiffWorker;
-import com.ajjpj.amapper.core2.AMapperWorker;
 import com.ajjpj.amapper.core2.diff.ADiffBuilder;
 import com.ajjpj.amapper.core2.path.APath;
 import com.ajjpj.amapper.core2.tpe.AQualifiedSourceAndTargetType;
@@ -14,7 +12,6 @@ import com.ajjpj.amapper.javabean2.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean2.mappingdef.AbstractJavaBeanValueMappingDef;
 import com.ajjpj.amapper.util.coll.AMap;
 import org.junit.Test;
-import scala.collection.immutable.Map;
 
 import static org.junit.Assert.assertEquals;
 

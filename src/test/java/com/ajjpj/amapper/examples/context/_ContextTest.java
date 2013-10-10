@@ -1,8 +1,8 @@
 package com.ajjpj.amapper.examples.context;
 
-import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
-import com.ajjpj.amapper.javabean.japi.JavaBeanMapperBuilder;
-import com.ajjpj.amapper.javabean.japi.JavaBeanMapper;
+import com.ajjpj.amapper.javabean2.JavaBeanMapper;
+import com.ajjpj.amapper.javabean2.builder.JavaBeanMapperBuilder;
+import com.ajjpj.amapper.javabean2.builder.JavaBeanMapping;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -13,7 +13,7 @@ import java.util.Currency;
  */
 public class _ContextTest {
     @Test
-    public void testContext() {
+    public void testContext() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withValueMapping(new DoubleToMoneyMapping())
                 .withBeanMapping(JavaBeanMapping.create(NormalizedInvoice.class, VerboseInvoice.class).withMatchingPropsMappings())

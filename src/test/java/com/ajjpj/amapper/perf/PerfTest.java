@@ -1,9 +1,8 @@
 package com.ajjpj.amapper.perf;
 
 import com.ajjpj.amapper.core2.exclog.AMapperLogger;
-import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
-import com.ajjpj.amapper.javabean.japi.JavaBeanMapper;
-import com.ajjpj.amapper.javabean.japi.JavaBeanMapperBuilder;
+import com.ajjpj.amapper.javabean2.JavaBeanMapper;
+import com.ajjpj.amapper.javabean2.builder.JavaBeanMapperBuilder;
 import com.ajjpj.amapper.javabean2.mappingdef.BuiltinCollectionMappingDefs;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,15 +18,11 @@ import java.util.Queue;
 
 @Ignore
 public class PerfTest extends Assert {
-    private final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withBeanMapping(JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
-            .build();
-
-    private final com.ajjpj.amapper.javabean2.JavaBeanMapper mapper2;
+    private final JavaBeanMapper mapper2;
 
     {
         try {
-            mapper2 = com.ajjpj.amapper.javabean2.builder.JavaBeanMapperBuilder.create()
+            mapper2 = JavaBeanMapperBuilder.create()
                     .withLogger(AMapperLogger.StdOut)
                     .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
                     .withBeanMapping(com.ajjpj.amapper.javabean2.builder.JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
@@ -258,20 +253,6 @@ public class PerfTest extends Assert {
 	}
 
     @Test
-    public void testMapper() throws Exception {
-        for (int i=0; i<100; i++) {
-            System.out.print(".");
-            copyWithMapper(a);
-        }
-        System.out.println();
-
-        final long start = System.currentTimeMillis();
-        final A copied = copyWithMapper(a);
-        final long end = System.currentTimeMillis();
-        System.out.println("Mapper: \t" + (end - start) + "ms: \t\t" + copied);
-    }
-
-    @Test
     public void testMapper2() throws Exception {
         for (int i=0; i<100; i++) {
             System.out.print(".");
@@ -285,10 +266,6 @@ public class PerfTest extends Assert {
         System.out.println("Mapper 2: \t" + (end - start) + "ms: \t\t" + copied);
     }
 
-
-    private A copyWithMapper(A orig) {
-        return mapper.map(orig, A.class);
-    }
 
     private A copyWithMapper2(A orig) throws Exception {
         return mapper2.map(orig, A.class);

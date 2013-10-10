@@ -1,7 +1,6 @@
 package com.ajjpj.amapper.javabean2;
 
 import com.ajjpj.amapper.classes.ForTypeTests;
-import com.ajjpj.amapper.javabean.SimpleJavaBeanType;
 import org.junit.Test;
 
 import java.lang.reflect.Type;

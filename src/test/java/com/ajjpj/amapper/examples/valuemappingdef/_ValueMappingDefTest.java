@@ -1,19 +1,19 @@
 package com.ajjpj.amapper.examples.valuemappingdef;
 
-
-import com.ajjpj.amapper.javabean.japi.JavaBeanMapper;
-import com.ajjpj.amapper.javabean.japi.JavaBeanMapperBuilder;
+import com.ajjpj.amapper.javabean2.JavaBeanMapper;
+import com.ajjpj.amapper.javabean2.builder.JavaBeanMapperBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import java.util.Date;
+
 
 /**
  * @author arno
  */
 public class _ValueMappingDefTest {
     @Test
-    public void testValueMapping() {
+    public void testValueMapping() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withValueMapping(new DateToLongValueMappingDef())
                 .build();

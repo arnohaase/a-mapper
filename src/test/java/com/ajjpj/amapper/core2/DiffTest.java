@@ -130,8 +130,6 @@ public class DiffTest {
         final ADiff diff = mapper.diff(s1, s2, DiffSource.class, DiffTarget.class);
         assertEquals(1, diff.getElements().size());
 
-        System.out.println(diff.getElements());
-
         assertEquals(Integer.valueOf(123),        diff.getSingle("targetChild.targetNum").get().oldValue);
         assertEquals(Integer.valueOf(124),        diff.getSingle("targetChild.targetNum").get().newValue);
         assertEquals(false,                       diff.getSingle("targetChild.targetNum").get().isDerived);

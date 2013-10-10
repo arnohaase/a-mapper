@@ -1,21 +1,21 @@
 package com.ajjpj.amapper.examples.doubleToBigDecimalQualifier;
 
-
-import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
-import com.ajjpj.amapper.javabean.japi.JavaBeanMapper;
-import com.ajjpj.amapper.javabean.japi.JavaBeanMapperBuilder;
+import com.ajjpj.amapper.javabean2.JavaBeanMapper;
+import com.ajjpj.amapper.javabean2.builder.JavaBeanMapperBuilder;
+import com.ajjpj.amapper.javabean2.builder.JavaBeanMapping;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 
+
 /**
  * @author arno
  */
 public class _QualifierTest {
     @Test
-    public void testQualifier() {
+    public void testQualifier() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withValueMapping(new DoubleToBigDecimalForCurrencyMappingDef())
                 .withValueMapping(new DoubleToBigDecimalWithRoundingMappingDef())
