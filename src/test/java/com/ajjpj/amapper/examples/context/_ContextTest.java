@@ -1,8 +1,8 @@
 package com.ajjpj.amapper.examples.context;
 
-import com.ajjpj.amapper.javabean2.JavaBeanMapper;
-import com.ajjpj.amapper.javabean2.builder.JavaBeanMapperBuilder;
-import com.ajjpj.amapper.javabean2.builder.JavaBeanMapping;
+import com.ajjpj.amapper.javabean.JavaBeanMapper;
+import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
+import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

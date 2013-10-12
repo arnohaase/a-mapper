@@ -1,12 +1,12 @@
 package com.ajjpj.amapper.examples.doubleToBigDecimalQualifier;
 
-import com.ajjpj.amapper.core2.AMapperDiffWorker;
-import com.ajjpj.amapper.core2.AMapperWorker;
-import com.ajjpj.amapper.core2.AValueMappingDef;
-import com.ajjpj.amapper.core2.diff.ADiffBuilder;
-import com.ajjpj.amapper.core2.path.APath;
-import com.ajjpj.amapper.core2.tpe.AQualifiedSourceAndTargetType;
-import com.ajjpj.amapper.javabean2.JavaBeanTypes;
+import com.ajjpj.amapper.core.AMapperDiffWorker;
+import com.ajjpj.amapper.core.AMapperWorker;
+import com.ajjpj.amapper.core.AValueMappingDef;
+import com.ajjpj.amapper.core.diff.ADiffBuilder;
+import com.ajjpj.amapper.core.path.APath;
+import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
+import com.ajjpj.amapper.javabean.JavaBeanTypes;
 import com.ajjpj.amapper.util.coll.AMap;
 
 import java.math.BigDecimal;

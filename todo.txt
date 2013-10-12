@@ -1,9 +1,5 @@
 todo
 ----
-* cross cutting
-  * generic CompositeCanHandle[T <: CanHandle]?
-  * log exception including path in worker --> configurable: log and maintain old exception, wrap, ...
-
 * tests
   * deferred, esp. for diff
   * child referenced by several parents
@@ -20,11 +16,9 @@ todo
   * all annotations as qualifiers?
   * validation?
 
-
 * features
   * list and set mapping for Java Bean mappings by default
   * "list as set" (--> actively remove target duplicates)
-  * exception handling
   * warn if an object has several "parents"
     * how to handle several "dealer refs" well? collections with duplicates?
   * for java beans / first shot
@@ -47,14 +41,12 @@ todo
   * transforming case classes / immutable structures
   * separate 'transformation' step between source and target access?
 
-* admin
-  * upload to maven central
-
 * documentation
+  * exception handling: callbacks throw 'Exception', wrapped in AMapperException --> path information of origin
+
   * no write-only properties - old value is passed into the mapping defs
   * MappingDefTools.*
 
-  * Scala / Java API in parallel
   * Java Bean mapping: sourceCls == targetClass --> only 'forward' mapping is registered
   * examples for qualifiers
     * 'list' mapping strategy

@@ -1,9 +1,9 @@
 package com.ajjpj.amapper.perf;
 
-import com.ajjpj.amapper.core2.exclog.AMapperLogger;
-import com.ajjpj.amapper.javabean2.JavaBeanMapper;
-import com.ajjpj.amapper.javabean2.builder.JavaBeanMapperBuilder;
-import com.ajjpj.amapper.javabean2.mappingdef.BuiltinCollectionMappingDefs;
+import com.ajjpj.amapper.core.exclog.AMapperLogger;
+import com.ajjpj.amapper.javabean.JavaBeanMapper;
+import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
+import com.ajjpj.amapper.javabean.mappingdef.BuiltinCollectionMappingDefs;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -25,7 +25,7 @@ public class PerfTest extends Assert {
             mapper2 = JavaBeanMapperBuilder.create()
                     .withLogger(AMapperLogger.StdOut)
                     .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
-                    .withBeanMapping(com.ajjpj.amapper.javabean2.builder.JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
+                    .withBeanMapping(com.ajjpj.amapper.javabean.builder.JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
                     .build();
         } catch (Exception e) {
             throw new RuntimeException(e);

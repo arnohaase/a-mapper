@@ -1,7 +1,7 @@
 package com.ajjpj.amapper.examples.valuemappingdef;
 
-import com.ajjpj.amapper.javabean2.JavaBeanMapper;
-import com.ajjpj.amapper.javabean2.builder.JavaBeanMapperBuilder;
+import com.ajjpj.amapper.javabean.JavaBeanMapper;
+import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
