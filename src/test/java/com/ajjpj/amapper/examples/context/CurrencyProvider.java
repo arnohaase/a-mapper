@@ -1,7 +1,7 @@
 package com.ajjpj.amapper.examples.context;
 
 
-import com.ajjpj.amapper.javabean.japi.AContextMarker;
+import com.ajjpj.amapper.javabean.annotation.AContextMarker;
 
 import java.util.Currency;
 

@@ -1,4 +1,4 @@
-package com.ajjpj.amapper.javabean.japi;
+package com.ajjpj.amapper.javabean.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

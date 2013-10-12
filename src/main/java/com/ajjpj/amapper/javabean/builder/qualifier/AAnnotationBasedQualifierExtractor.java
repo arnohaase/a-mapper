@@ -1,7 +1,7 @@
 package com.ajjpj.amapper.javabean.builder.qualifier;
 
 import com.ajjpj.amapper.core.tpe.AQualifier;
-import com.ajjpj.amapper.javabean.japi.AQualifierAnnotation;
+import com.ajjpj.amapper.javabean.annotation.AQualifierAnnotation;
 import com.ajjpj.amapper.util.coll.AHashMap;
 import com.ajjpj.amapper.util.coll.AMap;
 

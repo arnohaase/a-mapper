@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.classes;
 
-import com.ajjpj.amapper.javabean.japi.DeferredProperty;
+import com.ajjpj.amapper.javabean.annotation.DeferredProperty;
 
 /**
  * @author arno

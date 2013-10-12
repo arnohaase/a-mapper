@@ -2,7 +2,7 @@ package com.ajjpj.amapper.javabean;
 
 import com.ajjpj.amapper.core.AContextExtractor;
 import com.ajjpj.amapper.core.tpe.AType;
-import com.ajjpj.amapper.javabean.japi.AContextMarker;
+import com.ajjpj.amapper.javabean.annotation.AContextMarker;
 import com.ajjpj.amapper.util.coll.AList;
 import com.ajjpj.amapper.util.coll.AMap;
 

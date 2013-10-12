@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.examples.doubleToBigDecimalQualifier;
 
-import com.ajjpj.amapper.javabean.japi.AQualifierAnnotation;
+import com.ajjpj.amapper.javabean.annotation.AQualifierAnnotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

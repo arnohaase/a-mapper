@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.classes;
 
-import com.ajjpj.amapper.javabean.japi.AContextMarker;
+import com.ajjpj.amapper.javabean.annotation.AContextMarker;
 
 
 @AContextMarker

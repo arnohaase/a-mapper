@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.javabean.builder;
 
-import com.ajjpj.amapper.javabean.japi.DeferredProperty;
+import com.ajjpj.amapper.javabean.annotation.DeferredProperty;
 
 import java.lang.reflect.AnnotatedElement;
 
