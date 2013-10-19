@@ -88,14 +88,89 @@ public class AMethodPathBasedPropertyAccessor implements APropertyAccessor {
         finalSetter.invoke(cur, newValue);
     }
 
+    private boolean hasNullSafeSegment() {
+        for(Step step: steps) {
+            if(step.isNullSafe()) {
+                return true;
+            }
+        }
+        return isFinalStepNullSafe;
+    }
+
     @Override
     public ACodeSnippet javaCodeForGet(ACodeSnippet parent) throws Exception {
-        throw new UnsupportedOperationException("TODO");
+        final StringBuilder code = new StringBuilder();
+
+        if(hasNullSafeSegment()) {
+            code.append("((" + finalGetter.getReturnType().getName() + ")(new java.util.concurrent.Callable() {\n");
+            code.append("public Object call() {\n");
+
+            String prevVarName = parent.getCode();
+            for(Step step: steps) {
+                if(step.isNullSafe()) {
+                    code.append("if(" + prevVarName + " == null) return null;\n");
+                }
+                final String varName = ACodeSnippet.uniqueIdentifier();
+                code.append("final " + step.getGetter().getReturnType().getName() + " " + varName + " = " + prevVarName + "." + step.getGetter().getName() + "();\n");
+                prevVarName = varName;
+            }
+
+            if(isFinalStepNullSafe) {
+                code.append("if(" + prevVarName + " == null) return null;\n");
+            }
+            code.append("return " + prevVarName + "." + finalGetter.getName() + "();\n");
+
+            code.append("}\n");
+            code.append("}).call())");
+        }
+        else {
+            code.append(parent.getCode());
+            for(Step step: steps) {
+                code.append("." + step.getGetter().getName() + "()");
+            }
+
+            code.append("." + finalGetter.getName() + "()");
+        }
+
+        return new ACodeSnippet(code.toString());
     }
 
     @Override
     public ACodeSnippet javaCodeForSet(ACodeSnippet parent, ACodeSnippet newValue) throws Exception {
-        throw new UnsupportedOperationException("TODO");
+        final StringBuilder code = new StringBuilder();
+
+        if(hasNullSafeSegment()) {
+            code.append("new java.util.concurrent.Callable() {\n");
+            code.append("public Object call() {\n");
+            String prevVarName = parent.getCode();
+            for(Step step: steps) {
+                if(step.isNullSafe()) {
+                    code.append("if(" + prevVarName + " == null) return null;\n");
+                }
+                final String varName = ACodeSnippet.uniqueIdentifier();
+                code.append("final " + step.getGetter().getReturnType().getName() + " " + varName + " = " + prevVarName + "." + step.getGetter().getName() + "();\n");
+                prevVarName = varName;
+            }
+
+            if(isFinalStepNullSafe) {
+                code.append("if(" + prevVarName + " == null) return null;\n");
+            }
+            code.append(prevVarName + "." + finalSetter.getName() + "(" + newValue.getCode() + ");\n");
+            code.append("return null;\n");
+
+            code.append("}\n");
+            code.append("}.call()");
+        }
+        else {
+            code.append(parent.getCode());
+            for(Step step: steps) {
+                code.append("." + step.getGetter().getName() + "()");
+            }
+
+            code.append("." + finalSetter.getName() + "(" + newValue.getCode() + ")");
+        }
+
+        return new ACodeSnippet(code.toString());
     }
 
     public static class Step {

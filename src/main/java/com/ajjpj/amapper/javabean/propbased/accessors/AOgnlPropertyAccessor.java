@@ -1,10 +1,14 @@
 package com.ajjpj.amapper.javabean.propbased.accessors;
 
 import com.ajjpj.amapper.core.compile.ACodeSnippet;
+import com.ajjpj.amapper.core.compile.AInjectedField;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
 import ognl.Ognl;
 import ognl.OgnlException;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * @author arno
@@ -72,14 +76,14 @@ public class AOgnlPropertyAccessor implements APropertyAccessor {
         Ognl.setValue(parsedExpr, o, newValue);
     }
 
-    @Override
-    public ACodeSnippet javaCodeForGet(ACodeSnippet parent) throws Exception {
-        throw new UnsupportedOperationException("TODO");
+    @Override public ACodeSnippet javaCodeForGet(ACodeSnippet parent) throws Exception {
+        final String ognlExprName = ACodeSnippet.uniqueIdentifier();
+        return new ACodeSnippet("ognl.Ognl.getValue(" + ognlExprName + ", " + parent.getCode() + ")", Collections.<String>emptyList(), Arrays.asList(new AInjectedField(ognlExprName, "Object", parsedExpr)));
     }
 
-    @Override
-    public ACodeSnippet javaCodeForSet(ACodeSnippet parent, ACodeSnippet newValue) throws Exception {
-        throw new UnsupportedOperationException("TODO");
+    @Override public ACodeSnippet javaCodeForSet(ACodeSnippet parent, ACodeSnippet newValue) throws Exception {
+        final String ognlExprName = ACodeSnippet.uniqueIdentifier();
+        return new ACodeSnippet("ognl.Ognl.setValue(" + ognlExprName + ", " + parent.getCode() + ", " + newValue.getCode() + ")", Collections.<String>emptyList(), Arrays.asList(new AInjectedField(ognlExprName, "Object", parsedExpr)));
     }
 
     @Override

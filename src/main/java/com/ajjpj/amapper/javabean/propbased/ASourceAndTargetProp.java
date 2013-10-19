@@ -102,7 +102,28 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
         final Collection<AInjectedField> injectedFields = new ArrayList<AInjectedField>();
 
         if(sourceProp.isDeferred()) {
-            throw new UnsupportedOperationException("TODO");
+            final String sourcePropName = ACodeSnippet.uniqueIdentifier();
+            final String targetPropName = ACodeSnippet.uniqueIdentifier();
+            injectedFields.add(new AInjectedField(sourcePropName, APropertyAccessor.class.getName(), sourceProp));
+            injectedFields.add(new AInjectedField(targetPropName, APropertyAccessor.class.getName(), targetProp));
+
+            final String typesVarName = ACodeSnippet.uniqueIdentifier();
+            injectedFields.add(new AInjectedField(typesVarName, AQualifiedSourceAndTargetType.class.getName(), types));
+
+            final String getterFunction0Name = ACodeSnippet.uniqueIdentifier();
+            code.appendLine(1, "final " + AFunction0.class.getName() + " " + getterFunction0Name + " = new " + AFunction0.class.getName() + "() {");
+            code.appendLine(2, "public Object apply() throws Exception {");
+            code.appendLine(3, "return " + targetPropName + ".get(" + target.getCode() + ");");
+            code.appendLine(2, "}");
+            code.appendLine(1, "};");
+
+            code.appendLine(1, "worker.mapDeferred (path.withChild(" + APathSegment.class.getName() + ".simple(\"" + getSourceName() + "\"))),");
+            code.appendLine(3, sourcePropName + ".get(" + source.getCode() + "), " + getterFunction0Name + ", " + typesVarName + ",");
+            code.appendLine(3, "new " + AVoidFunction1.class.getName() + "() {");
+            code.appendLine(4, "public void apply(Object o) throws Exception {");
+            code.appendLine(5, targetPropName + ".set(" + target.getCode() + ", o);");
+            code.appendLine(4, "}");
+            code.appendLine(3, "});");
         }
         else {
             final AOption<AValueMappingDef> vmOpt = compilationContext.tryGetValueMapping(types);
@@ -151,7 +172,7 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
         code.appendLine(1, "final Object " + oldTargetValueName + " = " + mergedCodeSnippet(targetProp.javaCodeForGet(target), supports, injectedFields) + ";");
         code.appendLine(1, "final " + AOption.class.getName() + " " + optName + " = worker.map(path.withChild(" + APathSegment.class.getName() + ".simple(\"" + getSourceName() + "\")), " +
                 mergedCodeSnippet(sourceProp.javaCodeForGet(source), supports, injectedFields) +
-                ", " + oldTargetValueName + ", " + injectedTypes + ", context);"); //TODO inlining of value mapping defs
+                ", " + oldTargetValueName + ", " + injectedTypes + ", context);");
         code.appendLine(1, "if (" + optName + ".isDefined() && " + optName + ".get() != " + oldTargetValueName + ") {");
         code.appendLine(2, mergedCodeSnippet(targetProp.javaCodeForSet(target, new ACodeSnippet("(" + sourceProp.getType().cls.getName() + ")" + optName + ".get()")), supports, injectedFields) + ";");
         code.appendLine(1, "}");

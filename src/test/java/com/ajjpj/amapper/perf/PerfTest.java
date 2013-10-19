@@ -6,16 +6,18 @@ import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinCollectionMappingDefs;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 
-//@Ignore
+@Ignore
 public class PerfTest extends Assert {
     private final JavaBeanMapper mapper;
     private final JavaBeanMapper mapperCompiled;
@@ -25,6 +27,7 @@ public class PerfTest extends Assert {
             mapper = JavaBeanMapperBuilder.create()
                     .withLogger(AMapperLogger.StdOut)
                     .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+//                    .withBeanMapping(com.ajjpj.amapper.javabean.builder.JavaBeanMapping.create(A.class, A.class).addMapping("children", List.class, A.class, "children", List.class, A.class))
                     .withBeanMapping(com.ajjpj.amapper.javabean.builder.JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
                     .build();
 

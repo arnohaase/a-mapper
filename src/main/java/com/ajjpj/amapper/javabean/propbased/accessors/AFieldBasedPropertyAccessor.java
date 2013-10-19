@@ -1,11 +1,14 @@
 package com.ajjpj.amapper.javabean.propbased.accessors;
 
 import com.ajjpj.amapper.core.compile.ACodeSnippet;
+import com.ajjpj.amapper.core.compile.AInjectedField;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Collections;
 
 
 /**
@@ -66,13 +69,13 @@ public class AFieldBasedPropertyAccessor implements APropertyAccessor {
         field.set(o, newValue);
     }
 
-    @Override
-    public ACodeSnippet javaCodeForGet(ACodeSnippet parent) throws Exception {
-        throw new UnsupportedOperationException("TODO");
+    @Override public ACodeSnippet javaCodeForGet(ACodeSnippet parent) throws Exception {
+        final String fieldName = ACodeSnippet.uniqueIdentifier();
+        return new ACodeSnippet(fieldName + ".get(" + parent.getCode() + ")", Collections.<String>emptyList(), Arrays.asList(new AInjectedField(fieldName, Field.class.getName(), field)));
     }
 
-    @Override
-    public ACodeSnippet javaCodeForSet(ACodeSnippet parent, ACodeSnippet newValue) throws Exception {
-        throw new UnsupportedOperationException("TODO");
+    @Override public ACodeSnippet javaCodeForSet(ACodeSnippet parent, ACodeSnippet newValue) throws Exception {
+        final String fieldName = ACodeSnippet.uniqueIdentifier();
+        return new ACodeSnippet(fieldName + ".set(" + parent.getCode() + ", " + newValue.getCode() + ")", Collections.<String>emptyList(), Arrays.asList(new AInjectedField(fieldName, Field.class.getName(), field)));
     }
 }

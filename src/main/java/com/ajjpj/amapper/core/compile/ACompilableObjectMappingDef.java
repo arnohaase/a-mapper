@@ -27,7 +27,6 @@ import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
  * @author arno
  */
 public interface ACompilableObjectMappingDef {
-//TODO ???    Object getInstanceIdentifier(AQualifiedSourceAndTargetType types);
     ACodeSnippet getSourceTypeRepresentation(AQualifiedSourceAndTargetType types);
     ACodeSnippet getTargetTypeRepresentation(AQualifiedSourceAndTargetType types);
 
