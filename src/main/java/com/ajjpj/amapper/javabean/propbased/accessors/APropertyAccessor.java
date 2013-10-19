@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.javabean.propbased.accessors;
 
+import com.ajjpj.amapper.core.compile.ACodeSnippet;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
 
@@ -22,4 +23,7 @@ public interface APropertyAccessor {
 
     Object get(Object o) throws Exception;
     void set(Object o, Object newValue) throws Exception;
+
+    ACodeSnippet javaCodeForGet(ACodeSnippet parent) throws Exception;
+    ACodeSnippet javaCodeForSet(ACodeSnippet parent, ACodeSnippet newValue) throws Exception;
 }

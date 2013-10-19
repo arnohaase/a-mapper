@@ -51,6 +51,9 @@ public class JavaBeanMapperImpl<H extends JavaBeanMappingHelper> implements Java
     }
 
     @Override public <T> T map(Object source, Class<T> targetClass) throws Exception {
+        if(targetClass == null) {
+            throw new IllegalArgumentException("no target class");
+        }
         if(source == null) {
             return null;
         }

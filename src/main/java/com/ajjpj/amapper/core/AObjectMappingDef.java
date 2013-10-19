@@ -20,7 +20,7 @@ public interface AObjectMappingDef <S, T, H> extends CanHandleSourceAndTarget {
      *         The only context where a value of 'false' makes sense is if a value (e.g. a string) is mapped into an existing
      *         data structure with object identity (e.g. a map).<p />
      *
-     *         If in doubt, return true.
+     *         If you didn't understand this, return true.
      */
     boolean isCacheable();
 

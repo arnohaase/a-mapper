@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.javabean.propbased.accessors;
 
+import com.ajjpj.amapper.core.compile.ACodeSnippet;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
 import ognl.Ognl;
@@ -69,6 +70,16 @@ public class AOgnlPropertyAccessor implements APropertyAccessor {
 
     @Override public void set(Object o, Object newValue) throws Exception {
         Ognl.setValue(parsedExpr, o, newValue);
+    }
+
+    @Override
+    public ACodeSnippet javaCodeForGet(ACodeSnippet parent) throws Exception {
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    @Override
+    public ACodeSnippet javaCodeForSet(ACodeSnippet parent, ACodeSnippet newValue) throws Exception {
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override

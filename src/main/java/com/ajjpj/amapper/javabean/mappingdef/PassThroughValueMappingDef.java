@@ -1,9 +1,10 @@
 package com.ajjpj.amapper.javabean.mappingdef;
 
-
 import com.ajjpj.amapper.core.AMapperDiffWorker;
 import com.ajjpj.amapper.core.AMapperWorker;
 import com.ajjpj.amapper.core.AValueMappingDef;
+import com.ajjpj.amapper.core.compile.ACodeSnippet;
+import com.ajjpj.amapper.core.compile.AInlineableValueMappingDef;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;
 import com.ajjpj.amapper.core.diff.ADiffElement;
 import com.ajjpj.amapper.core.path.APath;
@@ -13,10 +14,11 @@ import com.ajjpj.amapper.javabean.JavaBeanTypes;
 import com.ajjpj.amapper.util.coll.AEquality;
 import com.ajjpj.amapper.util.coll.AMap;
 
+
 /**
  * @author arno
  */
-public class PassThroughValueMappingDef<T> implements AValueMappingDef<T,T,Object> { //TODO show this in the documentation
+public class PassThroughValueMappingDef<T> implements AValueMappingDef<T,T,Object>, AInlineableValueMappingDef { //TODO show this in the documentation
     protected final JavaBeanType<T> tpe;
 
     PassThroughValueMappingDef(Class<T> cls) {
@@ -35,5 +37,16 @@ public class PassThroughValueMappingDef<T> implements AValueMappingDef<T,T,Objec
         if(! AEquality.EQUALS.equals(sourceOld, sourceNew)) {
             diff.add(ADiffElement.attribute(path, isDerived, sourceOld, sourceNew));
         }
+    }
+
+    @Override public ACodeSnippet javaCodeForMap(ACodeSnippet sourceValue, AQualifiedSourceAndTargetType types) {
+        return new ACodeSnippet(sourceValue.getCode());
+    }
+
+    @Override public ACodeSnippet javaCodeForDiff(ACodeSnippet sourceOld, ACodeSnippet sourceNew, AQualifiedSourceAndTargetType types) {
+        final String result = "if(! com.ajjpj.amapper.util.coll.AEquality.EQUALS.equals(" + sourceOld.getCode() + ", " + sourceNew.getCode() +
+                ") { diff.add(com.ajjpj.amapper.core.diff.ADiffElement.attribute(path, isDerived, " + sourceOld.getCode() + ", " + sourceNew.getCode() + "; }";
+
+        return new ACodeSnippet(result);
     }
 }

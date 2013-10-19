@@ -13,7 +13,7 @@ import java.util.*;
 public class SimpleJavaBeanMappingHelper implements JavaBeanMappingHelper{
     public static SimpleJavaBeanMappingHelper INSTANCE = new SimpleJavaBeanMappingHelper();
 
-    @Override public Object createInstance(JavaBeanType<?> sourceType, JavaBeanType<?> targetType) throws Exception {
+    @Override public Object createInstance(Object source, JavaBeanType<?> sourceType, JavaBeanType<?> targetType) throws Exception {
         return targetType.cls.newInstance();
     }
 
@@ -30,6 +30,7 @@ public class SimpleJavaBeanMappingHelper implements JavaBeanMappingHelper{
         return coll;
     }
 
+    @SuppressWarnings("unchecked")
     @Override public <T> Collection<T> createEmptyCollection(AQualifiedType tpe) throws Exception {
         if(tpe.tpe instanceof SingleParamBeanType) {
             final Class<?> collClass = ((SingleParamBeanType) tpe.tpe).cls;

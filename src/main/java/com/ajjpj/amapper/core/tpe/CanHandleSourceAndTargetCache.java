@@ -11,10 +11,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CanHandleSourceAndTargetCache<T extends CanHandleSourceAndTarget, R> {
     private final String notFoundMessage;
-    private final Iterable<T> all;
+    private final Iterable<? extends T> all;
     private final ConcurrentHashMap<AQualifiedSourceAndTargetType, AOption<R>> resolved = new ConcurrentHashMap<AQualifiedSourceAndTargetType, AOption<R>>();
 
-    public CanHandleSourceAndTargetCache(String notFoundMessage, Iterable<T> all) {
+    public CanHandleSourceAndTargetCache(String notFoundMessage, Iterable<? extends T> all) {
         this.notFoundMessage = notFoundMessage;
         this.all = all;
     }

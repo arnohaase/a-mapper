@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.javabean.propbased.accessors;
 
+import com.ajjpj.amapper.core.compile.ACodeSnippet;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
 
@@ -87,6 +88,15 @@ public class AMethodPathBasedPropertyAccessor implements APropertyAccessor {
         finalSetter.invoke(cur, newValue);
     }
 
+    @Override
+    public ACodeSnippet javaCodeForGet(ACodeSnippet parent) throws Exception {
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    @Override
+    public ACodeSnippet javaCodeForSet(ACodeSnippet parent, ACodeSnippet newValue) throws Exception {
+        throw new UnsupportedOperationException("TODO");
+    }
 
     public static class Step {
         private final Method getter;

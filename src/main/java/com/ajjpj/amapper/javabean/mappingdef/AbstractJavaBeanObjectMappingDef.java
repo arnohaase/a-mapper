@@ -33,7 +33,7 @@ public abstract class AbstractJavaBeanObjectMappingDef<S,T,H extends JavaBeanMap
             return null;
         }
         else {
-            final T target = targetRaw != null ? targetRaw : (T) worker.getHelpers().createInstance(sourceType, targetType);
+            final T target = targetRaw != null ? targetRaw : (T) worker.getHelpers().createInstance(source, sourceType, targetType);
             doMap(source, target, types, worker, context, path);
             return target;
         }

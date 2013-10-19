@@ -12,5 +12,5 @@ public interface JavaBeanMappingHelper extends ACollectionHelper {
      *  could e.g. lookup JPA entities by their primary key, causing the mapper to merge data into persistent data
      *  structures.
      */
-    Object createInstance(JavaBeanType<?> sourceType, JavaBeanType<?> targetType) throws Exception;
+    Object createInstance(Object source, JavaBeanType<?> sourceType, JavaBeanType<?> targetType) throws Exception;
 }

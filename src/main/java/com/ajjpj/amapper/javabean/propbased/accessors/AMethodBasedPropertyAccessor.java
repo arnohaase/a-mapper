@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.javabean.propbased.accessors;
 
+import com.ajjpj.amapper.core.compile.ACodeSnippet;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
 
@@ -57,6 +58,14 @@ public class AMethodBasedPropertyAccessor implements APropertyAccessor {
 
     @Override public void set(Object o, Object newValue) throws Exception {
         setter.invoke(o, newValue);
+    }
+
+    @Override public ACodeSnippet javaCodeForGet(ACodeSnippet parent) throws Exception {
+        return new ACodeSnippet(parent.getCode() + "." + getter.getName() + "()");
+    }
+
+    @Override public ACodeSnippet javaCodeForSet(ACodeSnippet parent, ACodeSnippet newValue) throws Exception {
+        return new ACodeSnippet(parent.getCode() + "." + setter.getName() + "(" + newValue.getCode() + ")");
     }
 
     @Override
