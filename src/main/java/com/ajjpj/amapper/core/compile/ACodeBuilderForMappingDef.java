@@ -60,9 +60,9 @@ class ACodeBuilderForMappingDef {
         code.appendLine(0, "}");
 
 
-        System.out.println("----------------------------------------");
-        System.out.println(code.build());
-        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+//        System.out.println("----------------------------------------");
+//        System.out.println(code.build());
+//        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 
 
         return code.build();

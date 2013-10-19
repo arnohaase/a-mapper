@@ -6,7 +6,6 @@ import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinCollectionMappingDefs;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -18,15 +17,22 @@ import java.util.Queue;
 
 //@Ignore
 public class PerfTest extends Assert {
-    private final JavaBeanMapper mapper2;
+    private final JavaBeanMapper mapper;
+    private final JavaBeanMapper mapperCompiled;
 
     {
         try {
-            mapper2 = JavaBeanMapperBuilder.create()
+            mapper = JavaBeanMapperBuilder.create()
                     .withLogger(AMapperLogger.StdOut)
                     .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
                     .withBeanMapping(com.ajjpj.amapper.javabean.builder.JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
                     .build();
+
+            mapperCompiled = JavaBeanMapperBuilder.create()
+                    .withLogger(AMapperLogger.StdOut)
+                    .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+                    .withBeanMapping(com.ajjpj.amapper.javabean.builder.JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
+                    .build(true);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -253,22 +259,39 @@ public class PerfTest extends Assert {
 	}
 
     @Test
-    public void testMapper2() throws Exception {
+    public void testMapper() throws Exception {
         for (int i=0; i<100; i++) {
             System.out.print(".");
-            copyWithMapper2(a);
+            copyWithMapper(a);
         }
         System.out.println();
 
         final long start = System.currentTimeMillis();
-        final A copied = copyWithMapper2(a);
+        final A copied = copyWithMapper(a);
         final long end = System.currentTimeMillis();
-        System.out.println("Mapper 2: \t" + (end - start) + "ms: \t\t" + copied);
+        System.out.println("Mapper: \t" + (end - start) + "ms: \t\t" + copied);
     }
 
+    @Test
+    public void testMapperCompiled() throws Exception {
+        for (int i=0; i<100; i++) {
+            System.out.print(".");
+            copyWithMapperCompiled(a);
+        }
+        System.out.println();
 
-    private A copyWithMapper2(A orig) throws Exception {
-        return mapper2.map(orig, A.class);
+        final long start = System.currentTimeMillis();
+        final A copied = copyWithMapperCompiled(a);
+        final long end = System.currentTimeMillis();
+        System.out.println("Mapper compiled: \t" + (end - start) + "ms: \t\t" + copied);
+    }
+
+    private A copyWithMapper(A orig) throws Exception {
+        return mapper.map(orig, A.class);
+    }
+
+    private A copyWithMapperCompiled(A orig) throws Exception {
+        return mapperCompiled.map(orig, A.class);
     }
 
 	private static void copyAttributesExplicit(A source, A target) {

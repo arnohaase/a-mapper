@@ -1,7 +1,10 @@
 package com.ajjpj.amapper.javabean.builder;
 
 import com.ajjpj.amapper.core.*;
+import com.ajjpj.amapper.core.exclog.AMapperException;
+import com.ajjpj.amapper.core.exclog.AMapperExceptionHandler;
 import com.ajjpj.amapper.core.exclog.AMapperLogger;
+import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.javabean.AnnotationBasedContextExtractor;
 import com.ajjpj.amapper.javabean.JavaBeanMapper;
@@ -107,15 +110,23 @@ public class JavaBeanMapperBuilder <H extends JavaBeanMappingHelper> {
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public JavaBeanMapper build() {
+        return build(false);
+    }
+
+    @SuppressWarnings("unchecked")
+    public JavaBeanMapper build(boolean compile) {
         Collections.reverse(objectMappings);
         Collections.reverse(valueMappings);
 
-        return new JavaBeanMapperImpl<H> (
-                objectMappings, valueMappings,
-                logger, helperFactory, identifierExtractor, contextExtractor,
-                preProcessors, postProcessors
-        );
+        try {
+            return new JavaBeanMapperImpl<H> (
+                    objectMappings, valueMappings,
+                    logger, helperFactory, identifierExtractor, contextExtractor,
+                    preProcessors, postProcessors, compile
+            );
+        } catch (Exception exc) {
+            return AMapperExceptionHandler.onError(exc, APath.EMPTY);
+        }
     }
 }

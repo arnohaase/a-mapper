@@ -22,15 +22,17 @@ import java.util.Set;
 public class JavaBeanMapperImpl<H extends JavaBeanMappingHelper> implements JavaBeanMapper {
     private final AMapper inner;
 
-    public JavaBeanMapperImpl(Iterable<AObjectMappingDef<?, ?, ? super H>> objectMappings,
-                              Iterable<AValueMappingDef <?, ?, ? super H>> valueMappings,
+    public JavaBeanMapperImpl(Collection<? extends AObjectMappingDef<?, ?, ? super H>> objectMappings,
+                              Collection<? extends AValueMappingDef <?, ?, ? super H>> valueMappings,
                               AMapperLogger logger,
                               AFunction0<H, RuntimeException> helperFactory,
                               AIdentifierExtractor identifierExtractor,
                               AContextExtractor contextExtractor,
-                              Iterable<APreProcessor> preProcessors,
-                              Iterable<APostProcessor> postProcessors) {
-        this.inner = new AMapperImpl<H> (objectMappings, valueMappings, logger, helperFactory, identifierExtractor, contextExtractor, preProcessors, postProcessors);
+                              Collection<? extends APreProcessor> preProcessors,
+                              Collection<? extends APostProcessor> postProcessors,
+                              boolean compile) throws Exception {
+        final AMapperImpl innerRaw = new AMapperImpl<H> (objectMappings, valueMappings, logger, helperFactory, identifierExtractor, contextExtractor, preProcessors, postProcessors);
+        this.inner = compile ? innerRaw.compile() : innerRaw;
     }
 
     @SuppressWarnings("unchecked")

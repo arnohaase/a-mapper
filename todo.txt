@@ -43,6 +43,8 @@ todo
 
 * documentation
   * exception handling: callbacks throw 'Exception', wrapped in AMapperException --> path information of origin
+  * compilation, API (AMapperImpl, Java Bean specific API)
+
 
   * no write-only properties - old value is passed into the mapping defs
   * MappingDefTools.*

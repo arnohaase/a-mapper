@@ -1,6 +1,7 @@
 package com.ajjpj.amapper.core.impl;
 
 import com.ajjpj.amapper.core.*;
+import com.ajjpj.amapper.core.compile.AMappingDefCompiler;
 import com.ajjpj.amapper.core.diff.ADiff;
 import com.ajjpj.amapper.core.exclog.AMapperLogger;
 import com.ajjpj.amapper.core.path.APath;
@@ -9,12 +10,15 @@ import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.core.tpe.AType;
 import com.ajjpj.amapper.core.tpe.CanHandleSourceAndTargetCache;
 import com.ajjpj.amapper.AMapper;
+import com.ajjpj.amapper.javabean.mappingdef.BuiltinValueMappingDefs;
 import com.ajjpj.amapper.util.coll.AHashMap;
 import com.ajjpj.amapper.util.coll.AMap;
 import com.ajjpj.amapper.util.coll.AOption;
 import com.ajjpj.amapper.util.func.AFunction0;
 import com.ajjpj.amapper.util.func.AVoidFunction0;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -33,13 +37,13 @@ public class AMapperImpl<H> implements AMapper {
     private final CanHandleSourceAndTargetCache<APreProcessor, APreProcessor> preProcessors;
     private final CanHandleSourceAndTargetCache<APostProcessor, APostProcessor> postProcessors;
 
-    public AMapperImpl(Iterable<AObjectMappingDef<?, ?, ? super H>> objectMappings,
-                       Iterable<AValueMappingDef<?, ?, ? super H>> valueMappings,
+    public AMapperImpl(Collection<? extends AObjectMappingDef<?, ?, ? super H>> objectMappings,
+                       Collection<? extends AValueMappingDef<?, ?, ? super H>> valueMappings,
                        AMapperLogger logger, AFunction0<H, RuntimeException> helperFactory,
                        AIdentifierExtractor identifierExtractor,
                        AContextExtractor contextExtractor,
-                       Iterable<APreProcessor> preProcessors,
-                       Iterable<APostProcessor> postProcessors) {
+                       Collection<? extends APreProcessor> preProcessors,
+                       Collection<? extends APostProcessor> postProcessors) {
         this.objectMappings = new CanHandleSourceAndTargetCache<AObjectMappingDef<?, ?, ? super H>, AObjectMappingDef<Object, Object, H>>("no object mapping found for ", objectMappings);
         this.valueMappings = new CanHandleSourceAndTargetCache<AValueMappingDef<?, ?, ? super H>, AValueMappingDef<Object, Object, H>>("no value mapping found for ", valueMappings);
         this.logger = logger;
@@ -72,6 +76,17 @@ public class AMapperImpl<H> implements AMapper {
         }
 
         return worker.getDiffResult();
+    }
+
+    /**
+     * @return a <em>new</em> instance of AMapper with "compiled" mapping defs
+     */
+    public AMapperImpl compile() throws Exception {
+        final AMappingDefCompiler compiler = new AMappingDefCompiler(objectMappings.getAll(), valueMappings.getAll());
+
+        return new AMapperImpl(compiler.getCompiledObjectMappingDefs(), valueMappings.getAll(), logger, helperFactory, identifierExtractor, contextExtractor, preProcessors.getAll(), postProcessors.getAll());
+
+
     }
 }
 

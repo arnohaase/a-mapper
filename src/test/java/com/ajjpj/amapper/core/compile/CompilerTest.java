@@ -28,19 +28,10 @@ import static org.junit.Assert.*;
 public class CompilerTest {
     @Test
     public void testCompile() throws Exception {
-        final APropertyBasedObjectMappingDef om = JavaBeanMapping.create(ClassA.class, ClassB.class).withMatchingPropsMappings().build();
-
-        final AMappingDefCompiler compiler = new AMappingDefCompiler(Arrays.asList(om), Arrays.asList(BuiltinValueMappingDefs.StringMappingDef));
-        final AObjectMappingDef compiled = compiler.getCompiledObjectMappingDefs().iterator().next();
-
-        assertTrue (compiled.canHandle(new AQualifiedSourceAndTargetType(JavaBeanTypes.create(ClassA.class), AQualifier.NO_QUALIFIER, JavaBeanTypes.create(ClassB.class), AQualifier.NO_QUALIFIER)));
-        assertFalse(compiled.canHandle(new AQualifiedSourceAndTargetType(JavaBeanTypes.create(ClassA.class), AQualifier.NO_QUALIFIER, JavaBeanTypes.create(ClassA.class), AQualifier.NO_QUALIFIER)));
-        assertFalse(compiled.canHandle(new AQualifiedSourceAndTargetType(JavaBeanTypes.create(ClassB.class), AQualifier.NO_QUALIFIER, JavaBeanTypes.create(ClassB.class), AQualifier.NO_QUALIFIER)));
-
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
-                .withObjectMapping(compiled)
-                .build();
+                .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class).withMatchingPropsMappings())
+                .build(true);
 
         final ClassA a = new ClassA();
         final ClassB b = mapper.map(a, ClassB.class);
@@ -49,10 +40,11 @@ public class CompilerTest {
 
     @Test
     public void testTodo() {
+        fail("TODO: debug logging of compiled mapping defs instead of System.out.println()");
         fail("TODO: java code for accessors: method path, field, ognl");
-        fail("TODO: inline inlineable value mapping defs");
         fail("TODO: deferred mapping for prop based");
         fail("TODO: diff");
+        fail("TODO: comprehensive tests");
     }
 }
 

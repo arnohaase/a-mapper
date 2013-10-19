@@ -4,6 +4,7 @@ import com.ajjpj.amapper.core.exclog.AMapperExceptionHandler;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.util.coll.AOption;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -11,10 +12,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CanHandleSourceAndTargetCache<T extends CanHandleSourceAndTarget, R> {
     private final String notFoundMessage;
-    private final Iterable<? extends T> all;
+    private final Collection<? extends T> all;
     private final ConcurrentHashMap<AQualifiedSourceAndTargetType, AOption<R>> resolved = new ConcurrentHashMap<AQualifiedSourceAndTargetType, AOption<R>>();
 
-    public CanHandleSourceAndTargetCache(String notFoundMessage, Iterable<? extends T> all) {
+    public CanHandleSourceAndTargetCache(String notFoundMessage, Collection<? extends T> all) {
         this.notFoundMessage = notFoundMessage;
         this.all = all;
     }
@@ -50,5 +51,9 @@ public class CanHandleSourceAndTargetCache<T extends CanHandleSourceAndTarget, R
             }
         }
         return AOption.none();
+    }
+
+    public Collection<? extends T> getAll() {
+        return all;
     }
 }
