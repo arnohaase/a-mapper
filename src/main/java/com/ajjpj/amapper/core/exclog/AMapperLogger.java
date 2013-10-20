@@ -25,6 +25,13 @@ public abstract class AMapperLogger {
     public void duplicateRegistration(APath path, Object s) {
         warn("The object " + s + " was visited twice while navigating primary references. Maybe one of the references should be deferred, maybe the object is just referenced from two 'parents' as a child.");
     }
+    public void generatedCompiledMappingDef(final String code) {
+        debug(new AStringFunction0() {
+            @Override public String apply() throws RuntimeException {
+                return "------------------------- Generated Code --------------------------\n" + code;
+            }
+        });
+    }
 
 
     public static AMapperLogger defaultLogger() {

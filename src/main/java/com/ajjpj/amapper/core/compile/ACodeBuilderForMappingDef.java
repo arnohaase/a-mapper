@@ -1,5 +1,7 @@
 package com.ajjpj.amapper.core.compile;
 
+import com.ajjpj.amapper.core.exclog.AMapperLogger;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -8,6 +10,8 @@ import java.util.Collection;
  */
 class ACodeBuilderForMappingDef {
     public static final String PACKAGE_NAME = "com.ajjpj.amapper.generated";
+
+    private final AMapperLogger logger;
 
     private final Collection<AInjectedField> injected = new ArrayList<AInjectedField>();
     private final Collection<String> supports = new ArrayList<String>();
@@ -19,8 +23,9 @@ class ACodeBuilderForMappingDef {
     private final String innerType;
     private final ACodeBuilder code = new ACodeBuilder(0);
 
-    ACodeBuilderForMappingDef(String innerType) {
+    ACodeBuilderForMappingDef(String innerType, AMapperLogger logger) {
         this.innerType = innerType;
+        this.logger = logger;
     }
 
     public void addInjectedFields(Collection<AInjectedField> injected) {
@@ -59,13 +64,9 @@ class ACodeBuilderForMappingDef {
 
         code.appendLine(0, "}");
 
-
-        System.out.println("----------------------------------------");
-        System.out.println(code.build());
-        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-
-
-        return code.build();
+        final String result = code.build();
+        logger.generatedCompiledMappingDef(result);
+        return result;
     }
 
     private void appendFieldDefs() {

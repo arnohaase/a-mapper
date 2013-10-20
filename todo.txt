@@ -17,8 +17,7 @@ todo
   * validation?
 
 * features
-  * debug logging of compiled mapping defs instead of System.out.println()
-  * list and set mapping for Java Bean mappings by default
+  * list and set mapping for Java Bean mappings by default?
   * "list as set" (--> actively remove target duplicates)
   * warn if an object has several "parents"
     * how to handle several "dealer refs" well? collections with duplicates?
@@ -36,7 +35,7 @@ todo
     * List --> Levenshtein
     * List --> "bag"
     * arrays
-  * map, diff, simulate, merge
+  * simulate, merge
   * streaming output
   * streaming input (?)
   * transforming case classes / immutable structures
