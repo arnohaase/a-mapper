@@ -250,7 +250,5 @@ public class CompilerTest {
         assertEquals(4, diff.getSingle("targetChild.targetAttrib2").get().newValue);
         assertEquals(true, diff.getSingle("targetChild.targetAttrib2").get().isDerived);
     }
-
-    //TODO is 'supports' ever used?
 }
 

@@ -99,7 +99,6 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
     @Override public ACodeSnippet javaCodeForMap(ACodeSnippet source, ACodeSnippet target, ACompilationContext compilationContext) throws Exception {
         final ACodeBuilder code = new ACodeBuilder(2);
 
-        final Collection<String> supports = new ArrayList<String>();
         final Collection<AInjectedField> injectedFields = new ArrayList<AInjectedField>();
 
         if(sourceProp.isDeferred()) {
@@ -134,9 +133,9 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
 
                 if(vm instanceof AInlineableValueMappingDef) {
                     final AInlineableValueMappingDef ivm = (AInlineableValueMappingDef) vm;
-                    final String getSource = mergedCodeSnippet(sourceProp.javaCodeForGet(source), supports, injectedFields);
-                    final String mapped = mergedCodeSnippet(ivm.javaCodeForMap(new ACodeSnippet(getSource), types), supports, injectedFields);
-                    final String setTarget = mergedCodeSnippet(targetProp.javaCodeForSet(target, new ACodeSnippet(mapped)), supports, injectedFields);
+                    final String getSource = mergedCodeSnippet(sourceProp.javaCodeForGet(source), injectedFields);
+                    final String mapped = mergedCodeSnippet(ivm.javaCodeForMap(new ACodeSnippet(getSource), types), injectedFields);
+                    final String setTarget = mergedCodeSnippet(targetProp.javaCodeForSet(target, new ACodeSnippet(mapped)), injectedFields);
                     code.appendLine(1, setTarget + ";");
                 }
                 else {
@@ -146,47 +145,45 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
                     final String vmName = ACodeSnippet.uniqueIdentifier();
                     injectedFields.add(new AInjectedField(vmName, AValueMappingDef.class.getName(), vm));
 
-                    final String getSource = mergedCodeSnippet(sourceProp.javaCodeForGet(source), supports, injectedFields);
+                    final String getSource = mergedCodeSnippet(sourceProp.javaCodeForGet(source), injectedFields);
                     final String invokeMap = vmName + ".map(" + getSource + ", " + injectedTypes + ", worker, context)";
                     final String cast = "((" + targetProp.getType().cls.getName() + ")" + invokeMap + ")";
-                    final String setTarget = mergedCodeSnippet(targetProp.javaCodeForSet(target, new ACodeSnippet(cast)), supports, injectedFields);
+                    final String setTarget = mergedCodeSnippet(targetProp.javaCodeForSet(target, new ACodeSnippet(cast)), injectedFields);
 
                     code.appendLine(1, setTarget + ";");
                 }
             }
             else {
-                javaCodeForObjectMapping(source, target, code, supports, injectedFields);
+                javaCodeForObjectMapping(source, target, code, injectedFields);
             }
         }
 
 
-        return new ACodeSnippet(code.build(), supports, injectedFields);
+        return new ACodeSnippet(code.build(), injectedFields);
     }
 
-    private void javaCodeForObjectMapping(ACodeSnippet source, ACodeSnippet target, ACodeBuilder code, Collection<String> supports, Collection<AInjectedField> injectedFields) throws Exception {
+    private void javaCodeForObjectMapping(ACodeSnippet source, ACodeSnippet target, ACodeBuilder code, Collection<AInjectedField> injectedFields) throws Exception {
         final String injectedTypes = ACodeSnippet.uniqueIdentifier();
         injectedFields.add(new AInjectedField(injectedTypes, AQualifiedSourceAndTargetType.class.getName(), types));
 
         final String oldTargetValueName = ACodeSnippet.uniqueIdentifier();
         final String optName = ACodeSnippet.uniqueIdentifier();
 
-        code.appendLine(1, "final Object " + oldTargetValueName + " = " + mergedCodeSnippet(targetProp.javaCodeForGet(target), supports, injectedFields) + ";");
+        code.appendLine(1, "final Object " + oldTargetValueName + " = " + mergedCodeSnippet(targetProp.javaCodeForGet(target), injectedFields) + ";");
         code.appendLine(1, "final " + AOption.class.getName() + " " + optName + " = worker.map(path.withChild(" + APathSegment.class.getName() + ".simple(\"" + getSourceName() + "\")), " +
-                mergedCodeSnippet(sourceProp.javaCodeForGet(source), supports, injectedFields) +
+                mergedCodeSnippet(sourceProp.javaCodeForGet(source), injectedFields) +
                 ", " + oldTargetValueName + ", " + injectedTypes + ", context);");
         code.appendLine(1, "if (" + optName + ".isDefined() && " + optName + ".get() != " + oldTargetValueName + ") {");
-        code.appendLine(2, mergedCodeSnippet(targetProp.javaCodeForSet(target, new ACodeSnippet("(" + targetProp.getType().cls.getName() + ")" + optName + ".get()")), supports, injectedFields) + ";");
+        code.appendLine(2, mergedCodeSnippet(targetProp.javaCodeForSet(target, new ACodeSnippet("(" + targetProp.getType().cls.getName() + ")" + optName + ".get()")), injectedFields) + ";");
         code.appendLine(1, "}");
     }
 
-    private String mergedCodeSnippet(ACodeSnippet code, Collection<String> supports, Collection<AInjectedField> injectedFields) {
-        supports.addAll(code.getSupports());
+    private String mergedCodeSnippet(ACodeSnippet code, Collection<AInjectedField> injectedFields) {
         injectedFields.addAll(code.getInjectedFields());
         return code.getCode();
     }
 
     @Override public ACodeSnippet javaCodeForDiff(ACodeSnippet sourceOld, ACodeSnippet sourceNew, ACompilationContext compilationContext) throws Exception {
-        final List<String> supports = new ArrayList<String>();
         final List<AInjectedField> injectedFields = new ArrayList<AInjectedField>();
 
         final ACodeBuilder code = new ACodeBuilder(2);
@@ -195,8 +192,8 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
         final String newPropName = ACodeSnippet.uniqueIdentifier();
 
         //TODO use 'default values' (e.g. based on an 'empty' target object) instead of this 'null' default --> add 'getDefaultValue()' to property accessor?
-        code.appendLine(0, "final Object " + oldPropName + " = " + sourceOld.getCode() + " != null ? ((" + sourceProp.getType().cls.getName() + ")" + mergedCodeSnippet(sourceProp.javaCodeForGet(sourceOld), supports, injectedFields) + ") : null;");
-        code.appendLine(0, "final Object " + newPropName + " = " + sourceNew.getCode() + " != null ? ((" + sourceProp.getType().cls.getName() + ")" + mergedCodeSnippet(sourceProp.javaCodeForGet(sourceNew), supports, injectedFields) + ") : null;");
+        code.appendLine(0, "final Object " + oldPropName + " = " + sourceOld.getCode() + " != null ? ((" + sourceProp.getType().cls.getName() + ")" + mergedCodeSnippet(sourceProp.javaCodeForGet(sourceOld), injectedFields) + ") : null;");
+        code.appendLine(0, "final Object " + newPropName + " = " + sourceNew.getCode() + " != null ? ((" + sourceProp.getType().cls.getName() + ")" + mergedCodeSnippet(sourceProp.javaCodeForGet(sourceNew), injectedFields) + ") : null;");
         //TODO does sourceOld/New==null force 'isDerived'?
 
         final String typesName = ACodeSnippet.uniqueIdentifier();
@@ -210,7 +207,7 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
             code.appendLine(0, "worker.diff(path.withChild(" + APathSegment.class.getName() + ".simple(\"" + getTargetName() + "\")), " + oldPropName + ", " + newPropName + ", " + typesName + ", contextOld, contextNew, isDerived);");
         }
 
-        return new ACodeSnippet(code.build(), supports, injectedFields);
+        return new ACodeSnippet(code.build(), injectedFields);
     }
 }
 

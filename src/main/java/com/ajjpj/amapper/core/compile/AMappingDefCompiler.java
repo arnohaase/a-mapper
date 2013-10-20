@@ -63,9 +63,6 @@ public class AMappingDefCompiler {
         builder.addInjectedFields(codeForMap. getInjectedFields());
         builder.addInjectedFields(codeForDiff.getInjectedFields());
 
-        builder.addSupports(codeForMap.getSupports());
-        builder.addSupports(codeForDiff.getSupports());
-
         // only raw types in the signatures because neither Janino nor Javassist support generics
 
         builder.addMethod("public Object map(Object source, Object targetRaw, " +

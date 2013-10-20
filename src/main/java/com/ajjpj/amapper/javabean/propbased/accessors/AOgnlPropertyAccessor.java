@@ -8,7 +8,6 @@ import ognl.Ognl;
 import ognl.OgnlException;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * @author arno
@@ -78,12 +77,12 @@ public class AOgnlPropertyAccessor implements APropertyAccessor {
 
     @Override public ACodeSnippet javaCodeForGet(ACodeSnippet parent) throws Exception {
         final String ognlExprName = ACodeSnippet.uniqueIdentifier();
-        return new ACodeSnippet("ognl.Ognl.getValue(" + ognlExprName + ", " + parent.getCode() + ")", Collections.<String>emptyList(), Arrays.asList(new AInjectedField(ognlExprName, "Object", parsedExpr)));
+        return new ACodeSnippet("ognl.Ognl.getValue(" + ognlExprName + ", " + parent.getCode() + ")", Arrays.asList(new AInjectedField(ognlExprName, "Object", parsedExpr)));
     }
 
     @Override public ACodeSnippet javaCodeForSet(ACodeSnippet parent, ACodeSnippet newValue) throws Exception {
         final String ognlExprName = ACodeSnippet.uniqueIdentifier();
-        return new ACodeSnippet("ognl.Ognl.setValue(" + ognlExprName + ", " + parent.getCode() + ", " + newValue.getCode() + ")", Collections.<String>emptyList(), Arrays.asList(new AInjectedField(ognlExprName, "Object", parsedExpr)));
+        return new ACodeSnippet("ognl.Ognl.setValue(" + ognlExprName + ", " + parent.getCode() + ", " + newValue.getCode() + ")", Arrays.asList(new AInjectedField(ognlExprName, "Object", parsedExpr)));
     }
 
     @Override

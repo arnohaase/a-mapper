@@ -47,7 +47,6 @@ public class APropertyBasedObjectMappingDef<S,T,H extends JavaBeanMappingHelper>
     }
 
     @Override public ACodeSnippet javaCodeForMap(ACodeSnippet sourceRaw, ACodeSnippet target, ACompilationContext compilationContext) throws Exception {
-        final Collection<String> supports = new ArrayList<String>();
         final Collection<AInjectedField> injectedFields = new ArrayList<AInjectedField>();
 
         final String source = ACodeSnippet.uniqueIdentifier();
@@ -67,7 +66,6 @@ public class APropertyBasedObjectMappingDef<S,T,H extends JavaBeanMappingHelper>
         for(APartialBeanMapping pm: parts) {
             if(pm instanceof AInlineablePartialBeanMapping) {
                 final ACodeSnippet pmSnippet = ((AInlineablePartialBeanMapping) pm).javaCodeForMap(new ACodeSnippet(source), new ACodeSnippet("target"), compilationContext);
-                supports.      addAll (pmSnippet.getSupports());
                 injectedFields.addAll (pmSnippet.getInjectedFields());
                 code.appendLine(0, pmSnippet.getCode());
             }
@@ -80,11 +78,10 @@ public class APropertyBasedObjectMappingDef<S,T,H extends JavaBeanMappingHelper>
 
         code.appendLine(3, "return target;");
         code.appendLine(2, "}");
-        return new ACodeSnippet(code.toString(), supports, injectedFields);
+        return new ACodeSnippet(code.toString(), injectedFields);
     }
 
     @Override public ACodeSnippet javaCodeForDiff(ACodeSnippet sourceOld, ACodeSnippet sourceNew, ACompilationContext compilationContext) throws Exception {
-        final Collection<String> supports = new ArrayList<String>();
         final Collection<AInjectedField> injectedFields = new ArrayList<AInjectedField>();
 
         final ACodeBuilder code = new ACodeBuilder(0);
@@ -98,7 +95,6 @@ public class APropertyBasedObjectMappingDef<S,T,H extends JavaBeanMappingHelper>
         for(APartialBeanMapping pm: parts) {
             if(pm instanceof AInlineablePartialBeanMapping) {
                 final ACodeSnippet pmSnippet = ((AInlineablePartialBeanMapping) pm).javaCodeForDiff(new ACodeSnippet(sourceOldName), new ACodeSnippet(sourceNewName), compilationContext);
-                supports.      addAll (pmSnippet.getSupports());
                 injectedFields.addAll (pmSnippet.getInjectedFields());
                 code.append(0, pmSnippet.getCode());
             }
@@ -109,6 +105,6 @@ public class APropertyBasedObjectMappingDef<S,T,H extends JavaBeanMappingHelper>
             }
         }
 
-        return new ACodeSnippet(code.toString(), supports, injectedFields);
+        return new ACodeSnippet(code.toString(), injectedFields);
     }
 }
