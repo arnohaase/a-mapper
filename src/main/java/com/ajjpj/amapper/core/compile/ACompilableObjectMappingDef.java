@@ -31,7 +31,7 @@ public interface ACompilableObjectMappingDef {
     ACodeSnippet getTargetTypeRepresentation(AQualifiedSourceAndTargetType types);
 
     ACodeSnippet javaCodeForMap(ACodeSnippet source, ACodeSnippet target, ACompilationContext compilationContext) throws Exception;
-    ACodeSnippet javaCodeForDiff(ACodeSnippet sourceOld, ACodeSnippet sourceNew, ACompilationContext compilationContext);
+    ACodeSnippet javaCodeForDiff(ACodeSnippet sourceOld, ACodeSnippet sourceNew, ACompilationContext compilationContext) throws Exception;
 }
 
 

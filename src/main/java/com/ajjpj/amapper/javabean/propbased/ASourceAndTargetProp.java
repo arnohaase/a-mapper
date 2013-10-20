@@ -18,6 +18,7 @@ import com.ajjpj.amapper.util.func.AVoidFunction1;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author arno
@@ -174,7 +175,7 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
                 mergedCodeSnippet(sourceProp.javaCodeForGet(source), supports, injectedFields) +
                 ", " + oldTargetValueName + ", " + injectedTypes + ", context);");
         code.appendLine(1, "if (" + optName + ".isDefined() && " + optName + ".get() != " + oldTargetValueName + ") {");
-        code.appendLine(2, mergedCodeSnippet(targetProp.javaCodeForSet(target, new ACodeSnippet("(" + sourceProp.getType().cls.getName() + ")" + optName + ".get()")), supports, injectedFields) + ";");
+        code.appendLine(2, mergedCodeSnippet(targetProp.javaCodeForSet(target, new ACodeSnippet("(" + targetProp.getType().cls.getName() + ")" + optName + ".get()")), supports, injectedFields) + ";");
         code.appendLine(1, "}");
     }
 
@@ -184,8 +185,32 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
         return code.getCode();
     }
 
-    @Override public ACodeSnippet javaCodeForDiff(ACodeSnippet sourceOld, ACodeSnippet sourceNew, ACompilationContext compilationContext) {
-        return new ACodeSnippet(""); //TODO
+    @Override public ACodeSnippet javaCodeForDiff(ACodeSnippet sourceOld, ACodeSnippet sourceNew, ACompilationContext compilationContext) throws Exception {
+        final List<String> supports = new ArrayList<String>();
+        final List<AInjectedField> injectedFields = new ArrayList<AInjectedField>();
+
+        final ACodeBuilder code = new ACodeBuilder(2);
+
+        final String oldPropName = ACodeSnippet.uniqueIdentifier();
+        final String newPropName = ACodeSnippet.uniqueIdentifier();
+
+        //TODO use 'default values' (e.g. based on an 'empty' target object) instead of this 'null' default --> add 'getDefaultValue()' to property accessor?
+        code.appendLine(0, "final Object " + oldPropName + " = " + sourceOld.getCode() + " != null ? ((" + sourceProp.getType().cls.getName() + ")" + mergedCodeSnippet(sourceProp.javaCodeForGet(sourceOld), supports, injectedFields) + ") : null;");
+        code.appendLine(0, "final Object " + newPropName + " = " + sourceNew.getCode() + " != null ? ((" + sourceProp.getType().cls.getName() + ")" + mergedCodeSnippet(sourceProp.javaCodeForGet(sourceNew), supports, injectedFields) + ") : null;");
+        //TODO does sourceOld/New==null force 'isDerived'?
+
+        final String typesName = ACodeSnippet.uniqueIdentifier();
+        injectedFields.add(new AInjectedField(typesName, AQualifiedSourceAndTargetType.class.getName(), types));
+
+        if(sourceProp.isDeferred()) {
+            code.appendLine(0, "worker.diffDeferred(path.withChild(" + APathSegment.class.getName() + ".simple(\"" + getTargetName() + "\")), " + oldPropName + ", " + newPropName + ", " + typesName + ", contextOld, contextNew, isDerived);");
+        }
+        else {
+            //TODO do the actual inlining of the worker code
+            code.appendLine(0, "worker.diff(path.withChild(" + APathSegment.class.getName() + ".simple(\"" + getTargetName() + "\")), " + oldPropName + ", " + newPropName + ", " + typesName + ", contextOld, contextNew, isDerived);");
+        }
+
+        return new ACodeSnippet(code.build(), supports, injectedFields);
     }
 }
 

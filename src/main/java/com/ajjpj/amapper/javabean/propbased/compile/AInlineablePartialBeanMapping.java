@@ -8,5 +8,5 @@ import com.ajjpj.amapper.core.compile.ACompilationContext;
  */
 public interface AInlineablePartialBeanMapping {
     ACodeSnippet javaCodeForMap(ACodeSnippet source, ACodeSnippet target, ACompilationContext compilationContext) throws Exception;
-    ACodeSnippet javaCodeForDiff(ACodeSnippet sourceOld, ACodeSnippet sourceNew, ACompilationContext compilationContext);
+    ACodeSnippet javaCodeForDiff(ACodeSnippet sourceOld, ACodeSnippet sourceNew, ACompilationContext compilationContext) throws Exception;
 }
