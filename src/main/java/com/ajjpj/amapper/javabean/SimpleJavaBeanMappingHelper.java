@@ -10,11 +10,11 @@ import java.util.*;
  *
  * @author arno
  */
-public class SimpleJavaBeanMappingHelper implements JavaBeanMappingHelper{
+public class SimpleJavaBeanMappingHelper implements JavaBeanMappingHelper {
     public static SimpleJavaBeanMappingHelper INSTANCE = new SimpleJavaBeanMappingHelper();
 
-    @Override public Object createInstance(Object source, JavaBeanType<?> sourceType, JavaBeanType<?> targetType) throws Exception {
-        return targetType.cls.newInstance();
+    @Override public Object provideInstance(Object source, Object targetRaw, JavaBeanType<?> sourceType, JavaBeanType<?> targetType) throws Exception {
+        return targetRaw != null ? targetRaw : targetType.cls.newInstance();
     }
 
     @Override public AType elementType(AType tpe) {

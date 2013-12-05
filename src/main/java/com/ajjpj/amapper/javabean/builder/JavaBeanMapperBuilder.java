@@ -110,6 +110,16 @@ public class JavaBeanMapperBuilder <H extends JavaBeanMappingHelper> {
         return this;
     }
 
+    public JavaBeanMapperBuilder<H> withPreProcessor(APreProcessor preProcessor) {
+        this.preProcessors.add(preProcessor);
+        return this;
+    }
+
+    public JavaBeanMapperBuilder<H> withPostProcessor(APostProcessor postProcessor) {
+        this.postProcessors.add(postProcessor);
+        return this;
+    }
+
     public JavaBeanMapper build() {
         return build(false);
     }

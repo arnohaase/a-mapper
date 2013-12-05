@@ -58,7 +58,8 @@ public class APropertyBasedObjectMappingDef<S,T,H extends JavaBeanMappingHelper>
         code.appendLine(2, "else {");
         code.appendLine(3, "final " + sourceType.cls.getName() + " " + source + " = (" + sourceType.cls.getName() + ")" + sourceRaw.getCode() + ";");
         code.appendLine(3, "final " + targetType.cls.getName() + " target = (" + targetType.cls.getName() + ")(" + target.getCode() + " != null ? " +
-                        target.getCode() + " : ((com.ajjpj.amapper.javabean.JavaBeanMappingHelper) worker.getHelpers()).createInstance(" + source + ", " +
+                        target.getCode() + " : ((com.ajjpj.amapper.javabean.JavaBeanMappingHelper) worker.getHelpers()).provideInstance(" +
+                        source + ", " + target.getCode() + ", " +
                         JavaBeanTypes.class.getName() + ".create(" + sourceType.cls.getName() + ".class), " +
                         JavaBeanTypes.class.getName() + ".create(" + targetType.cls.getName() + ".class)));"
         );

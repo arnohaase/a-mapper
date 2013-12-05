@@ -82,11 +82,9 @@ public class AMapperImpl<H> implements AMapper {
      * @return a <em>new</em> instance of AMapper with "compiled" mapping defs
      */
     public AMapperImpl compile() throws Exception {
-        final AMappingDefCompiler compiler = new AMappingDefCompiler(objectMappings.getAll(), valueMappings.getAll());
+        final AMappingDefCompiler compiler = new AMappingDefCompiler(logger, objectMappings.getAll(), valueMappings.getAll());
 
         return new AMapperImpl(compiler.getCompiledObjectMappingDefs(), valueMappings.getAll(), logger, helperFactory, identifierExtractor, contextExtractor, preProcessors.getAll(), postProcessors.getAll());
-
-
     }
 }
 
