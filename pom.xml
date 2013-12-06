@@ -11,7 +11,7 @@
 
     <groupId>com.ajjpj.a-mapper</groupId>
     <artifactId>a-mapper</artifactId>
-    <version>0.9-pre4-SNAPSHOT</version>
+    <version>0.9-pre4</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}-${project.version}</name>
