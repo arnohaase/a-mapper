@@ -86,8 +86,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
 
         try {
             final AObjectMappingDef<Object, Object, H> m = objectMappings.expectedEntryFor(types, path);
-            final APreProcessor pre = preProcessors.tryEntryFor(types).getOrElse(APreProcessor.NO_PREPROCESSOR);
-            final AOption<Object> preProcessed = pre.preProcess(sourceRaw, types);
+            final AOption<Object> preProcessed = preProcess(preProcessors.allEntriesFor(types), sourceRaw, types);
 
             if(preProcessed.isEmpty()) {
                 // preprocessor vetoed this mapping operation
@@ -103,7 +102,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
             final AMap<String, Object> newContext = contextExtractor.withContext(context, sourceRaw, types.sourceType);
             final Object resultRaw = m.map(source, target, types, this, newContext, path);
 
-            final Object result = postProcessors.tryEntryFor(types).getOrElse(APostProcessor.NO_POSTPROCESSOR).postProcess(resultRaw, types);
+            final Object result = postProcess(postProcessors.allEntriesFor(types), resultRaw, types);
 
             if(m.isCacheable()) {
                 identityCache.register(source, result, path);
@@ -113,6 +112,25 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
         } catch (Exception exc) {
             return AMapperExceptionHandler.onError(exc, path);
         }
+    }
+
+    private AOption<Object> preProcess(Iterable<APreProcessor> allPre, Object sourceRaw, AQualifiedSourceAndTargetType types) {
+        AOption<Object> result = AOption.some(sourceRaw);
+        for(APreProcessor pre: allPre) {
+            result = pre.preProcess(result.get(), types);
+            if(result.isEmpty()) {
+                return result;
+            }
+        }
+        return result;
+    }
+
+    private Object postProcess(Iterable<APostProcessor> allPost, Object sourceRaw, AQualifiedSourceAndTargetType types) {
+        Object curResult = sourceRaw;
+        for(APostProcessor post: allPost) {
+            curResult = post.postProcess(curResult, types);
+        }
+        return curResult;
     }
 
     @Override public Object mapValue(final APath path, final Object source, AQualifiedSourceAndTargetType types, AMap<String, Object> context) {
@@ -149,8 +167,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
                 });
 
                 try {
-                    final APreProcessor pre = preProcessors.tryEntryFor(types).getOrElse(APreProcessor.NO_PREPROCESSOR);
-                    final AOption<Object> preProcessed = pre.preProcess(sourceRaw, types);
+                    final AOption<Object> preProcessed = preProcess(preProcessors.allEntriesFor(types), sourceRaw, types);
 
                     if(preProcessed.isEmpty()) {
                         return;
@@ -168,6 +185,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
                         if(mapped.isDefined()) {
                             callback.apply(mapped.get());
                         }
+                        //TODO documentation: explain why there is no post processing done here
                     }
                 }
                 catch (Exception exc) {

@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.core;
 
+import com.ajjpj.amapper.AMapper;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;
 import com.ajjpj.amapper.core.exclog.AMapperLogger;
 import com.ajjpj.amapper.core.impl.AMapperImpl;
@@ -8,7 +9,6 @@ import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.core.tpe.AType;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinValueMappingDefs;
-import com.ajjpj.amapper.AMapper;
 import com.ajjpj.amapper.util.coll.AMap;
 import com.ajjpj.amapper.util.coll.AOption;
 import com.ajjpj.amapper.util.func.AFunction0;
@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -172,4 +173,96 @@ public class PrePostProcessorTest {
         final AOption<Object> mapped = mapper.map(orig, type3, AQualifier.NO_QUALIFIER, oldTarget, type1, AQualifier.NO_QUALIFIER);
         assertFalse (mapped.isDefined());
     }
+
+    @Test
+    public void testChainedPreProcessors() throws Exception {
+        class MockPreProcessor implements APreProcessor {
+            private final boolean isActive;
+            public int count = 0;
+            public boolean passThrough = true;
+
+            MockPreProcessor(boolean isActive) {
+                this.isActive = isActive;
+            }
+
+            @Override public <T> AOption<T> preProcess(T o, AQualifiedSourceAndTargetType qt) {
+                count += 1;
+                return passThrough ? AOption.some(o) : AOption.<T>none();
+            }
+
+            @Override public boolean canHandle(AQualifiedSourceAndTargetType types) throws Exception {
+                return isActive;
+            }
+        }
+
+        final MockPreProcessor pre1 = new MockPreProcessor(true);
+        final MockPreProcessor pre2 = new MockPreProcessor(false);
+        final MockPreProcessor pre3 = new MockPreProcessor(true);
+
+        final AMapper mapper = new AMapperImpl(objectMappingDefs, Collections.emptyList(), AMapperLogger.StdOut, helperFactory, ie, NoContextExtractor.INSTANCE, Arrays.asList(pre1, pre2, pre3), Collections.emptyList());
+
+        assertEquals(true, mapper.map(new DataClass(), type1, AQualifier.NO_QUALIFIER, null, type1, AQualifier.NO_QUALIFIER).isDefined());
+        assertEquals(1, pre1.count);
+        assertEquals(0, pre2.count);
+        assertEquals(1, pre3.count);
+
+        pre1.passThrough = false;
+        assertEquals(false, mapper.map(new DataClass(), type1, AQualifier.NO_QUALIFIER, null, type1, AQualifier.NO_QUALIFIER).isDefined());
+        assertEquals(2, pre1.count);
+        assertEquals(0, pre2.count);
+        assertEquals(1, pre3.count);
+
+        pre1.passThrough = true;
+        pre3.passThrough = false;
+        assertEquals(false, mapper.map(new DataClass(), type1, AQualifier.NO_QUALIFIER, null, type1, AQualifier.NO_QUALIFIER).isDefined());
+        assertEquals(3, pre1.count);
+        assertEquals(0, pre2.count);
+        assertEquals(2, pre3.count);
+    }
+
+    @Test
+    public void testChainedPostProcessors() throws Exception {
+        class MockPostProcessor implements APostProcessor {
+            private final boolean isActive;
+            public boolean passThrough = true;
+            public int count = 0;
+
+            MockPostProcessor(boolean isActive) {
+                this.isActive = isActive;
+            }
+
+            @Override public <T> T postProcess(T o, AQualifiedSourceAndTargetType qt) {
+                count += 1;
+                return passThrough ? o : null;
+            }
+
+            @Override public boolean canHandle(AQualifiedSourceAndTargetType types) throws Exception {
+                return isActive;
+            }
+        }
+
+        final MockPostProcessor post1 = new MockPostProcessor(true);
+        final MockPostProcessor post2 = new MockPostProcessor(false);
+        final MockPostProcessor post3 = new MockPostProcessor(true);
+
+        final AMapper mapper = new AMapperImpl(objectMappingDefs, Collections.emptyList(), AMapperLogger.StdOut, helperFactory, ie, NoContextExtractor.INSTANCE, Collections.emptyList(), Arrays.asList(post1, post2, post3));
+
+        assertNotNull(mapper.map(new DataClass(), type1, AQualifier.NO_QUALIFIER, null, type1, AQualifier.NO_QUALIFIER).get());
+        assertEquals(1, post1.count);
+        assertEquals(0, post2.count);
+        assertEquals(1, post3.count);
+
+        post1.passThrough = false;
+        assertNull(mapper.map(new DataClass(), type1, AQualifier.NO_QUALIFIER, null, type1, AQualifier.NO_QUALIFIER).get());
+        assertEquals(2, post1.count);
+        assertEquals(0, post2.count);
+        assertEquals(2, post3.count);
+
+        post3.passThrough = false;
+        assertNull(mapper.map(new DataClass(), type1, AQualifier.NO_QUALIFIER, null, type1, AQualifier.NO_QUALIFIER).get());
+        assertEquals(3, post1.count);
+        assertEquals(0, post2.count);
+        assertEquals(3, post3.count);
+    }
 }
+
