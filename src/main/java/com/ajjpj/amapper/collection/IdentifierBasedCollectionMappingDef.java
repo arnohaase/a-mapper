@@ -1,5 +1,8 @@
 package com.ajjpj.amapper.collection;
 
+import com.ajjpj.abase.collection.AEquality;
+import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.amapper.core.AIdentifierExtractor;
 import com.ajjpj.amapper.core.AMapperDiffWorker;
 import com.ajjpj.amapper.core.AMapperWorker;
@@ -7,9 +10,6 @@ import com.ajjpj.amapper.core.AObjectMappingDef;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
-import com.ajjpj.amapper.util.coll.AEquality;
-import com.ajjpj.amapper.util.coll.AMap;
-import com.ajjpj.amapper.util.coll.AOption;
 
 import java.util.*;
 

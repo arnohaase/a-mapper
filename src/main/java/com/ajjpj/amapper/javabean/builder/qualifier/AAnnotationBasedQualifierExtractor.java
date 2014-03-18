@@ -1,15 +1,16 @@
 package com.ajjpj.amapper.javabean.builder.qualifier;
 
+import com.ajjpj.abase.collection.immutable.AHashMap;
+import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.annotation.AQualifierAnnotation;
-import com.ajjpj.amapper.util.coll.AHashMap;
-import com.ajjpj.amapper.util.coll.AMap;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * @author arno

@@ -1,12 +1,13 @@
 package com.ajjpj.amapper.core;
 
+import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.abase.collection.immutable.AOption;
+import com.ajjpj.abase.function.AFunction0;
+import com.ajjpj.abase.function.AStatement1;
 import com.ajjpj.amapper.core.exclog.AMapperLogger;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
-import com.ajjpj.amapper.util.coll.AMap;
-import com.ajjpj.amapper.util.coll.AOption;
-import com.ajjpj.amapper.util.func.AFunction0;
-import com.ajjpj.amapper.util.func.AVoidFunction1;
+
 
 /**
  * A 'worker' is created per mapping execution. It has mutable state and is <em>not</em> thread safe.
@@ -39,5 +40,5 @@ public interface AMapperWorker<H> {
      *  mapping is created after the initial object structure is complete. This also prevents streaming processing.
      *
      */
-    void mapDeferred(APath path, Object source, AFunction0<Object,Exception> target, AQualifiedSourceAndTargetType types, AVoidFunction1<Object,Exception> callback);
+    void mapDeferred(APath path, Object source, AFunction0<Object,Exception> target, AQualifiedSourceAndTargetType types, AStatement1<Object,Exception> callback);
 }

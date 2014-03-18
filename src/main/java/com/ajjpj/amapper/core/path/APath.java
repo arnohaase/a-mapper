@@ -1,6 +1,7 @@
 package com.ajjpj.amapper.core.path;
 
-import com.ajjpj.amapper.util.coll.AList;
+
+import com.ajjpj.abase.collection.immutable.AList;
 
 import java.util.Arrays;
 

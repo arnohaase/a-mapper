@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.core;
 
+import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.classes.ClassRequiringContext;
 import com.ajjpj.amapper.classes.ClassWithContext;
 import com.ajjpj.amapper.classes.PriceClass;
@@ -11,7 +12,6 @@ import com.ajjpj.amapper.javabean.JavaBeanMapper;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.mappingdef.AbstractJavaBeanValueMappingDef;
-import com.ajjpj.amapper.util.coll.AMap;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

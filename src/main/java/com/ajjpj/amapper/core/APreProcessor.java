@@ -1,8 +1,9 @@
 package com.ajjpj.amapper.core;
 
+import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.core.tpe.CanHandleSourceAndTarget;
-import com.ajjpj.amapper.util.coll.AOption;
+
 
 /**
  * @author arno

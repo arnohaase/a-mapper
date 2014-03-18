@@ -1,19 +1,19 @@
 package com.ajjpj.amapper.javabean.builder;
 
-
+import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
 import com.ajjpj.amapper.javabean.JavaBeanTypes;
 import com.ajjpj.amapper.javabean.builder.qualifier.AQualifierExtractor;
 import com.ajjpj.amapper.javabean.propbased.accessors.AMethodBasedPropertyAccessor;
 import com.ajjpj.amapper.javabean.propbased.accessors.APropertyAccessor;
-import com.ajjpj.amapper.util.coll.AOption;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 
 /**
  * This is a collection of generic helper methods for working with Java Beans

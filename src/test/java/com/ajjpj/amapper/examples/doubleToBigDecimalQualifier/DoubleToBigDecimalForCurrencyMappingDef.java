@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.examples.doubleToBigDecimalQualifier;
 
+import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.core.AMapperDiffWorker;
 import com.ajjpj.amapper.core.AMapperWorker;
 import com.ajjpj.amapper.core.AValueMappingDef;
@@ -7,10 +8,10 @@ import com.ajjpj.amapper.core.diff.ADiffBuilder;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.javabean.JavaBeanTypes;
-import com.ajjpj.amapper.util.coll.AMap;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 
 /**
  * @author arno

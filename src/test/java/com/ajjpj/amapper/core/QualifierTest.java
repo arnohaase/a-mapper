@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.core;
 
+import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.classes.WithQualifiers;
 import com.ajjpj.amapper.classes.WithoutQualifiers;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;
@@ -10,7 +11,6 @@ import com.ajjpj.amapper.javabean.JavaBeanMappingHelper;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.mappingdef.AbstractJavaBeanValueMappingDef;
-import com.ajjpj.amapper.util.coll.AMap;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

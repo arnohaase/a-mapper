@@ -1,10 +1,11 @@
 package com.ajjpj.amapper.core;
 
+import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.core.tpe.CanHandleSourceAndTarget;
-import com.ajjpj.amapper.util.coll.AMap;
+
 
 /**
  * A value mapping transforms data for which there is no difference between several copies as long as their attribute

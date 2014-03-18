@@ -1,9 +1,9 @@
 package com.ajjpj.amapper.core;
 
+import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.core.exclog.AMapperLogger;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
-import com.ajjpj.amapper.util.coll.AMap;
 
 /**
  * A 'worker' is created per mapping execution. It has mutable state and is <em>not</em> thread safe.

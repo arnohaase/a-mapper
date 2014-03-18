@@ -1,12 +1,12 @@
 package com.ajjpj.amapper.javabean.builder;
 
+import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
 import com.ajjpj.amapper.javabean.builder.qualifier.AQualifierExtractor;
 import com.ajjpj.amapper.javabean.propbased.accessors.AMethodPathBasedPropertyAccessor;
 import com.ajjpj.amapper.javabean.propbased.accessors.AOgnlPropertyAccessor;
 import com.ajjpj.amapper.javabean.propbased.accessors.APropertyAccessor;
-import com.ajjpj.amapper.util.coll.AOption;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

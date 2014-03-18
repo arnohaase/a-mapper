@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.javabean;
 
+import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.classes.ClassA;
 import com.ajjpj.amapper.core.AMapperDiffWorker;
 import com.ajjpj.amapper.core.AMapperWorker;
@@ -10,7 +11,6 @@ import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinCollectionMappingDefs;
-import com.ajjpj.amapper.util.coll.AMap;
 import org.junit.Test;
 
 import java.util.*;

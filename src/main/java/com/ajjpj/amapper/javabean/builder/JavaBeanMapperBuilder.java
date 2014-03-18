@@ -1,7 +1,7 @@
 package com.ajjpj.amapper.javabean.builder;
 
+import com.ajjpj.abase.function.AFunction0;
 import com.ajjpj.amapper.core.*;
-import com.ajjpj.amapper.core.exclog.AMapperException;
 import com.ajjpj.amapper.core.exclog.AMapperExceptionHandler;
 import com.ajjpj.amapper.core.exclog.AMapperLogger;
 import com.ajjpj.amapper.core.path.APath;
@@ -12,7 +12,6 @@ import com.ajjpj.amapper.javabean.JavaBeanMappingHelper;
 import com.ajjpj.amapper.javabean.SimpleJavaBeanMappingHelper;
 import com.ajjpj.amapper.javabean.impl.JavaBeanMapperImpl;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinValueMappingDefs;
-import com.ajjpj.amapper.util.func.AFunction0;
 
 import java.util.ArrayList;
 import java.util.Arrays;

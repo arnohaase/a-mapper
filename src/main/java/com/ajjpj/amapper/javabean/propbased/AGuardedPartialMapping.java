@@ -1,11 +1,11 @@
 package com.ajjpj.amapper.javabean.propbased;
 
-
+import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.core.AMapperDiffWorker;
 import com.ajjpj.amapper.core.AMapperWorker;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;
 import com.ajjpj.amapper.core.path.APath;
-import com.ajjpj.amapper.util.coll.AMap;
+
 
 /**
  * This class adds a condition to a partial mapping. This condition is evaluated whenever the mapping is used, and based on the conditions's

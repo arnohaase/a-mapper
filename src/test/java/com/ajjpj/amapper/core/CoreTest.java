@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.core;
 
+import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.classes.ClassCyclicChild;
 import com.ajjpj.amapper.classes.ClassCyclicParent;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;
@@ -12,7 +13,6 @@ import com.ajjpj.amapper.javabean.SingleParamBeanType;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinCollectionMappingDefs;
-import com.ajjpj.amapper.util.coll.AMap;
 import org.junit.Test;
 
 import java.util.Arrays;

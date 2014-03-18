@@ -1,5 +1,10 @@
 package com.ajjpj.amapper.core.impl;
 
+import com.ajjpj.abase.collection.AEquality;
+import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.abase.collection.immutable.AOption;
+import com.ajjpj.abase.function.AFunction0NoThrow;
+import com.ajjpj.abase.function.AStatement0;
 import com.ajjpj.amapper.core.*;
 import com.ajjpj.amapper.core.diff.ADiff;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;
@@ -9,11 +14,6 @@ import com.ajjpj.amapper.core.exclog.AMapperLogger;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.core.tpe.CanHandleSourceAndTargetCache;
-import com.ajjpj.amapper.util.coll.AEquality;
-import com.ajjpj.amapper.util.coll.AMap;
-import com.ajjpj.amapper.util.coll.AOption;
-import com.ajjpj.amapper.util.func.AStringFunction0;
-import com.ajjpj.amapper.util.func.AVoidFunction0;
 
 import java.util.HashSet;
 import java.util.Queue;
@@ -30,7 +30,7 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
     private final AIdentifierExtractor identifierExtractor;
     private final AContextExtractor contextExtractor;
     private final CanHandleSourceAndTargetCache<APreProcessor, APreProcessor> preProcessor;
-    private final Queue<AVoidFunction0<RuntimeException>>  deferredWork;
+    private final Queue<AStatement0<RuntimeException>>  deferredWork;
 
     private final Set<IdentityPair> identityCache = new HashSet<IdentityPair>();
     private final ADiffBuilder diffBuilder = new ADiffBuilder();
@@ -40,7 +40,7 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
                                  AMapperLogger logger, H helpers,
                                  AIdentifierExtractor identifierExtractor, AContextExtractor contextExtractor,
                                  CanHandleSourceAndTargetCache<APreProcessor, APreProcessor> preProcessor,
-                                 Queue<AVoidFunction0<RuntimeException>> deferredWork) {
+                                 Queue<AStatement0<RuntimeException>> deferredWork) {
         this.valueMappings = valueMappings;
         this.objectMappings = objectMappings;
         this.logger = logger;
@@ -82,7 +82,7 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
     }
 
     @Override public void diffValue(final APath path, final Object sourceOld, final Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOld, AMap<String, Object> contextNew, boolean isDerived) {
-        logger.debug (new AStringFunction0() {
+        logger.debug (new AFunction0NoThrow<String>() {
             @Override public String apply() {
                 return "diff value: " + sourceOld + " <-> " + sourceNew + " @ " + path;
             }
@@ -95,7 +95,7 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
     }
 
     @Override public void diffObject(final APath path, final Object sourceOldRaw, final Object sourceNewRaw, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOld, AMap<String, Object> contextNew, boolean isDerived) {
-        logger.debug (new AStringFunction0() {
+        logger.debug (new AFunction0NoThrow<String>() {
             @Override
             public String apply() {
                 return "diff object: " + sourceOldRaw + " <-> " + sourceNewRaw + " @ " + path;
@@ -157,16 +157,16 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
 
 
     @Override public void diffDeferred(final APath path, final Object sourceOldRaw, final Object sourceNewRaw, final AQualifiedSourceAndTargetType types, final AMap<String, Object> contextOld, final AMap<String, Object> contextNew, final boolean isDerived) {
-        logger.debug (new AStringFunction0() {
+        logger.debug (new AFunction0NoThrow<String>() {
             @Override
             public String apply() {
                 return "diff deferred: " + sourceOldRaw + " <-> " + sourceNewRaw + " @ " + path;
             }
         });
 
-        deferredWork.add(new AVoidFunction0<RuntimeException>() {
+        deferredWork.add(new AStatement0<RuntimeException>() {
             @Override public void apply() {
-                logger.debug(new AStringFunction0() {
+                logger.debug(new AFunction0NoThrow<String>() {
                     @Override
                     public String apply() {
                         return "processing deferred diff: " + types + "@" + path;

@@ -44,6 +44,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.ajjpj.a-base</groupId>
+            <artifactId>a-base</artifactId>
+            <version>1.0-pre2</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
             <version>2.6.1</version>
@@ -82,8 +88,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
 				<executions>
 					<execution>

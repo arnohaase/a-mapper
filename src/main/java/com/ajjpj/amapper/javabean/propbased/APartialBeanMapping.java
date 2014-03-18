@@ -1,10 +1,10 @@
 package com.ajjpj.amapper.javabean.propbased;
 
+import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.core.AMapperDiffWorker;
 import com.ajjpj.amapper.core.AMapperWorker;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;
 import com.ajjpj.amapper.core.path.APath;
-import com.ajjpj.amapper.util.coll.AMap;
 
 /**
  * Java Bean mappings are typically done by property, i.e. they are split into parts. This interface represents such a

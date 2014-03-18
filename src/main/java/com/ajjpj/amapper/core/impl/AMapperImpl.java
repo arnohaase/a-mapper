@@ -1,5 +1,10 @@
 package com.ajjpj.amapper.core.impl;
 
+import com.ajjpj.abase.collection.immutable.AHashMap;
+import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.abase.collection.immutable.AOption;
+import com.ajjpj.abase.function.AFunction0;
+import com.ajjpj.abase.function.AStatement0;
 import com.ajjpj.amapper.core.*;
 import com.ajjpj.amapper.core.compile.AMappingDefCompiler;
 import com.ajjpj.amapper.core.diff.ADiff;
@@ -11,11 +16,6 @@ import com.ajjpj.amapper.core.tpe.AType;
 import com.ajjpj.amapper.core.tpe.CanHandleSourceAndTargetCache;
 import com.ajjpj.amapper.AMapper;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinValueMappingDefs;
-import com.ajjpj.amapper.util.coll.AHashMap;
-import com.ajjpj.amapper.util.coll.AMap;
-import com.ajjpj.amapper.util.coll.AOption;
-import com.ajjpj.amapper.util.func.AFunction0;
-import com.ajjpj.amapper.util.func.AVoidFunction0;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,7 +55,7 @@ public class AMapperImpl<H> implements AMapper {
     }
 
     @Override public AOption<Object> map(Object source, AType sourceType, AQualifier sourceQualifier, Object target, AType targetType, AQualifier targetQualifier) {
-        final Queue<AVoidFunction0<RuntimeException>> deferredWork = new LinkedList<AVoidFunction0<RuntimeException>>();
+        final Queue<AStatement0<RuntimeException>> deferredWork = new LinkedList<AStatement0<RuntimeException>>();
         final AMapperWorker<H> worker = new AMapperWorkerImpl<H>(valueMappings, objectMappings, logger, helperFactory.apply(), identifierExtractor, contextExtractor, preProcessors, postProcessors, deferredWork);
         final AOption<Object> result = worker.map(APath.EMPTY, source, target, new AQualifiedSourceAndTargetType(sourceType, sourceQualifier, targetType, targetQualifier), EMPTY_CONTEXT);
 
@@ -67,7 +67,7 @@ public class AMapperImpl<H> implements AMapper {
     }
 
     @Override public ADiff diff(Object sourceOld, Object sourceNew, AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier) {
-        final Queue<AVoidFunction0<RuntimeException>> deferredWork = new LinkedList<AVoidFunction0<RuntimeException>>();
+        final Queue<AStatement0<RuntimeException>> deferredWork = new LinkedList<AStatement0<RuntimeException>>();
         final AMapperDiffWorkerImpl worker = new AMapperDiffWorkerImpl<H>(valueMappings, objectMappings, logger, helperFactory.apply(), identifierExtractor, contextExtractor, preProcessors, deferredWork);
         worker.diff(APath.EMPTY, sourceOld, sourceNew, new AQualifiedSourceAndTargetType(sourceType, sourceQualifier, targetType, targetQualifier), EMPTY_CONTEXT, EMPTY_CONTEXT, false);
 

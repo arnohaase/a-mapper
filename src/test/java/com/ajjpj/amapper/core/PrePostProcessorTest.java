@@ -1,5 +1,8 @@
 package com.ajjpj.amapper.core;
 
+import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.abase.collection.immutable.AOption;
+import com.ajjpj.abase.function.AFunction0;
 import com.ajjpj.amapper.AMapper;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;
 import com.ajjpj.amapper.core.exclog.AMapperLogger;
@@ -9,15 +12,13 @@ import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.core.tpe.AType;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinValueMappingDefs;
-import com.ajjpj.amapper.util.coll.AMap;
-import com.ajjpj.amapper.util.coll.AOption;
-import com.ajjpj.amapper.util.func.AFunction0;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 
 import static org.junit.Assert.*;
 

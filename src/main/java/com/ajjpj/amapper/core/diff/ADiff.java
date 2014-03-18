@@ -1,14 +1,11 @@
 package com.ajjpj.amapper.core.diff;
 
+import com.ajjpj.abase.collection.immutable.*;
+import com.ajjpj.abase.function.AFunction1;
+import com.ajjpj.abase.function.AFunction1NoThrow;
+import com.ajjpj.abase.function.APredicate;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.path.APathSegment;
-import com.ajjpj.amapper.util.coll.*;
-import com.ajjpj.amapper.util.coll.AHashMap;
-import com.ajjpj.amapper.util.coll.AHashSet;
-import com.ajjpj.amapper.util.coll.AList;
-import com.ajjpj.amapper.util.coll.AMap;
-import com.ajjpj.amapper.util.func.AFunction1;
-import com.ajjpj.amapper.util.func.APredicate;
 
 /**
  * @author arno
@@ -23,13 +20,13 @@ public class ADiff {
 
     public ADiff(final AList<ADiffElement> elements) {
         this.elements = elements;
-        this.paths = elements.map(new AFunction1<APath, ADiffElement, RuntimeException>() {
+        this.paths = elements.map(new AFunction1<ADiffElement, APath, RuntimeException>() { //TODO nothrow
             @Override
             public APath apply(ADiffElement param) {
                 return param.path;
             }
         }).toSet();
-        this.byPath = AHashMap.fromKeysAndFunction(paths, new AFunction1<ADiffElement, APath, RuntimeException>() {
+        this.byPath = AHashMap.fromKeysAndFunction(paths, new AFunction1<APath, ADiffElement, RuntimeException>() { //TODO nothrow
             @Override
             public ADiffElement apply(final APath path) {
                 return elements.find(new APredicate<ADiffElement, RuntimeException>() {
@@ -40,13 +37,13 @@ public class ADiff {
                 }).get();
             }
         });
-        this.pathStrings = paths.map(new AFunction1<String, APath, RuntimeException>() {
+        this.pathStrings = paths.map(new AFunction1<APath, String, RuntimeException>() { //TODO nothrow
             @Override
             public String apply(APath param) {
                 return asPathString(param);
             }
         });
-        this.byPathString = AHashMap.fromKeysAndFunction(pathStrings, new AFunction1<AList<ADiffElement>, String, RuntimeException>() {
+        this.byPathString = AHashMap.fromKeysAndFunction(pathStrings, new AFunction1<String, AList<ADiffElement>, RuntimeException>() { //TODO nothrow
             @Override public AList<ADiffElement> apply(final String path) {
                 return elements.filter(new APredicate<ADiffElement, RuntimeException>() {
                     @Override public boolean apply(ADiffElement o) {

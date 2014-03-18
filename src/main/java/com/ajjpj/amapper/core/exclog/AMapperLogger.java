@@ -1,7 +1,8 @@
 package com.ajjpj.amapper.core.exclog;
 
+import com.ajjpj.abase.function.AFunction0;
+import com.ajjpj.abase.function.AFunction0NoThrow;
 import com.ajjpj.amapper.core.path.APath;
-import com.ajjpj.amapper.util.func.AStringFunction0;
 import org.apache.log4j.Logger;
 
 
@@ -9,7 +10,7 @@ import org.apache.log4j.Logger;
  * @author arno
  */
 public abstract class AMapperLogger {
-    public abstract void debug(AStringFunction0 msg);
+    public abstract void debug(AFunction0NoThrow<String> msg);
 
     protected abstract void warn(String msg);
 
@@ -26,7 +27,7 @@ public abstract class AMapperLogger {
         warn("The object " + s + " was visited twice while navigating primary references. Maybe one of the references should be deferred, maybe the object is just referenced from two 'parents' as a child.");
     }
     public void generatedCompiledMappingDef(final String code) {
-        debug(new AStringFunction0() {
+        debug(new AFunction0NoThrow<String>() {
             @Override public String apply() throws RuntimeException {
                 return "------------------------- Generated Code --------------------------\n" + code;
             }
@@ -54,7 +55,7 @@ public abstract class AMapperLogger {
             return Thread.currentThread().getName() + "@" + System.currentTimeMillis() + ": ";
         }
 
-        @Override public void debug(AStringFunction0 msg) {
+        @Override public void debug(AFunction0NoThrow<String> msg) {
             if(showDebug) System.out.println(preamble() + "DEBUG " + msg.apply());
         }
 
@@ -68,7 +69,7 @@ public abstract class AMapperLogger {
             return Thread.currentThread().getName() + "@" + System.currentTimeMillis() + ": ";
         }
 
-        @Override public void debug(AStringFunction0 msg) {
+        @Override public void debug(AFunction0NoThrow<String> msg) {
             if(showDebug) System.err.println(preamble() + "DEBUG " + msg.apply());
         }
 
@@ -81,7 +82,7 @@ public abstract class AMapperLogger {
         final Logger log = Logger.getLogger("org.ajjpj.amapper");
 
         @Override
-        public void debug(AStringFunction0 msg) {
+        public void debug(AFunction0NoThrow<String> msg) {
             if(log.isDebugEnabled()) {
                 log.debug(msg.apply());
             }

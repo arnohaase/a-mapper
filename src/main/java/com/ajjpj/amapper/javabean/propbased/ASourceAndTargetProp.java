@@ -1,5 +1,9 @@
 package com.ajjpj.amapper.javabean.propbased;
 
+import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.abase.collection.immutable.AOption;
+import com.ajjpj.abase.function.AFunction0;
+import com.ajjpj.abase.function.AStatement1;
 import com.ajjpj.amapper.core.AMapperDiffWorker;
 import com.ajjpj.amapper.core.AMapperWorker;
 import com.ajjpj.amapper.core.AValueMappingDef;
@@ -11,14 +15,11 @@ import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.javabean.JavaBeanMappingHelper;
 import com.ajjpj.amapper.javabean.propbased.accessors.APropertyAccessor;
 import com.ajjpj.amapper.javabean.propbased.compile.AInlineablePartialBeanMapping;
-import com.ajjpj.amapper.util.coll.AMap;
-import com.ajjpj.amapper.util.coll.AOption;
-import com.ajjpj.amapper.util.func.AFunction0;
-import com.ajjpj.amapper.util.func.AVoidFunction1;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 
 /**
  * @author arno
@@ -68,7 +69,7 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
                 }
             };
 
-            worker.mapDeferred (childPath(path, true), sourceProp.get(source), tp, types, new AVoidFunction1<Object,Exception>() {
+            worker.mapDeferred (childPath(path, true), sourceProp.get(source), tp, types, new AStatement1<Object, Exception>() {
                 @Override public void apply(Object o) throws Exception {
                     targetProp.set(target, o);
                 }
@@ -119,7 +120,7 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
 
             code.appendLine(1, "worker.mapDeferred (path.withChild(" + APathSegment.class.getName() + ".simple(\"" + getSourceName() + "\"))),");
             code.appendLine(3, sourcePropName + ".get(" + source.getCode() + "), " + getterFunction0Name + ", " + typesVarName + ",");
-            code.appendLine(3, "new " + AVoidFunction1.class.getName() + "() {");
+            code.appendLine(3, "new " + AStatement1.class.getName() + "() {");
             code.appendLine(4, "public void apply(Object o) throws Exception {");
             code.appendLine(5, targetPropName + ".set(" + target.getCode() + ", o);");
             code.appendLine(4, "}");

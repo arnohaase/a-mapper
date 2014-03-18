@@ -1,7 +1,7 @@
 package com.ajjpj.amapper.javabean.propbased;
 
+import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.core.path.APath;
-import com.ajjpj.amapper.util.coll.AMap;
 
 /**
  * @author arno

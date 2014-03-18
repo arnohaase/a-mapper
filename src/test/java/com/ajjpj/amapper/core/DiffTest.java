@@ -1,5 +1,7 @@
 package com.ajjpj.amapper.core;
 
+import com.ajjpj.abase.collection.immutable.AList;
+import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.amapper.classes.*;
 import com.ajjpj.amapper.core.diff.ADiff;
 import com.ajjpj.amapper.core.diff.ADiffElement;
@@ -10,8 +12,6 @@ import com.ajjpj.amapper.javabean.JavaBeanMapper;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinCollectionMappingDefs;
-import com.ajjpj.amapper.util.coll.AList;
-import com.ajjpj.amapper.util.coll.AOption;
 import org.junit.Test;
 
 import java.util.Arrays;

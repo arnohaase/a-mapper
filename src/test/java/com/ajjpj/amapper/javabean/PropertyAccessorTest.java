@@ -1,12 +1,12 @@
 package com.ajjpj.amapper.javabean;
 
+import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.amapper.classes.PartOfPropPath;
 import com.ajjpj.amapper.classes.WithProperties;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.builder.ABeanExpressionParser;
 import com.ajjpj.amapper.javabean.builder.qualifier.NoQualifierExtractor;
 import com.ajjpj.amapper.javabean.propbased.accessors.*;
-import com.ajjpj.amapper.util.coll.AOption;
 import org.junit.Test;
 
 import java.util.ArrayList;

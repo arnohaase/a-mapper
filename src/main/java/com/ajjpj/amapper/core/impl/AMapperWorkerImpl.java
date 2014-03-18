@@ -1,18 +1,18 @@
 package com.ajjpj.amapper.core.impl;
 
+import com.ajjpj.abase.collection.immutable.AHashMap;
+import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.abase.collection.immutable.AOption;
+import com.ajjpj.abase.function.AFunction0;
+import com.ajjpj.abase.function.AFunction0NoThrow;
+import com.ajjpj.abase.function.AStatement0;
+import com.ajjpj.abase.function.AStatement1;
 import com.ajjpj.amapper.core.*;
 import com.ajjpj.amapper.core.exclog.AMapperExceptionHandler;
 import com.ajjpj.amapper.core.exclog.AMapperLogger;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.core.tpe.CanHandleSourceAndTargetCache;
-import com.ajjpj.amapper.util.coll.AHashMap;
-import com.ajjpj.amapper.util.coll.AMap;
-import com.ajjpj.amapper.util.coll.AOption;
-import com.ajjpj.amapper.util.func.AFunction0;
-import com.ajjpj.amapper.util.func.AStringFunction0;
-import com.ajjpj.amapper.util.func.AVoidFunction0;
-import com.ajjpj.amapper.util.func.AVoidFunction1;
 
 import java.util.Queue;
 
@@ -28,7 +28,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
     private final AContextExtractor contextExtractor;
     private final CanHandleSourceAndTargetCache<APreProcessor, APreProcessor> preProcessors;
     private final CanHandleSourceAndTargetCache<APostProcessor, APostProcessor> postProcessors;
-    private final Queue<AVoidFunction0<RuntimeException>> deferredWork;
+    private final Queue<AStatement0<RuntimeException>> deferredWork;
 
     private final IdentityCache identityCache = new IdentityCache();
 
@@ -38,7 +38,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
                              AIdentifierExtractor identifierExtractor, AContextExtractor contextExtractor,
                              CanHandleSourceAndTargetCache<APreProcessor, APreProcessor> preProcessor,
                              CanHandleSourceAndTargetCache<APostProcessor, APostProcessor> postProcessor,
-                             Queue<AVoidFunction0<RuntimeException>> deferredWork) {
+                             Queue<AStatement0<RuntimeException>> deferredWork) {
         this.valueMappings = valueMappings;
         this.objectMappings = objectMappings;
         this.logger = logger;
@@ -77,7 +77,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
     }
 
     @Override public AOption<Object> mapObject(final APath path, final Object sourceRaw, Object target, AQualifiedSourceAndTargetType types, AMap<String, Object> context) {
-        logger.debug (new AStringFunction0() {
+        logger.debug (new AFunction0NoThrow<String>() {
             @Override
             public String apply() {
                 return "map: " + sourceRaw + " @ " + path;
@@ -134,7 +134,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
     }
 
     @Override public Object mapValue(final APath path, final Object source, AQualifiedSourceAndTargetType types, AMap<String, Object> context) {
-        logger.debug (new AStringFunction0() {
+        logger.debug (new AFunction0NoThrow<String>() {
             @Override
             public String apply() {
                 return "map: " + source + " @ " + path;
@@ -150,16 +150,16 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
         }
     }
 
-    @Override public void mapDeferred(final APath path, final Object sourceRaw, final AFunction0<Object, Exception> target, final AQualifiedSourceAndTargetType types, final AVoidFunction1<Object, Exception> callback) {
-        logger.debug (new AStringFunction0() {
+    @Override public void mapDeferred(final APath path, final Object sourceRaw, final AFunction0<Object, Exception> target, final AQualifiedSourceAndTargetType types, final AStatement1<Object, Exception> callback) {
+        logger.debug (new AFunction0NoThrow<String>() {
             @Override public String apply() {
                 return "map deferred: " + types + " @ " + path;
             }
         });
 
-        deferredWork.add(new AVoidFunction0<RuntimeException>() {
+        deferredWork.add(new AStatement0<RuntimeException>() {
             @Override public void apply() {
-                logger.debug(new AStringFunction0() {
+                logger.debug(new AFunction0NoThrow<String>() {
                     @Override
                     public String apply() {
                         return "processing deferred: " + types + " @ " + path;

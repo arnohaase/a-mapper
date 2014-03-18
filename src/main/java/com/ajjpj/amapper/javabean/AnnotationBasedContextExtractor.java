@@ -1,13 +1,14 @@
 package com.ajjpj.amapper.javabean;
 
+import com.ajjpj.abase.collection.immutable.AList;
+import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.core.AContextExtractor;
 import com.ajjpj.amapper.core.tpe.AType;
 import com.ajjpj.amapper.javabean.annotation.AContextMarker;
-import com.ajjpj.amapper.util.coll.AList;
-import com.ajjpj.amapper.util.coll.AMap;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * @author arno

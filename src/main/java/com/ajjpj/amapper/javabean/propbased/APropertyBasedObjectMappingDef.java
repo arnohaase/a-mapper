@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.javabean.propbased;
 
+import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.core.AMapperDiffWorker;
 import com.ajjpj.amapper.core.AMapperWorker;
 import com.ajjpj.amapper.core.compile.*;
@@ -10,7 +11,6 @@ import com.ajjpj.amapper.javabean.JavaBeanMappingHelper;
 import com.ajjpj.amapper.javabean.JavaBeanTypes;
 import com.ajjpj.amapper.javabean.mappingdef.AbstractJavaBeanObjectMappingDef;
 import com.ajjpj.amapper.javabean.propbased.compile.AInlineablePartialBeanMapping;
-import com.ajjpj.amapper.util.coll.AMap;
 
 import java.util.ArrayList;
 import java.util.Collection;

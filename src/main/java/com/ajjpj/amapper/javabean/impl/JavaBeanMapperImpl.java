@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.javabean.impl;
 
+import com.ajjpj.abase.function.AFunction0;
 import com.ajjpj.amapper.core.*;
 import com.ajjpj.amapper.core.diff.ADiff;
 import com.ajjpj.amapper.core.exclog.AMapperLogger;
@@ -10,7 +11,6 @@ import com.ajjpj.amapper.javabean.JavaBeanMapper;
 import com.ajjpj.amapper.javabean.JavaBeanMappingHelper;
 import com.ajjpj.amapper.javabean.JavaBeanTypes;
 import com.ajjpj.amapper.AMapper;
-import com.ajjpj.amapper.util.func.AFunction0;
 
 import java.util.Collection;
 import java.util.List;
