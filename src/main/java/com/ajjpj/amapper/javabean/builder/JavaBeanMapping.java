@@ -146,6 +146,22 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
         return this;
     }
 
+    public JavaBeanMapping<S,T,H> removeMapping (String sourceExpr, String targetExpr) { //TODO test this
+        for(Iterator<APartialBeanMapping<S,T,?>> iter=forwardProps.iterator(); iter.hasNext(); ) {
+            final APartialBeanMapping<S,T,?> current = iter.next ();
+            if(current.getSourceName().equals(sourceExpr) && current.getTargetName().equals (targetExpr)) {
+                iter.remove();
+            }
+        }
+        for(Iterator<APartialBeanMapping<T,S,?>> iter=backwardProps.iterator(); iter.hasNext(); ) {
+            final APartialBeanMapping<T,S,?> current = iter.next ();
+            if(current.getTargetName().equals(sourceExpr) && current.getSourceName ().equals (targetExpr)) {
+                iter.remove();
+            }
+        }
+        return this;
+    }
+
     public JavaBeanMapping<S,T,H> removeMappingForSourceProp(String expr) {
         for(Iterator<APartialBeanMapping<S,T,?>> iter=forwardProps.iterator(); iter.hasNext(); ) {
             if(iter.next().getSourceName().equals(expr)) {
