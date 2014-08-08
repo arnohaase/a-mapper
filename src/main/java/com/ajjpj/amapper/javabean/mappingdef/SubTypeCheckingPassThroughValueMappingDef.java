@@ -9,8 +9,8 @@ import com.ajjpj.amapper.javabean.JavaBeanType;
  *
  * @author arno
  */
-class SubTypeCheckingPassThroughValueMappingDef<T> extends PassThroughValueMappingDef<T> {
-    SubTypeCheckingPassThroughValueMappingDef(Class<T> cls) {
+public class SubTypeCheckingPassThroughValueMappingDef<T> extends PassThroughValueMappingDef<T> {
+    public SubTypeCheckingPassThroughValueMappingDef(Class<T> cls) {
         super(cls);
     }
 

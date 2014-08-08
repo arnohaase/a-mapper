@@ -8,7 +8,7 @@ import com.ajjpj.amapper.core.tpe.CanHandleSourceAndTarget;
  * @author arno
  */
 public interface APostProcessor extends CanHandleSourceAndTarget {
-    <T> T postProcess(T o, AQualifiedSourceAndTargetType qt);
+    <T> T postProcess(T o, AQualifiedSourceAndTargetType qt);   //TODO pass in ref to source element!
 
     APostProcessor NO_POSTPROCESSOR = new NoPostProcessor();
 

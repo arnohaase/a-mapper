@@ -21,7 +21,7 @@ import com.ajjpj.amapper.javabean.JavaBeanTypes;
 public class PassThroughValueMappingDef<T> implements AValueMappingDef<T,T,Object>, AInlineableValueMappingDef { //TODO show this in the documentation
     protected final JavaBeanType<T> tpe;
 
-    PassThroughValueMappingDef(Class<T> cls) {
+    public PassThroughValueMappingDef(Class<T> cls) {
         this.tpe = JavaBeanTypes.create(cls);
     }
 
