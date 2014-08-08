@@ -92,7 +92,10 @@ public class JavaBeanSupport {
         for(String prefix: GETTER_PREFIXES) {
             try {
                 final Method getter = cls.getMethod(prefix + methodNameSuffix);
-                result.add(new AccessorDetails(getter, name, JavaBeanTypes.create(getter.getGenericReturnType()), qualifierExtractor.extract(getter), deferredStrategy.isDeferred(getter)));
+                final AOption<? extends JavaBeanType> tpe = JavaBeanTypes.create(getter.getGenericReturnType());
+                if (tpe.isDefined ()) {
+                    result.add(new AccessorDetails(getter, name, tpe.get(), qualifierExtractor.extract(getter), deferredStrategy.isDeferred(getter)));
+                }
             } catch (Exception e) { //
             }
         }
@@ -113,7 +116,12 @@ public class JavaBeanSupport {
         // passing in the getter instead of the JavaBeanType takes care of the whole primitive / boxed dichotomy
         try {
             final Method setter = getter.getDeclaringClass().getMethod("set" + propNameToMethodNameSuffix(name), getter.getReturnType());
-            return AOption.some(new AccessorDetails(setter, name, JavaBeanTypes.create(getter.getGenericReturnType()), qualifierExtractor.extract(setter), deferredStrategy.isDeferred(setter)));
+            final AOption<? extends JavaBeanType> tpe = JavaBeanTypes.create(getter.getGenericReturnType());
+            if (tpe.isEmpty ()) {
+                return AOption.none();
+            }
+
+            return AOption.some(new AccessorDetails(setter, name, tpe.get(), qualifierExtractor.extract(setter), deferredStrategy.isDeferred(setter)));
         }
         catch(Exception exc) { //
             return AOption.none();

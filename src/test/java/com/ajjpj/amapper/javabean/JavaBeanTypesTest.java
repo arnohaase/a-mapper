@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.javabean;
 
+import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.amapper.classes.ForTypeTests;
 import org.junit.Test;
 
@@ -32,17 +33,26 @@ public class JavaBeanTypesTest {
         final Type tpeString     = ForTypeTests.class.getMethod("withString").getGenericReturnType();
         final Type tpeStringList = ForTypeTests.class.getMethod("withStringList").getGenericReturnType();
         final Type tpeMap        = ForTypeTests.class.getMethod("withMap").getGenericReturnType();
+        final Type tpeWildcard   = ForTypeTests.class.getMethod("withWildcardList").getGenericReturnType ();
+        final Type tpeGeneric    = ForTypeTests.class.getMethod("withGeneric").getGenericReturnType ();
 
-        assertEquals(new JavaBeanType(String.class), JavaBeanTypes.create(tpeString));
-        assertEquals(new SingleParamBeanType(List.class, String.class), JavaBeanTypes.create(tpeStringList));
+        assertEquals(new JavaBeanType(String.class), JavaBeanTypes.create(tpeString).get());
+        assertEquals(new SingleParamBeanType(List.class, String.class), JavaBeanTypes.create(tpeStringList).get());
 
-        assertEquals(String.class, JavaBeanTypes.rawType(tpeString));
-        assertEquals(List.class,   JavaBeanTypes.rawType(tpeStringList));
+        assertEquals(AOption.some (String.class), JavaBeanTypes.rawType(tpeString));
+        assertEquals(AOption.some (List.class),   JavaBeanTypes.rawType (tpeStringList));
 
         // There is no *built-in* special handling of Java types with more than one parameter, especially in generic factories. Using code
         //  is however free to provide their own implementation of JavaBeanType that provide such support
-        assertEquals(new JavaBeanType(Map.class), JavaBeanTypes.create(tpeMap));
-        assertEquals(Map.class, JavaBeanTypes.rawType(tpeMap));
+        assertEquals(new JavaBeanType(Map.class), JavaBeanTypes.create(tpeMap).get());
+        assertEquals(AOption.some(Map.class), JavaBeanTypes.rawType(tpeMap));
+
+        assertEquals (new JavaBeanType(List.class), JavaBeanTypes.create (tpeWildcard).get());
+        assertEquals (AOption.none (), JavaBeanTypes.create (tpeGeneric));
+
+        assertEquals(AOption.some (List.class), JavaBeanTypes.rawType (tpeWildcard));
+        assertEquals(AOption.none (), JavaBeanTypes.rawType (tpeGeneric));
+
     }
 
     @Test

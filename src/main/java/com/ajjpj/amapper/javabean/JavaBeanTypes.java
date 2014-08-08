@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.javabean;
 
+import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.amapper.core.tpe.AType;
 
 import java.lang.reflect.ParameterizedType;
@@ -30,16 +31,23 @@ public class JavaBeanTypes {
     public static <T,P> SingleParamBeanType<T,P> create (Class<T> cls, Class<P> param) {
         return new SingleParamBeanType<T,P>(cls, param);
     }
-    public static JavaBeanType<?> create(Type javaType) {
-        if(javaType instanceof Class<?>) {
-            return create ((Class<?>) javaType);
+    public static AOption<? extends JavaBeanType> create(Type javaType) {
+        if (javaType instanceof Class<?>) {
+            return AOption.some (create ((Class) javaType));
+        }
+        if (! (javaType instanceof ParameterizedType)) {
+            return AOption.none ();
         }
 
         final ParameterizedType pt = (ParameterizedType) javaType;
         if(pt.getActualTypeArguments().length == 1) {
-            return create(rawType(pt), rawType(pt.getActualTypeArguments()[0]));
+            final AOption<Class> paramType = rawType (pt.getActualTypeArguments()[0]);
+            if (paramType.isEmpty ()) {
+                return AOption.some (create (rawType(pt).get()));
+            }
+            return AOption.some (create (rawType(pt).get (), paramType.get ()));
         }
-        return create(rawType(pt));
+        return AOption.some (create(rawType(pt).get()));
     }
 
     public static boolean isSubtypeOrSameOf(AType tpe, Class<?> cls) {
@@ -52,11 +60,14 @@ public class JavaBeanTypes {
         return boxed != null ? (Class<T>) boxed : cls;
     }
 
-    public static Class<?> rawType(Type javaType) {
-        if(javaType instanceof Class<?>) {
-            return (Class<?>) javaType;
+    public static AOption<Class> rawType(Type javaType) {
+        if (javaType instanceof Class<?>) {
+            return AOption.some((Class) javaType);
+        }
+        if (javaType instanceof ParameterizedType) {
+            return rawType(((ParameterizedType) javaType).getRawType());
         }
 
-        return rawType(((ParameterizedType) javaType).getRawType());
+        return AOption.none ();
     }
 }
