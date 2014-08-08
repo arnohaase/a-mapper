@@ -93,7 +93,7 @@ public class JavaBeanSupport {
             try {
                 final Method getter = cls.getMethod(prefix + methodNameSuffix);
                 result.add(new AccessorDetails(getter, name, JavaBeanTypes.create(getter.getGenericReturnType()), qualifierExtractor.extract(getter), deferredStrategy.isDeferred(getter)));
-            } catch (NoSuchMethodException e) { //
+            } catch (Exception e) { //
             }
         }
 
@@ -115,7 +115,7 @@ public class JavaBeanSupport {
             final Method setter = getter.getDeclaringClass().getMethod("set" + propNameToMethodNameSuffix(name), getter.getReturnType());
             return AOption.some(new AccessorDetails(setter, name, JavaBeanTypes.create(getter.getGenericReturnType()), qualifierExtractor.extract(setter), deferredStrategy.isDeferred(setter)));
         }
-        catch(NoSuchMethodException exc) { //
+        catch(Exception exc) { //
             return AOption.none();
         }
     }
