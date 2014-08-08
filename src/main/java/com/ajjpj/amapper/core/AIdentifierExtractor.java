@@ -9,7 +9,7 @@ public interface AIdentifierExtractor {
     /**
      * Used to qualify the path segment in a collection mapping, or more generally to identify an object in the mapper's output. The mapper uses these
      *  identifiers when mapping collections to minimize changes to the target. They also qualify paths segments for collection elements, and application
-     *  code may depend on them, especially when processing the result of a 'diff'. <p />
+     *  code may depend on them, especially when processing the result of a 'diff'. <p>
      *
      * The following properties are often desirable for uniqueIdentifier implementations (pretty much the same criteria
      *  that apply to good 'business keys' in persistent storage):
@@ -22,7 +22,7 @@ public interface AIdentifierExtractor {
      * <li> serializable / human readable: is often a direct consequence of "stable"
      * </ul>
      *
-     * @param types contains the qualified type of the object that is passed in, as well as the type in terms of which it is viewed. <p />
+     * @param types contains the qualified type of the object that is passed in, as well as the type in terms of which it is viewed. <p>
      *              This information be redundant for some domains, e.g. for Java Beans. In other domains, an object's 'AType' may not be easily retrieved
      *              from the object, e.g. because all objects are represented by Map instances. So use what you need, and feel free to ignore
      *              the rest.

@@ -15,10 +15,10 @@ import java.util.*;
 
 /**
  * This class handles collections based on the unique identifiers of their elements. A source and a target element correspond
- *  if their identifiers are equal.<p />
+ *  if their identifiers are equal.<p>
  *
  * That means that all collections are mapped using 'set' semantics, regardless of their actual type and 'native' semantics. For
- *  java.util.Lists, that can e.g. be useful if they are mapped with Hibernate as 'bags'.<p />
+ *  java.util.Lists, that can e.g. be useful if they are mapped with Hibernate as 'bags'.<p>
  *
  * More specifically, the class makes the following assumptions:
  *
@@ -27,12 +27,12 @@ import java.util.*;
  *     <li> element order / iteration order is considered insignificant
  * </ul>
  *
- * If these assumptions are not met, unexpected behavior may result.<p />
+ * If these assumptions are not met, unexpected behavior may result.<p>
  *
- * As it stands, this class 'can handle' no types at all. That is intentional - in order to actually use it, wrap it using <
- *  code>MappingDefTools.forTypes()</code>. <p />
+ * As it stands, this class 'can handle' no types at all. That is intentional - in order to actually use it, wrap it using
+ *  <code>MappingDefTools.forTypes()</code>. <p>
  *
- * Qualifiers of collection types are used for their elements as well.<p />
+ * Qualifiers of collection types are used for their elements as well.<p>
  *
  * Both map() and diff() operations have O(n^2) performance.
  *

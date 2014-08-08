@@ -8,7 +8,7 @@ import com.ajjpj.amapper.core.path.APath;
 
 /**
  * Java Bean mappings are typically done by property, i.e. they are split into parts. This interface represents such a
- *  part, e.g. the mapping of a single property.<p />
+ *  part, e.g. the mapping of a single property.<p>
  *
  * The type parameters represent the bean types that this mapping is part of.
  *

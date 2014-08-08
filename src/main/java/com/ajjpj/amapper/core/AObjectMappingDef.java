@@ -16,10 +16,10 @@ public interface AObjectMappingDef <S, T, H> extends CanHandleSourceAndTarget {
     /**
      * @return true iff both source and target side have object identity, i.e. calls with the <em>same</em> object
      *         must return the <em>same</em> result. That is almost always desirable - it is one of the key characteristics
-     *         of object mappings as opposed to value mappings.<p />
+     *         of object mappings as opposed to value mappings.<p>
      *
      *         The only context where a value of 'false' makes sense is if a value (e.g. a string) is mapped into an existing
-     *         data structure with object identity (e.g. a map).<p />
+     *         data structure with object identity (e.g. a map).<p>
      *
      *         If you didn't understand this, return true.
      */

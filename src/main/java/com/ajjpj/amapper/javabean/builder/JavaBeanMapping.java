@@ -12,12 +12,12 @@ import java.util.*;
 
 /**
  * This class is actually a builder for Java Bean mapping defs. It is part of the most widely-used public API however,
- *  and therefore a simple and intuitive name was chosen.<p />
+ *  and therefore a simple and intuitive name was chosen.<p>
  *
  * To use it, create an instance by calling the static create() method with 'source' and 'target' types. 'Source' and
  *  'target' are just labels to readily identify the two sides of the mapping - a single instance of JavaBeanMapping
  *  keeps track of mappings in both directions, and registering it with a JavaBeanMapperBuilder instance registers
- *  mappings in both directions.<p />
+ *  mappings in both directions.<p>
  *
  * By default, no properties are registered for mapping. If you want properties with matching names to be mapped,
  *  call <code>withMatchingPropsMappings()</code>.
@@ -56,17 +56,17 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
 
     /**
      * This method compares all Java Bean properties of source and target class, registering a bidirectional mapping if
-     *  a source and target property have the same name. <p />
+     *  a source and target property have the same name. <p>
      *
      * This heuristic is by no means fail-safe. There may happen to be properties that have the same name but should or can not
-     *  be mapped. Or some properties should only be mapped one-way. <p />
+     *  be mapped. Or some properties should only be mapped one-way. <p>
      *
      * So be aware of this method's limitations. That said, it is often a good starting point - call it early, and then
-     *  customize the mapping using the more detailed methods of <code>JavaBeanMapping</code>.<p />
+     *  customize the mapping using the more detailed methods of <code>JavaBeanMapping</code>.<p>
      *
      * @param removeReadOnly The Java Bean standard says that a bean property is read-only if there is no setter for it. If
      *                        'removeReadOnly' is set to 'true', mappings to these read-only properties are not registered. That
-     *                        is the default if you leave this parameter out.<p />
+     *                        is the default if you leave this parameter out.<p>
      *                       In some domains however it may not be necessary to modify properties because there is always
      *                        an existing object to modify. There may e.g. not be a setter for a collection because that
      *                        collections is always modified using 'add' and 'remove'. If you want mappings to be automatically

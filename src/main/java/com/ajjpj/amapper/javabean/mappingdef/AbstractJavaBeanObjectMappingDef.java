@@ -8,10 +8,10 @@ import com.ajjpj.amapper.javabean.JavaBeanMappingHelper;
 
 /**
  * This superclass provides the typical type handling for Java Bean mapping defs. It provides a convenience
- *  canHandle() implementation, and it creates new instances when the target ref is <code>null</code>. <p />
+ *  canHandle() implementation, and it creates new instances when the target ref is <code>null</code>. <p>
  *
  * If you are writing an object mapping def for Java Beans and want typical, 'default' behavior, extend this
- *  class.<p />
+ *  class.<p>
  *
  * This class' canHandle() implementation checks for type equality, ignoring qualifiers. If you want qualifier
  *  dependence, one of the static methods in MappingDefTools may be a convenient way to go.

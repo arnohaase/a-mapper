@@ -32,10 +32,10 @@ public interface AMapperWorker<H> {
     /**
      * deferred mapping causes this mapping to be deferred until no non-deferred mapping work is left. The underlying
      *  abstraction is that there is a primary, hierarchical structure through which all objects can be
-     *  reached, and a secondary structure of non-containment references. <p />
-     * The former is mapped first so as to provide well-defined, 'normalized' paths to every element. <p />
+     *  reached, and a secondary structure of non-containment references. <p>
+     * The former is mapped first so as to provide well-defined, 'normalized' paths to every element. <p>
      * All objects must be reachable through the primary hierarchy. Put differently, it is invalid for
-     *  an unmapped object to be reached through a deferred 'map' call. <p />
+     *  an unmapped object to be reached through a deferred 'map' call. <p>
      * NB: deferred mapping automatically means mutable state in the target object structure because the result of the
      *  mapping is created after the initial object structure is complete. This also prevents streaming processing.
      *

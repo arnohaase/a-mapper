@@ -9,7 +9,7 @@ import com.ajjpj.amapper.core.path.APath;
 
 /**
  * This class adds a condition to a partial mapping. This condition is evaluated whenever the mapping is used, and based on the conditions's
- *  value the partial mapping is applied or skipped.<p />
+ *  value the partial mapping is applied or skipped.<p>
  *
  * This mechanism is helpful e.g. for permission based mapping.
  *

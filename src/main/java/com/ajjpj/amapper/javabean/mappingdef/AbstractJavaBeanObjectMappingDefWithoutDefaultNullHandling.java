@@ -8,7 +8,7 @@ import com.ajjpj.amapper.javabean.JavaBeanTypes;
 
 /**
  * This class provides 'canHandle' and generics convenience for Java Bean mapping defs, leaving the handling of
- *  null values (especially on the target side) to implementations.<p />
+ *  null values (especially on the target side) to implementations.<p>
  *
  * If you do not know what that means or if you are unsure if it is what you want, use AbstractJavaBeanMappingDef
  *  instead.

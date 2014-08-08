@@ -15,7 +15,7 @@ import java.util.Collection;
  * </ul>
  *
  * This interface defines the required adaptor methods between arbitrary collection representations and java.util.Collection. The 'helpers' object registered with the mapper
- *  and passed to mapping defs must implement ACollectionHelper in order for collection mappings to be available. <p />
+ *  and passed to mapping defs must implement ACollectionHelper in order for collection mappings to be available. <p>
  *
  * The mutator methods of the returned j.u.Collection can either write through to a wrapped collection, or the returned collection can act as a builder, creating a new
  *  underlying collection when fromJuCollection is called.
