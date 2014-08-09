@@ -32,7 +32,7 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
 
     public ASourceAndTargetProp(APropertyAccessor sourceProp, APropertyAccessor targetProp) {
         if(! targetProp.isWritable()) {
-            throw new IllegalArgumentException("target property is not writable: " + targetProp); //TODO weaken this condition - or how to handle this?!
+            //TODO log a warning?   throw new IllegalArgumentException("target property is not writable: " + targetProp);
         }
 
         this.sourceProp = sourceProp;
