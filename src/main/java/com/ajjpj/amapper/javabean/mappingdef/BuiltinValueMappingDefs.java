@@ -4,24 +4,22 @@ import com.ajjpj.amapper.core.AValueMappingDef;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Currency;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 
 
 /**
  * @author arno
  */
 public class BuiltinValueMappingDefs {
-    public static final AValueMappingDef<String,     String,     Object> StringMappingDef     = new PassThroughValueMappingDef <String>     (String.class);
-    public static final AValueMappingDef<Boolean,    Boolean,    Object> BooleanMappingDef    = new PassThroughValueMappingDef <Boolean>    (Boolean.class);
-    public static final AValueMappingDef<Character , Character,  Object> CharacterMappingDef  = new PassThroughValueMappingDef <Character>  (Character.class);
+    public static final AValueMappingDef<String,     String,     Object> StringMappingDef     = new PassThroughValueMappingDef <> (String.class);
+    public static final AValueMappingDef<Boolean,    Boolean,    Object> BooleanMappingDef    = new PassThroughValueMappingDef <> (Boolean.class);
+    public static final AValueMappingDef<Character , Character,  Object> CharacterMappingDef  = new PassThroughValueMappingDef <> (Character.class);
 
-    public static final AValueMappingDef<Date,     Date,     Object> DateMappingDef     = new PassThroughValueMappingDef <Date>     (Date.class);
-    public static final AValueMappingDef<Locale,   Locale,   Object> LocaleMappingDef   = new PassThroughValueMappingDef <Locale>   (Locale.class);
-    public static final AValueMappingDef<TimeZone, TimeZone, Object> TimeZoneMappingDef = new PassThroughValueMappingDef <TimeZone> (TimeZone.class);
-    public static final AValueMappingDef<Currency, Currency, Object> CurrencyMappingDef = new PassThroughValueMappingDef <Currency> (Currency.class);
+    public static final AValueMappingDef<Date,     Date,     Object> DateMappingDef     = new PassThroughValueMappingDef <> (Date.class);
+    public static final AValueMappingDef<Locale,   Locale,   Object> LocaleMappingDef   = new PassThroughValueMappingDef <> (Locale.class);
+    public static final AValueMappingDef<TimeZone, TimeZone, Object> TimeZoneMappingDef = new PassThroughValueMappingDef <> (TimeZone.class);
+    public static final AValueMappingDef<Currency, Currency, Object> CurrencyMappingDef = new PassThroughValueMappingDef <> (Currency.class);
+    public static final AValueMappingDef<UUID,     UUID,     Object> UuidMappingDef     = new PassThroughValueMappingDef <> (UUID.class);
 
     @SuppressWarnings(value = {"raw", "unchecked"})
     public static final AValueMappingDef<Class<?>, Class<?>, Object> ClassMappingDef = new PassThroughValueMappingDef <Class<?>> ((Class) Class.class);

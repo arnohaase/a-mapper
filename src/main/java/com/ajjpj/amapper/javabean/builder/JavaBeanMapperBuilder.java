@@ -30,6 +30,7 @@ public class JavaBeanMapperBuilder <H extends JavaBeanMappingHelper> {
             BuiltinValueMappingDefs.StringMappingDef, BuiltinValueMappingDefs.BooleanMappingDef, BuiltinValueMappingDefs.CharacterMappingDef,
             BuiltinValueMappingDefs.BigDecimalMappingDef, BuiltinValueMappingDefs.BigIntegerMappingDef,
             BuiltinValueMappingDefs.DateMappingDef, BuiltinValueMappingDefs.LocaleMappingDef, BuiltinValueMappingDefs.TimeZoneMappingDef, BuiltinValueMappingDefs.CurrencyMappingDef,
+            BuiltinValueMappingDefs.UuidMappingDef,
             BuiltinValueMappingDefs.ClassMappingDef, BuiltinValueMappingDefs.EnumMappingDef,
             BuiltinValueMappingDefs.ByteMappingDef, BuiltinValueMappingDefs.ShortMappingDef, BuiltinValueMappingDefs.IntegerMappingDef, BuiltinValueMappingDefs.LongMappingDef,
             BuiltinValueMappingDefs.FloatMappingDef, BuiltinValueMappingDefs.DoubleMappingDef
