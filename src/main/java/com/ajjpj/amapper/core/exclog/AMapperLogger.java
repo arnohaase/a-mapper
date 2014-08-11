@@ -48,7 +48,7 @@ public abstract class AMapperLogger {
     /**
      * controls output of StdOut and StdErr
      */
-    public static boolean showDebug = false;
+    public static volatile boolean showDebug = false;
 
     public static AMapperLogger StdOut = new AMapperLogger() {
         String preamble() {

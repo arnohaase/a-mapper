@@ -3,6 +3,7 @@ package com.ajjpj.amapper.javabean.propbased.accessors;
 import com.ajjpj.amapper.core.compile.ACodeSnippet;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
+import com.ajjpj.amapper.util.AMapperReflectionHelper;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -63,13 +64,13 @@ public class AMethodPathBasedPropertyAccessor implements APropertyAccessor {
             if(cur == null && step.isNullSafe()) {
                 return null;
             }
-            cur = step.getGetter().invoke(cur);
+            cur = AMapperReflectionHelper.invoke (step.getGetter(), cur);
         }
 
         if(cur == null && isFinalStepNullSafe) {
             return null;
         }
-        return finalGetter.invoke(cur);
+        return AMapperReflectionHelper.invoke (finalGetter, cur);
     }
 
     @Override
@@ -79,13 +80,13 @@ public class AMethodPathBasedPropertyAccessor implements APropertyAccessor {
             if(cur == null && step.isNullSafe()) {
                 return;
             }
-            cur = step.getGetter().invoke(cur);
+            cur = AMapperReflectionHelper.invoke (step.getGetter(), cur);
         }
 
         if(cur == null && isFinalStepNullSafe) {
             return;
         }
-        finalSetter.invoke(cur, newValue);
+        AMapperReflectionHelper.invoke (finalSetter, cur, newValue);
     }
 
     private boolean hasNullSafeSegment() {

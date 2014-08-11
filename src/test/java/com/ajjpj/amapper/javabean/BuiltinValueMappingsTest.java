@@ -3,6 +3,7 @@ package com.ajjpj.amapper.javabean;
 import com.ajjpj.amapper.core.AValueMappingDef;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.core.tpe.AQualifier;
+import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinValueMappingDefs;
 import org.junit.Test;
 
@@ -10,10 +11,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.RetentionPolicy;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Currency;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -237,6 +235,15 @@ public class BuiltinValueMappingsTest {
 
         assertEquals(veryBigDecimal0, BuiltinValueMappingDefs.BigDecimalMappingDef.map(veryBigInt,      null, null, null));
         assertEquals(veryBigDecimal3, BuiltinValueMappingDefs.BigDecimalMappingDef.map(veryBigDecimal3, null, null, null));
+    }
+
+    @Test
+    public void testUuid() throws Exception {
+        final JavaBeanMapper m = JavaBeanMapperBuilder.create ().build ();
+
+        final UUID uuid = UUID.randomUUID ();
+        final UUID mapped = m.map (uuid, UUID.class);
+        assertSame (uuid, mapped);
     }
 }
 

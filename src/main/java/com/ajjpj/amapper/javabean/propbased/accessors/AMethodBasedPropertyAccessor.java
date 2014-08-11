@@ -3,6 +3,7 @@ package com.ajjpj.amapper.javabean.propbased.accessors;
 import com.ajjpj.amapper.core.compile.ACodeSnippet;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
+import com.ajjpj.amapper.util.AMapperReflectionHelper;
 
 import java.lang.reflect.Method;
 
@@ -53,11 +54,11 @@ public class AMethodBasedPropertyAccessor implements APropertyAccessor {
     }
 
     @Override public Object get(Object o) throws Exception {
-        return getter.invoke(o);
+        return AMapperReflectionHelper.invoke (getter, o);
     }
 
     @Override public void set(Object o, Object newValue) throws Exception {
-        setter.invoke(o, newValue);
+        AMapperReflectionHelper.invoke (setter, o, newValue);
     }
 
     @Override public ACodeSnippet javaCodeForGet(ACodeSnippet parent) throws Exception {

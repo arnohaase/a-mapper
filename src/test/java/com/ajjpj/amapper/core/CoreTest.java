@@ -1,9 +1,12 @@
 package com.ajjpj.amapper.core;
 
 import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.amapper.AMapper;
 import com.ajjpj.amapper.classes.ClassCyclicChild;
 import com.ajjpj.amapper.classes.ClassCyclicParent;
+import com.ajjpj.amapper.classes.duplicateidentity.*;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;
+import com.ajjpj.amapper.core.exclog.AMapperLogger;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.javabean.JavaBeanMapper;
@@ -42,6 +45,29 @@ public class CoreTest {
 
         assertNotSame (parent, mappedParent);
         assertSame (mappedParent, mappedParent.getChild().getParent());
+    }
+
+    @Test
+    public void testDuplicateIdentity() throws Exception {
+        // source side has a simple cycle ParentA <-> ChildA
+        // target side has two classes ParentB and ParentB2, both mappable from ParentA. There is a cycle ParentB2 <-> ChildB, and a reference ParentB -> ChildB
+        // So a cyclical structure on the source side is napped to a structure where the parent is mapped twice, to instances of two different types - while maintaining
+        //  object identity for each
+
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+                .withBeanMapping (JavaBeanMapping.create (ParentA.class, ParentB. class).withMatchingPropsMappings ())
+                .withBeanMapping (JavaBeanMapping.create (ParentA.class, ParentB2.class).withMatchingPropsMappings ())
+                .withBeanMapping (JavaBeanMapping.create (ChildA.class, ChildB.class).withMatchingPropsMappings ())
+                .build ();
+
+        final ParentA parent = new ParentA();
+        parent.setChild (new ChildA ());
+        parent.getChild ().setParent (parent);
+
+        final ParentB mapped = mapper.map (parent, ParentB.class);
+
+        assertNotSame (mapped, mapped.getChild ().getParent ());
+        assertSame (mapped.getChild (), mapped.getChild ().getParent ().getChild ());
     }
 
     @Test

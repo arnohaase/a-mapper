@@ -4,6 +4,7 @@ import com.ajjpj.abase.collection.immutable.AHashMap;
 import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.annotation.AQualifierAnnotation;
+import com.ajjpj.amapper.util.AMapperReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -30,7 +31,7 @@ public class AAnnotationBasedQualifierExtractor implements AQualifierExtractor {
             this.valueGetter = valueGetter;
         }
     }
-    private final Map<Class<?>, QualAnnotDesc> cache = new ConcurrentHashMap<Class<?>, QualAnnotDesc>();
+    private final Map<Class<?>, QualAnnotDesc> cache = new ConcurrentHashMap<>();
 
     @Override
     public AQualifier extract(AnnotatedElement el) throws Exception {
@@ -39,7 +40,7 @@ public class AAnnotationBasedQualifierExtractor implements AQualifierExtractor {
         for(Annotation a: el.getAnnotations()) {
             final QualAnnotDesc desc = isQualifierAnnotation(a.annotationType());
             if(desc.isQualifier) {
-                final Object valueRaw = desc.valueGetter != null ? desc.valueGetter.invoke(a) : null;
+                final Object valueRaw = desc.valueGetter != null ? AMapperReflectionHelper.invoke (desc.valueGetter, a) : null;
                 final String value = valueRaw != null ? valueRaw.toString() : null;
 
                 map = map.updated(desc.name, value);

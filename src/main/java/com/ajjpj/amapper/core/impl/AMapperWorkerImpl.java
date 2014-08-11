@@ -94,7 +94,8 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
             }
 
             final Object source = preProcessed.get();
-            final AOption<Object> cached = identityCache.get(source);
+
+            final AOption<Object> cached = identityCache.get (source, types.target ());
             if(cached.isDefined()) {
                 return cached;
             }
@@ -105,7 +106,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
             final Object result = postProcess(postProcessors.allEntriesFor(types), resultRaw, types);
 
             if(m.isCacheable()) {
-                identityCache.register(source, result, path);
+                identityCache.register(source, result, types.target (), path);
             }
 
             return AOption.some(result);
@@ -174,14 +175,14 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
                     }
                     final Object source = preProcessed.get();
 
-                    final AOption<Object> prevTarget = identityCache.get(source);
+                    final AOption<Object> prevTarget = identityCache.get(source, types.target ());
                     if(prevTarget.isDefined()) {
                         callback.apply(prevTarget.get());
                     }
                     else {
                         logger.deferredWithoutInitial(path); //TODO special treatment for collections etc. --> flag in the mapping def?
                         // create a new, empty context: context is accumulated only from parents to children
-                        final AOption<Object> mapped = mapObject(path, source, target, types, AHashMap.<String, Object>empty());
+                        final AOption<Object> mapped = mapObject(path, source, target.apply (), types, AHashMap.<String, Object>empty());
                         if(mapped.isDefined()) {
                             callback.apply(mapped.get());
                         }
