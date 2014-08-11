@@ -14,8 +14,12 @@ public abstract class AMapperLogger {
 
     protected abstract void warn(String msg);
 
-    public void deferredWithoutInitial(APath path) {
-        warn("Object mapped as 'deferred' without previously being mapped in the primary hierarchy @ " + path);
+    public void deferredWithoutInitial(final APath path) {
+        debug (new AFunction0NoThrow<String> () {
+            @Override public String apply () {
+                return "Object mapped as 'deferred' without previously being mapped in the primary hierarchy @ " + path;
+            }
+        });
     }
     public void severalExistingTargetsForSource(APath path, Object s) {
         warn("Several existing target elements for source element " + s + "@" + path);
