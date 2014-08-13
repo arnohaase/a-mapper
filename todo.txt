@@ -1,6 +1,5 @@
 todo
 ----
-* AQualifiedSourceAndTargetTypes: convenience ctor
 * JavaBeanMapping:
   * source and target types optional (--> exception if OGNL)
   * builder methods for APropertyAccessor

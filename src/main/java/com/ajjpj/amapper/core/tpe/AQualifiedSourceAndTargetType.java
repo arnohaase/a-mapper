@@ -9,6 +9,13 @@ public class AQualifiedSourceAndTargetType {
     public final AType targetType;
     public final AQualifier targetQualifier;
 
+    /**
+     * convenience factory method for unqualified types
+     */
+    public static AQualifiedSourceAndTargetType create (AType sourceType, AType targetType) {
+        return new AQualifiedSourceAndTargetType (sourceType, AQualifier.NO_QUALIFIER, targetType, AQualifier.NO_QUALIFIER);
+    }
+
     public AQualifiedSourceAndTargetType(AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier) {
         this.sourceType = sourceType;
         this.sourceQualifier = sourceQualifier;
