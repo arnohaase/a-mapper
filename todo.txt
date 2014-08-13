@@ -2,6 +2,7 @@ todo
 ----
 * ListByIdentifierAsSet
 * EqualsBased
+* JavaBeanMapper: preprocess initial argument!
 
 * mapping lookup: qualified trumps unqualified (but how?)
 

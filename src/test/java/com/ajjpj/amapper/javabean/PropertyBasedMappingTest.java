@@ -1,8 +1,10 @@
 package com.ajjpj.amapper.javabean;
 
-import com.ajjpj.amapper.classes.ClassA;
-import com.ajjpj.amapper.classes.ClassB;
-import com.ajjpj.amapper.classes.InnerClassA;
+import com.ajjpj.amapper.classes.*;
+import com.ajjpj.amapper.classes.duplicateidentity.ChildA;
+import com.ajjpj.amapper.classes.duplicateidentity.ChildB;
+import com.ajjpj.amapper.classes.duplicateidentity.ParentA;
+import com.ajjpj.amapper.classes.duplicateidentity.ParentB;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinCollectionMappingDefs;
@@ -30,9 +32,88 @@ public class PropertyBasedMappingTest {
     }
 
     @Test
+    public void testBidirectionalHeuristic () throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+            .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
+                    .addMapping ("firstName", "firstName")
+            )
+            .build();
+
+        final ClassA a = new ClassA();
+        a.setFirstName("first");
+
+        final ClassB b = mapper.map(a, ClassB.class);
+        assertEquals("first", b.getFirstName());
+
+        final ClassA a2 = mapper.map(b, ClassA.class);
+        assertEquals("first", a2.getFirstName());
+    }
+
+    @Test public void testHeuristicCascade () throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+                .withBeanMapping (JavaBeanMapping.create (ParentA.class, ParentB.class)
+                        .addMapping ("child.name", "child.name2")
+                )
+                .build ();
+
+        final ParentA a = new ParentA();
+        a.setChild (new ChildA ());
+        a.getChild ().setName ("the name");
+
+        final ParentB b = new ParentB();
+        b.setChild (new ChildB ());
+
+        mapper.map (a, b);
+
+        assertEquals ("the name", b.getChild ().getName2 ());
+    }
+
+    @Test public void testHeuristicCascadeNullSafe () throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+                .withBeanMapping (JavaBeanMapping.create (ParentA.class, ParentB.class)
+                        .addMapping ("child.?name", "child.?name2")
+                )
+                .build ();
+
+        final ParentA a = new ParentA();
+        a.setChild (new ChildA ());
+        a.getChild ().setName ("the name");
+
+        assertEquals (null, mapper.map (a, ParentB.class).getChild ());
+
+        final ParentB b = new ParentB ();
+        b.setChild (new ChildB ());
+        b.getChild ().setName2 ("original name");
+
+        mapper.map (new ParentA(), b);
+        assertEquals (null, b.getChild ().getName2 ());
+    }
+
+    @Test public void testHeuristicDeferred () throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
+                .withBeanMapping(JavaBeanMapping.create(ClassCyclicParent.class, ClassCyclicParent.class)
+                        .addMapping ("child", "child")
+                )
+                .withBeanMapping (JavaBeanMapping.create(ClassCyclicChild.class, ClassCyclicChild.class)
+                        .addMapping ("parent", "parent")
+                )
+                .build();
+
+        final ClassCyclicParent parent = new ClassCyclicParent();
+        final ClassCyclicChild child = new ClassCyclicChild();
+
+        parent.setChild (child);
+        child.setParent (parent);
+
+        final ClassCyclicParent mappedParent = mapper.map (parent, ClassCyclicParent.class);
+
+        assertNotSame (parent, mappedParent);
+        assertSame (mappedParent, mappedParent.getChild().getParent());
+    }
+
+    @Test
     public void testRemove () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                 .removeMappingForSourceProp("firstName")
             )
@@ -47,12 +128,11 @@ public class PropertyBasedMappingTest {
 
     @Test
     public void testAddOneWay () throws Exception {
-        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                 .removeMappingForSourceProp("firstName")
-                .removeMappingForSourceProp("lastName")
-                .addOneWayMapping("firstName", String.class, "lastName", String.class)
+                .removeMappingForSourceProp ("lastName")
+                .addOneWayMapping ("firstName", String.class, "lastName", String.class)
             )
             .build();
 
@@ -60,7 +140,25 @@ public class PropertyBasedMappingTest {
         a.setFirstName("first");
 
         final ClassB b = mapper.map(a, ClassB.class);
-        assertEquals("first", b.getLastName());
+        assertEquals ("first", b.getLastName ());
+
+        final ClassA mappedA = mapper.map(b, ClassA.class);
+        assertEquals(null, mappedA.getFirstName());
+    }
+
+    @Test
+    public void testAddOneWayHeuristic () throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+            .withBeanMapping(JavaBeanMapping.create (ClassA.class, ClassB.class)
+                .addOneWayMapping ("firstName", "lastName")
+            )
+            .build();
+
+        final ClassA a = new ClassA();
+        a.setFirstName("first");
+
+        final ClassB b = mapper.map(a, ClassB.class);
+        assertEquals ("first", b.getLastName ());
 
         final ClassA mappedA = mapper.map(b, ClassA.class);
         assertEquals(null, mappedA.getFirstName());
@@ -68,12 +166,34 @@ public class PropertyBasedMappingTest {
 
     @Test
     public void testAddBackwardsOneWay () throws Exception {
-        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                 .removeMappingForSourceProp("firstName")
-                .removeMappingForSourceProp("lastName")
-                .addBackwardsOneWayMapping("firstName", String.class, "lastName", String.class)
+                .removeMappingForSourceProp ("lastName")
+                .addBackwardsOneWayMapping ("firstName", String.class, "lastName", String.class)
+            )
+            .build ();
+
+        final ClassA a = new ClassA();
+        a.setFirstName("first a");
+        a.setLastName("last a");
+
+        final ClassB b = mapper.map(a, ClassB.class);
+        assertEquals(null, b.getFirstName());
+        assertEquals(null, b.getLastName());
+
+        b.setFirstName("first b");
+        b.setLastName("last b");
+        final ClassA mappedA = mapper.map(b, ClassA.class);
+        assertEquals("last b", mappedA.getFirstName());
+        assertEquals(null, mappedA.getLastName ());
+    }
+
+    @Test
+    public void testAddBackwardsOneWayHeuristic () throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+            .withBeanMapping(JavaBeanMapping.create (ClassA.class, ClassB.class)
+                .addBackwardsOneWayMapping("firstName", "lastName")
             )
             .build ();
 
@@ -95,10 +215,10 @@ public class PropertyBasedMappingTest {
     @Test
     public void testMakeOneWay () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
-            .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
-                .withMatchingPropsMappings()
-                .makeOneWay("firstName")
+            .withObjectMapping (BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
+            .withBeanMapping (JavaBeanMapping.create (ClassA.class, ClassB.class)
+                    .withMatchingPropsMappings ()
+                    .makeOneWay ("firstName")
             )
              .build();
 

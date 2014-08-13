@@ -1,12 +1,12 @@
 package com.ajjpj.amapper.classes;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class ClassCyclicParent {
     private ClassCyclicChild child;
-    private List<ClassCyclicChild> childList = new ArrayList<ClassCyclicChild>();
+    private List<ClassCyclicChild> childList = new ArrayList<>();
 
     public ClassCyclicChild getChild() {
         return child;

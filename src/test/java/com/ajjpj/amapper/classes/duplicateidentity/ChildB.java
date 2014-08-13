@@ -8,6 +8,7 @@ import com.ajjpj.amapper.javabean.annotation.DeferredProperty;
  */
 public class ChildB {
     private ParentB2 parent;
+    private String name2;
 
     @DeferredProperty
     public ParentB2 getParent () {
@@ -15,5 +16,12 @@ public class ChildB {
     }
     public void setParent (ParentB2 parent) {
         this.parent = parent;
+    }
+
+    public String getName2 () {
+        return name2;
+    }
+    public void setName2 (String name2) {
+        this.name2 = name2;
     }
 }

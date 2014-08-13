@@ -52,10 +52,16 @@ public class ABeanExpressionParser {
         final JavaBeanSupport beanSupport = new JavaBeanSupport (deferredStrategy, qualifierExtractor);
 
         for(String segment: propCascade.split("\\.")) {
+            if (segment.startsWith ("?")) {
+                segment = segment.substring (1);
+            }
+
             final AOption<JavaBeanSupport.AccessorDetails> optGetter = beanSupport.getGetter (curClass, segment);
             if (optGetter.isEmpty ()) {
                 throw new IllegalArgumentException ("Type " + curClass + " has no property " + segment + " (as part of path " + propCascade + " on type " + parentClass.getName () + ")");
             }
+            getter = optGetter.get ();
+            curClass = getter.method.getReturnType ();
         }
         return getter;
     }
