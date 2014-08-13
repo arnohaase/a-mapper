@@ -260,7 +260,7 @@ public class DiffTest {
     public void testMergeList() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withIdentifierExtractor(ie)
-                .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+                .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
                 .withBeanMapping(JavaBeanMapping.create(DiffSource.class, DiffTarget.class)
                         .addMapping("sourceChildren", List.class, DiffSourceChild.class, "targetChildren", List.class, DiffTargetChild.class)
                 )
@@ -307,7 +307,7 @@ public class DiffTest {
     public void testDeferred() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withIdentifierExtractor(ie)
-                .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+                .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
                 .withBeanMapping(JavaBeanMapping.create(DiffSource.class, DiffTarget.class)
                         .addMapping("sourceName", String.class, "targetName", String.class)
 //                        .addMapping("sourceChildren", List.class, DiffSourceChild.class, "targetChildren", List.class, DiffTargetChild.class)

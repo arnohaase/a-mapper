@@ -75,7 +75,7 @@ public class SpecialMappingTest {
     @Test
     public void testGuardForward() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-                .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+                .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
                 .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                         .withMatchingPropsMappings()
                         .withForwardGuardBySourceExpression("firstName", new AGuardCondition<ClassA, ClassB, Object>() {
@@ -111,7 +111,7 @@ public class SpecialMappingTest {
     @Test
     public void testGuardBackward() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-                .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+                .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
                 .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                         .withMatchingPropsMappings()
                         .withBackwardGuardBySourceExpression("firstName", new AGuardCondition<ClassB, ClassA, Object>() {

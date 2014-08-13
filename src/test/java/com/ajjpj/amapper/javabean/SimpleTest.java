@@ -33,7 +33,7 @@ public class SimpleTest {
     public void testSimple2 () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
             .withLogger(AMapperLogger.StdErr)
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class).withMatchingPropsMappings())
             .withBeanMapping(JavaBeanMapping.create(InnerClassA.class, InnerClassB.class).withMatchingPropsMappings())
             .build();

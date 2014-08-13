@@ -1,12 +1,10 @@
 package com.ajjpj.amapper.core;
 
 import com.ajjpj.abase.collection.immutable.AMap;
-import com.ajjpj.amapper.AMapper;
 import com.ajjpj.amapper.classes.ClassCyclicChild;
 import com.ajjpj.amapper.classes.ClassCyclicParent;
 import com.ajjpj.amapper.classes.duplicateidentity.*;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;
-import com.ajjpj.amapper.core.exclog.AMapperLogger;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.javabean.JavaBeanMapper;
@@ -30,7 +28,7 @@ public class CoreTest {
     @Test
     public void testCyclicRef () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
             .withBeanMapping(JavaBeanMapping.create(ClassCyclicParent.class, ClassCyclicParent.class).withMatchingPropsMappings())
             .withBeanMapping (JavaBeanMapping.create(ClassCyclicChild.class, ClassCyclicChild.class).withMatchingPropsMappings())
             .build();
@@ -82,7 +80,7 @@ public class CoreTest {
         child2.setParent (parent);
 
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
             .withBeanMapping (JavaBeanMapping.create (ClassCyclicParent.class, ClassCyclicParent.class).withMatchingPropsMappings())
             .withBeanMapping (JavaBeanMapping.create (ClassCyclicChild.class, ClassCyclicChild.class).withMatchingPropsMappings())
             .build ();
@@ -140,7 +138,7 @@ public class CoreTest {
         };
 
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
             .withValueMapping(numberToString)
             .withObjectMapping(stringListMapping)
             .build ();

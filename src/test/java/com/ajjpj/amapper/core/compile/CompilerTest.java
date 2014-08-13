@@ -20,7 +20,7 @@ public class CompilerTest {
     @Test
     public void testSimpleCompile() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-                .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+                .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
                 .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class).withMatchingPropsMappings())
                 .build(true);
 
@@ -33,7 +33,7 @@ public class CompilerTest {
     @Test
     public void testCompileOgnl() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-                .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+                .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
                 .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class).addOneWayMapping("1>0 ? firstName : lastName", String.class, "1>0 ? firstName : lastName", String.class))
                 .build(true);
 

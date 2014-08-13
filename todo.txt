@@ -1,5 +1,14 @@
 todo
 ----
+* AQualifiedSourceAndTargetTypes: convenience ctor
+* JavaBeanMapping:
+  * source and target types optional (--> exception if OGNL)
+  * builder methods for APropertyAccessor
+* ListByIdentifierAsSet
+* EqualsBased
+
+* mapping lookup: qualified trumps unqualified (but how?)
+
 * tests
   * deferred, esp. for diff
   * child referenced by several parents

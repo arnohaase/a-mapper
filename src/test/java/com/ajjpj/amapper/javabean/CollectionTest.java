@@ -92,7 +92,7 @@ public class CollectionTest {
 
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withObjectMapping(StringHolderAsObject)
-                .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+                .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
                 .build();
 
         // Verify that the string's identity is preserved. In a real-world application, this is weird behavior for
@@ -121,7 +121,7 @@ public class CollectionTest {
     @Test
     public void testListByIdentifier() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassA.class))
             .build();
 

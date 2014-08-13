@@ -15,7 +15,7 @@ public class PropertyBasedMappingTest {
     @Test
     public void testBidirectional () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class).withMatchingPropsMappings())
             .build();
 
@@ -32,7 +32,7 @@ public class PropertyBasedMappingTest {
     @Test
     public void testRemove () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                 .removeMappingForSourceProp("firstName")
             )
@@ -48,7 +48,7 @@ public class PropertyBasedMappingTest {
     @Test
     public void testAddOneWay () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                 .removeMappingForSourceProp("firstName")
                 .removeMappingForSourceProp("lastName")
@@ -69,7 +69,7 @@ public class PropertyBasedMappingTest {
     @Test
     public void testAddBackwardsOneWay () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                 .removeMappingForSourceProp("firstName")
                 .removeMappingForSourceProp("lastName")
@@ -95,7 +95,7 @@ public class PropertyBasedMappingTest {
     @Test
     public void testMakeOneWay () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                 .withMatchingPropsMappings()
                 .makeOneWay("firstName")
@@ -117,7 +117,7 @@ public class PropertyBasedMappingTest {
     @Test
     public void testMakeBackwardsOneWay () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                 .withMatchingPropsMappings()
                 .makeBackwardsOneWay("firstName")
@@ -139,7 +139,7 @@ public class PropertyBasedMappingTest {
     @Test
     public void testOverridesAndOgnl () throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                     .removeMappingForSourceProp("phone")
                     .overrideWithOneWayMapping("phone[0].other", String.class, "lastName", String.class)
@@ -172,7 +172,7 @@ public class PropertyBasedMappingTest {
     public void testSameSource() throws Exception {
         // test that a single field can be mapped to several fields
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
-            .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
             .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassB.class)
                 .withMatchingPropsMappings()
                 .removeMappingForTargetProp("lastName")

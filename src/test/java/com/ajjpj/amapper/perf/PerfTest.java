@@ -13,7 +13,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 
@@ -26,14 +25,14 @@ public class PerfTest extends Assert {
         try {
             mapper = JavaBeanMapperBuilder.create()
                     .withLogger(AMapperLogger.StdOut)
-                    .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+                    .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
 //                    .withBeanMapping(com.ajjpj.amapper.javabean.builder.JavaBeanMapping.create(A.class, A.class).addMapping("children", List.class, A.class, "children", List.class, A.class))
                     .withBeanMapping(com.ajjpj.amapper.javabean.builder.JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
                     .build();
 
             mapperCompiled = JavaBeanMapperBuilder.create()
                     .withLogger(AMapperLogger.StdOut)
-                    .withObjectMapping(BuiltinCollectionMappingDefs.ListByIdentifierMapping)
+                    .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
                     .withBeanMapping(com.ajjpj.amapper.javabean.builder.JavaBeanMapping.create(A.class, A.class).withMatchingPropsMappings())
                     .build(true);
         } catch (Exception e) {

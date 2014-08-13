@@ -16,6 +16,10 @@ import java.util.Set;
  * @author arno
  */
 public class BuiltinCollectionMappingDefs {
+    /**
+     * This strategy for mapping sets matches source and target elements by equality of their respective identifiers (as returned by ACollectionHelper
+     *  implementations).
+     */
     public static final AObjectMappingDef<Object, Object, ACollectionHelper> SetByIdentifierMapping = new IdentifierBasedCollectionMappingDef() {
         @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
             return isBeanCollectionType(types.sourceType) && JavaBeanTypes.isSubtypeOrSameOf (types.targetType, Set.class);
@@ -25,13 +29,21 @@ public class BuiltinCollectionMappingDefs {
     /**
      * This strategy for mapping lists matches source and target elements by equality of their respective identifiers (as returned by ACollectionHelper
      *  implementations). It assumes that there are no duplicates - if there are, behavior is undefined. This is a conscious trade-off - the overhead
-     *  of checking for duplicates is intentionally avoided. TODO ListAsSetByIdentifier
+     *  of checking for duplicates is intentionally avoided.
      */
-    public static final AObjectMappingDef<Object, Object, ACollectionHelper> ListByIdentifierMapping = new IdentifierBasedCollectionMappingDef() {
+    public static final AObjectMappingDef<Object, Object, ACollectionHelper> ListWithoutDuplicatesByIdentifierMapping = new IdentifierBasedCollectionMappingDef() {
         @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
             return isBeanCollectionType(types.sourceType) && JavaBeanTypes.isSubtypeOrSameOf (types.targetType, List.class);
         }
     };
+
+    //TODO ListAsSetByIdentifierMapping
+    //TODO ListByIdentifierMapping
+
+    //TODO SetByEqualityMapping
+    //TODO ListByEqualityMapping
+    //TODO ListWithoutDuplicatesByEqualityMapping
+    //TODO ListAsSetByEqualityMapping
 
     public static boolean isBeanCollectionType(AType tpe) {
         return tpe instanceof SingleParamBeanType && JavaBeanTypes.isSubtypeOrSameOf(tpe, Collection.class);

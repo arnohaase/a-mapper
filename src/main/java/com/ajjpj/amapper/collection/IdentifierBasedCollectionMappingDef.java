@@ -40,7 +40,7 @@ import java.util.*;
  */
 public class IdentifierBasedCollectionMappingDef implements AObjectMappingDef<Object, Object, ACollectionHelper> {
     /**
-     * handles nothing by default - specialize this using TODO in order to use it
+     * handles nothing by default - specialize this in order to use it
      */
     @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
         return false;
