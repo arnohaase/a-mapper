@@ -126,8 +126,8 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
         return result;
     }
 
-    private Object postProcess(Iterable<APostProcessor> allPost, Object sourceRaw, AQualifiedSourceAndTargetType types) {
-        Object curResult = sourceRaw;
+    private Object postProcess(Iterable<APostProcessor> allPost, Object resultRaw, AQualifiedSourceAndTargetType types) {
+        Object curResult = resultRaw;
         for(APostProcessor post: allPost) {
             curResult = post.postProcess(curResult, types);
         }
