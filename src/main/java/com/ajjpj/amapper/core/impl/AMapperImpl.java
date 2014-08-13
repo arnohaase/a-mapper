@@ -44,14 +44,14 @@ public class AMapperImpl<H> implements AMapper {
                        AContextExtractor contextExtractor,
                        Collection<? extends APreProcessor> preProcessors,
                        Collection<? extends APostProcessor> postProcessors) {
-        this.objectMappings = new CanHandleSourceAndTargetCache<AObjectMappingDef<?, ?, ? super H>, AObjectMappingDef<Object, Object, H>>("no object mapping found for ", objectMappings);
-        this.valueMappings = new CanHandleSourceAndTargetCache<AValueMappingDef<?, ?, ? super H>, AValueMappingDef<Object, Object, H>>("no value mapping found for ", valueMappings);
+        this.objectMappings = new CanHandleSourceAndTargetCache<>("no object mapping found for ", objectMappings);
+        this.valueMappings = new CanHandleSourceAndTargetCache<>("no value mapping found for ", valueMappings);
         this.logger = logger;
         this.helperFactory = helperFactory;
         this.identifierExtractor = identifierExtractor;
         this.contextExtractor = contextExtractor;
-        this.preProcessors = new CanHandleSourceAndTargetCache<APreProcessor, APreProcessor>("no preprocessor found for ", preProcessors);
-        this.postProcessors = new CanHandleSourceAndTargetCache<APostProcessor, APostProcessor>("no postprocessor found for ", postProcessors);
+        this.preProcessors = new CanHandleSourceAndTargetCache<>("no preprocessor found for ", preProcessors);
+        this.postProcessors = new CanHandleSourceAndTargetCache<>("no postprocessor found for ", postProcessors);
     }
 
     @Override public AOption<Object> map(Object source, AType sourceType, AQualifier sourceQualifier, Object target, AType targetType, AQualifier targetQualifier) {
@@ -67,7 +67,7 @@ public class AMapperImpl<H> implements AMapper {
     }
 
     @Override public ADiff diff(Object sourceOld, Object sourceNew, AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier) {
-        final Queue<AStatement0<RuntimeException>> deferredWork = new LinkedList<AStatement0<RuntimeException>>();
+        final Queue<AStatement0<RuntimeException>> deferredWork = new LinkedList<>();
         final AMapperDiffWorkerImpl worker = new AMapperDiffWorkerImpl<H>(valueMappings, objectMappings, logger, helperFactory.apply(), identifierExtractor, contextExtractor, preProcessors, deferredWork);
         worker.diff(APath.EMPTY, sourceOld, sourceNew, new AQualifiedSourceAndTargetType(sourceType, sourceQualifier, targetType, targetQualifier), EMPTY_CONTEXT, EMPTY_CONTEXT, false);
 

@@ -1,16 +1,19 @@
 package com.ajjpj.amapper.javabean.impl;
 
+import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.abase.function.AFunction0;
+import com.ajjpj.amapper.AMapper;
 import com.ajjpj.amapper.core.*;
 import com.ajjpj.amapper.core.diff.ADiff;
 import com.ajjpj.amapper.core.exclog.AMapperLogger;
 import com.ajjpj.amapper.core.impl.AMapperImpl;
+import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.core.tpe.AType;
+import com.ajjpj.amapper.core.tpe.CanHandleSourceAndTargetCache;
 import com.ajjpj.amapper.javabean.JavaBeanMapper;
 import com.ajjpj.amapper.javabean.JavaBeanMappingHelper;
 import com.ajjpj.amapper.javabean.JavaBeanTypes;
-import com.ajjpj.amapper.AMapper;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,6 +24,8 @@ import java.util.Set;
  */
 public class JavaBeanMapperImpl<H extends JavaBeanMappingHelper> implements JavaBeanMapper {
     private final AMapper inner;
+
+    private final CanHandleSourceAndTargetCache<APreProcessor, APreProcessor> preProcessors;
 
     public JavaBeanMapperImpl(Collection<? extends AObjectMappingDef<?, ?, ? super H>> objectMappings,
                               Collection<? extends AValueMappingDef <?, ?, ? super H>> valueMappings,
@@ -33,6 +38,7 @@ public class JavaBeanMapperImpl<H extends JavaBeanMappingHelper> implements Java
                               boolean compile) throws Exception {
         final AMapperImpl innerRaw = new AMapperImpl<H> (objectMappings, valueMappings, logger, helperFactory, identifierExtractor, contextExtractor, preProcessors, postProcessors);
         this.inner = compile ? innerRaw.compile() : innerRaw;
+        this.preProcessors = new CanHandleSourceAndTargetCache<>("no preprocessor found for ", preProcessors);
     }
 
     @SuppressWarnings("unchecked")
@@ -60,6 +66,15 @@ public class JavaBeanMapperImpl<H extends JavaBeanMappingHelper> implements Java
             return null;
         }
 
+        final AQualifiedSourceAndTargetType types = AQualifiedSourceAndTargetType.create (JavaBeanTypes.create (source.getClass ()), JavaBeanTypes.create (targetClass));
+        for (APreProcessor pre: preProcessors.allEntriesFor (types)) {
+            final AOption<?> opt = pre.preProcess (source, types);
+            if (opt.isEmpty ()) {
+                return null;
+            }
+            source = opt.get ();
+        }
+
         return map(source, source.getClass(), null, targetClass);
     }
 
@@ -68,6 +83,16 @@ public class JavaBeanMapperImpl<H extends JavaBeanMappingHelper> implements Java
         if(source == null) {
             return null;
         }
+
+        final AQualifiedSourceAndTargetType types = AQualifiedSourceAndTargetType.create (JavaBeanTypes.create (source.getClass ()), JavaBeanTypes.create (target.getClass ()));
+        for (APreProcessor pre: preProcessors.allEntriesFor (types)) {
+            final AOption<?> opt = pre.preProcess (source, types);
+            if (opt.isEmpty ()) {
+                return null;
+            }
+            source = opt.get ();
+        }
+
         return map(source, source.getClass(), target, (Class<T>) target.getClass());
     }
 
