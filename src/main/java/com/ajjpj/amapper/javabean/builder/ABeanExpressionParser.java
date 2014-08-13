@@ -22,7 +22,7 @@ public class ABeanExpressionParser {
         this.qualifierExtractor = qualifierExtractor;
     }
 
-    public APropertyAccessor parse(Class<?> parentClass, String expression, JavaBeanType<?> tpe, boolean isDeferred) throws Exception {
+    public APropertyAccessor parse (Class<?> parentClass, String expression, JavaBeanType<?> tpe, boolean isDeferred) throws Exception {
         final String[] segments = expression.split("\\.");
 
         try {
@@ -36,9 +36,33 @@ public class ABeanExpressionParser {
         }
     }
 
+    public APropertyAccessor parseHeuristically (Class<?> parentClass, String expression, AIsDeferredStrategy deferredStrategy) throws Exception {
+        final JavaBeanSupport.AccessorDetails details = guessType (parentClass, expression, deferredStrategy);
+        return parse (parentClass, expression, details.tpe, details.isDeferred);
+    }
+
+    /**
+     * Uses reflection to guess the type of a given property of a class.
+     * @param propCascade the name of the property. This may be a dot-separated sequence of identifiers.
+     */
+    public JavaBeanSupport.AccessorDetails guessType (Class<?> parentClass, String propCascade, AIsDeferredStrategy deferredStrategy) throws Exception {
+        Class<?> curClass = parentClass;
+        JavaBeanSupport.AccessorDetails getter = null;
+
+        final JavaBeanSupport beanSupport = new JavaBeanSupport (deferredStrategy, qualifierExtractor);
+
+        for(String segment: propCascade.split("\\.")) {
+            final AOption<JavaBeanSupport.AccessorDetails> optGetter = beanSupport.getGetter (curClass, segment);
+            if (optGetter.isEmpty ()) {
+                throw new IllegalArgumentException ("Type " + curClass + " has no property " + segment + " (as part of path " + propCascade + " on type " + parentClass.getName () + ")");
+            }
+        }
+        return getter;
+    }
+
 
     private APropertyAccessor asPropCascade(Class<?> parentClass, String propName, String[] segments, JavaBeanType<?> tpe, boolean isDeferred) throws Exception {
-        final List<AMethodPathBasedPropertyAccessor.Step> steps = new ArrayList<AMethodPathBasedPropertyAccessor.Step>();
+        final List<AMethodPathBasedPropertyAccessor.Step> steps = new ArrayList<>();
 
         final JavaBeanSupport beanSupport = new JavaBeanSupport(new AIsDeferredStrategy.LiteralStrategy(isDeferred), qualifierExtractor);
 

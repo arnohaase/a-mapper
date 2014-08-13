@@ -31,8 +31,8 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
     private final AIsDeferredStrategy deferredStrategy;
     private final AQualifierExtractor qualifierExtractor;
 
-    private List<APartialBeanMapping<S,T,?>> forwardProps  = new ArrayList<APartialBeanMapping<S, T, ?>>();
-    private List<APartialBeanMapping<T,S,?>> backwardProps = new ArrayList<APartialBeanMapping<T, S, ?>>();
+    private List<APartialBeanMapping<S,T,?>> forwardProps  = new ArrayList<>();
+    private List<APartialBeanMapping<T,S,?>> backwardProps = new ArrayList<>();
 
 
     public static <S,T> JavaBeanMapping<S,T, JavaBeanMappingHelper> create(Class<S> sourceCls, Class<T> targetCls) {
@@ -40,7 +40,7 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
     }
 
     public static <S,T> JavaBeanMapping<S,T, JavaBeanMappingHelper> create(Class<S> sourceCls, Class<T> targetCls, AIsDeferredStrategy deferredStrategy, AQualifierExtractor qualifierExtractor) {
-        return new JavaBeanMapping<S, T, JavaBeanMappingHelper>(sourceCls, targetCls, deferredStrategy, qualifierExtractor);
+        return new JavaBeanMapping<>(sourceCls, targetCls, deferredStrategy, qualifierExtractor);
     }
 
     public JavaBeanMapping(Class<S> sourceCls, Class<T> targetCls, AIsDeferredStrategy deferredStrategy, AQualifierExtractor qualifierExtractor) {
@@ -76,7 +76,7 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
         final Map<String, APropertyAccessor> sourceProps = new JavaBeanSupport(deferredStrategy, qualifierExtractor).getAllProperties(sourceCls);
         final Map<String, APropertyAccessor> targetProps = new JavaBeanSupport(deferredStrategy, qualifierExtractor).getAllProperties(targetCls);
 
-        final Set<String> shared = new HashSet<String>(sourceProps.keySet());
+        final Set<String> shared = new HashSet<>(sourceProps.keySet());
         shared.retainAll(targetProps.keySet());
 
         for(String propName: shared) {
@@ -94,18 +94,39 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
         return this;
     }
 
+    public JavaBeanMapping<S,T,H> addMapping (String sourceExpression, String targetExpression)                     throws Exception { return addMapping (sourceExpression, targetExpression, deferredStrategy); }
+    public JavaBeanMapping<S,T,H> addMapping (String sourceExpression, String targetExpression, boolean isDeferred) throws Exception { return addMapping (sourceExpression, targetExpression, new AIsDeferredStrategy.LiteralStrategy (isDeferred)); }
+
+    public JavaBeanMapping<S,T,H> addMapping (String sourceExpression, String targetExpression, AIsDeferredStrategy deferredStrategy) throws Exception { //TODO test this
+        final APropertyAccessor sourceAccessor = new ABeanExpressionParser (qualifierExtractor).parseHeuristically (sourceCls, sourceExpression, deferredStrategy);
+        final APropertyAccessor targetAccessor = new ABeanExpressionParser (qualifierExtractor).parseHeuristically (targetCls, targetExpression, deferredStrategy);
+
+        return addMapping (sourceAccessor, targetAccessor);
+    }
+
     public JavaBeanMapping<S,T,H> addMapping (String sourceExpression, Class<?> sourceClass,                              String targetExpression, Class<?> targetClass                                                 ) throws Exception { return addMapping(sourceExpression, sourceClass, targetExpression, targetClass, false); }
     public JavaBeanMapping<S,T,H> addMapping (String sourceExpression, Class<?> sourceClass,                              String targetExpression, Class<?> targetClass,                              boolean isDeferred) throws Exception { return addMapping(sourceExpression, JavaBeanTypes.create(sourceClass), targetExpression, JavaBeanTypes.create(targetClass), isDeferred); }
     public JavaBeanMapping<S,T,H> addMapping (String sourceExpression, Class<?> sourceClass, Class<?> sourceElementClass, String targetExpression, Class<?> targetClass, Class<?> targetElementClass                    ) throws Exception { return addMapping(sourceExpression, sourceClass, sourceElementClass, targetExpression, targetClass, targetElementClass, false); }
     public JavaBeanMapping<S,T,H> addMapping (String sourceExpression, Class<?> sourceClass, Class<?> sourceElementClass, String targetExpression, Class<?> targetClass, Class<?> targetElementClass, boolean isDeferred) throws Exception { return addMapping(sourceExpression, JavaBeanTypes.create(sourceClass, sourceElementClass), targetExpression, JavaBeanTypes.create(targetClass, targetElementClass), isDeferred); }
 
     public JavaBeanMapping<S,T,H> addMapping (String sourceExpression, JavaBeanType<?> sourceType, String targetExpression, JavaBeanType<?> targetType, boolean isDeferred) throws Exception {
-        final APropertyAccessor sourceAccessor = new ABeanExpressionParser(qualifierExtractor).parse(sourceCls, sourceExpression, sourceType, isDeferred);
-        final APropertyAccessor targetAccessor = new ABeanExpressionParser(qualifierExtractor).parse(targetCls, targetExpression, targetType, isDeferred);
+        final APropertyAccessor sourceAccessor = new ABeanExpressionParser(qualifierExtractor).parse (sourceCls, sourceExpression, sourceType, isDeferred);
+        final APropertyAccessor targetAccessor = new ABeanExpressionParser(qualifierExtractor).parse (targetCls, targetExpression, targetType, isDeferred);
 
+        return addMapping (sourceAccessor, targetAccessor);
+    }
+
+    public JavaBeanMapping<S,T,H> addMapping (APropertyAccessor sourceAccessor, APropertyAccessor targetAccessor) throws Exception {
         forwardProps.add(new ASourceAndTargetProp<S, T>(sourceAccessor, targetAccessor));
         backwardProps.add(new ASourceAndTargetProp<T, S>(targetAccessor, sourceAccessor));
         return this;
+    }
+
+
+    public JavaBeanMapping<S,T,H> overrideMapping(String sourceExpression, String targetExpression) throws Exception {
+        removeMappingForSourceProp(sourceExpression);
+        removeMappingForTargetProp(targetExpression);
+        return addMapping (sourceExpression, targetExpression);
     }
 
     public JavaBeanMapping<S,T,H> overrideMapping(String sourceExpression, Class<?> sourceClass,                              String targetExpression, Class<?> targetClass                                                 ) throws Exception { return overrideMapping(sourceExpression, sourceClass, targetExpression, targetClass, false); }
@@ -116,8 +137,23 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
     public JavaBeanMapping<S,T,H> overrideMapping(String sourceExpression, JavaBeanType<?> sourceType, String targetExpression, JavaBeanType<?> targetType, boolean isDeferred) throws Exception {
         removeMappingForSourceProp(sourceExpression);
         removeMappingForTargetProp(targetExpression);
-        addMapping(sourceExpression, sourceType, targetExpression, targetType, isDeferred);
-        return this;
+        return addMapping(sourceExpression, sourceType, targetExpression, targetType, isDeferred);
+    }
+
+    public JavaBeanMapping<S,T,H> overrideMapping(APropertyAccessor sourceAccessor, APropertyAccessor targetAccessor) throws Exception {
+        removeMappingForSourceProp (sourceAccessor.getName ());
+        removeMappingForTargetProp (targetAccessor.getName ());
+        return addMapping (sourceAccessor, targetAccessor);
+    }
+
+    public JavaBeanMapping<S,T,H> addOneWayMapping (String sourceExpression, String targetExpression)                     throws Exception { return addOneWayMapping (sourceExpression, targetExpression, deferredStrategy); }
+    public JavaBeanMapping<S,T,H> addOneWayMapping (String sourceExpression, String targetExpression, boolean isDeferred) throws Exception { return addOneWayMapping (sourceExpression, targetExpression, new AIsDeferredStrategy.LiteralStrategy (isDeferred)); }
+
+    public JavaBeanMapping<S,T,H> addOneWayMapping (String sourceExpression, String targetExpression, AIsDeferredStrategy deferredStrategy) throws Exception { //TODO test this
+        final APropertyAccessor sourceAccessor = new ABeanExpressionParser (qualifierExtractor).parseHeuristically (sourceCls, sourceExpression, deferredStrategy);
+        final APropertyAccessor targetAccessor = new ABeanExpressionParser (qualifierExtractor).parseHeuristically (targetCls, targetExpression, deferredStrategy);
+
+        return addOneWayMapping (sourceAccessor, targetAccessor);
     }
 
     public JavaBeanMapping<S,T,H> addOneWayMapping(String sourceExpression, Class<?> sourceClass,                              String targetExpression, Class<?> targetClass                                                 ) throws Exception { return addOneWayMapping(sourceExpression, JavaBeanTypes.create(sourceClass), targetExpression, JavaBeanTypes.create(targetClass), false); }
@@ -129,8 +165,22 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
         final APropertyAccessor sourceAccessor = new ABeanExpressionParser(qualifierExtractor).parse(sourceCls, sourceExpression, sourceType, isDeferred);
         final APropertyAccessor targetAccessor = new ABeanExpressionParser(qualifierExtractor).parse(targetCls, targetExpression, targetType, isDeferred);
 
+        return addOneWayMapping (sourceAccessor, targetAccessor);
+    }
+
+    public JavaBeanMapping<S,T,H> addOneWayMapping(APropertyAccessor sourceAccessor, APropertyAccessor targetAccessor) throws Exception {
         forwardProps.add(new ASourceAndTargetProp<S, T>(sourceAccessor, targetAccessor));
         return this;
+    }
+
+    public JavaBeanMapping<S,T,H> addBackwardsOneWayMapping (String sourceExpression, String targetExpression)                     throws Exception { return addBackwardsOneWayMapping (sourceExpression, targetExpression, deferredStrategy); }
+    public JavaBeanMapping<S,T,H> addBackwardsOneWayMapping (String sourceExpression, String targetExpression, boolean isDeferred) throws Exception { return addBackwardsOneWayMapping (sourceExpression, targetExpression, new AIsDeferredStrategy.LiteralStrategy (isDeferred)); }
+
+    public JavaBeanMapping<S,T,H> addBackwardsOneWayMapping (String sourceExpression, String targetExpression, AIsDeferredStrategy deferredStrategy) throws Exception { //TODO test this
+        final APropertyAccessor sourceAccessor = new ABeanExpressionParser (qualifierExtractor).parseHeuristically (sourceCls, sourceExpression, deferredStrategy);
+        final APropertyAccessor targetAccessor = new ABeanExpressionParser (qualifierExtractor).parseHeuristically (targetCls, targetExpression, deferredStrategy);
+
+        return addBackwardsOneWayMapping (sourceAccessor, targetAccessor);
     }
 
     public JavaBeanMapping<S,T,H> addBackwardsOneWayMapping(String sourceExpression, Class<?> sourceClass,                              String targetExpression, Class<?> targetClass                                                 ) throws Exception { return addBackwardsOneWayMapping(sourceExpression, JavaBeanTypes.create(sourceClass), targetExpression, JavaBeanTypes.create(targetClass), false); }
@@ -142,9 +192,14 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
         final APropertyAccessor sourceAccessor = new ABeanExpressionParser(qualifierExtractor).parse(sourceCls, sourceExpression, sourceType, isDeferred);
         final APropertyAccessor targetAccessor = new ABeanExpressionParser(qualifierExtractor).parse(targetCls, targetExpression, targetType, isDeferred);
 
+        return addBackwardsOneWayMapping (sourceAccessor, targetAccessor);
+    }
+
+    public JavaBeanMapping<S,T,H> addBackwardsOneWayMapping (APropertyAccessor sourceAccessor, APropertyAccessor targetAccessor) throws Exception {
         backwardProps.add(new ASourceAndTargetProp<T, S>(targetAccessor, sourceAccessor));
         return this;
     }
+
 
     public JavaBeanMapping<S,T,H> removeMapping (String sourceExpr, String targetExpr) { //TODO test this
         for(Iterator<APartialBeanMapping<S,T,?>> iter=forwardProps.iterator(); iter.hasNext(); ) {
@@ -190,6 +245,15 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
         return this;
     }
 
+    public JavaBeanMapping<S,T,H> overrideWithOneWayMapping (String sourceExpression, String targetExpression)                     throws Exception { return overrideWithOneWayMapping (sourceExpression, targetExpression, deferredStrategy); }
+    public JavaBeanMapping<S,T,H> overrideWithOneWayMapping (String sourceExpression, String targetExpression, boolean isDeferred) throws Exception { return overrideWithOneWayMapping (sourceExpression, targetExpression, new AIsDeferredStrategy.LiteralStrategy (isDeferred)); }
+    public JavaBeanMapping<S,T,H> overrideWithOneWayMapping (String sourceExpression, String targetExpression, AIsDeferredStrategy deferredStrategy) throws Exception { //TODO test this
+        final APropertyAccessor sourceAccessor = new ABeanExpressionParser (qualifierExtractor).parseHeuristically (sourceCls, sourceExpression, deferredStrategy);
+        final APropertyAccessor targetAccessor = new ABeanExpressionParser (qualifierExtractor).parseHeuristically (targetCls, targetExpression, deferredStrategy);
+
+        return overrideWithOneWayMapping (sourceAccessor, targetAccessor);
+    }
+
     public JavaBeanMapping<S,T,H> overrideWithOneWayMapping(String sourceExpression, Class<?> sourceClass,                              String targetExpression, Class<?> targetClass                                                 ) throws Exception { return overrideWithOneWayMapping(sourceExpression, JavaBeanTypes.create(sourceClass), targetExpression, JavaBeanTypes.create(targetClass), false); }
     public JavaBeanMapping<S,T,H> overrideWithOneWayMapping(String sourceExpression, Class<?> sourceClass,                              String targetExpression, Class<?> targetClass,                              boolean isDeferred) throws Exception { return overrideWithOneWayMapping(sourceExpression, JavaBeanTypes.create(sourceClass), targetExpression, JavaBeanTypes.create(targetClass), isDeferred); }
     public JavaBeanMapping<S,T,H> overrideWithOneWayMapping(String sourceExpression, Class<?> sourceClass, Class<?> sourceElementClass, String targetExpression, Class<?> targetClass, Class<?> targetElementClass                    ) throws Exception { return overrideWithOneWayMapping(sourceExpression, JavaBeanTypes.create(sourceClass, sourceElementClass), targetExpression, JavaBeanTypes.create(targetClass, targetElementClass), false); }
@@ -201,15 +265,37 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
         return addOneWayMapping(sourceExpression, sourceType, targetExpression, targetType, isDeferred);
     }
 
+    public JavaBeanMapping<S,T,H> overrideWithOneWayMapping (APropertyAccessor sourceAccessor, APropertyAccessor targetAccessor) throws Exception {
+        removeMappingForSourceProp (sourceAccessor.getName ());
+        removeMappingForTargetProp (targetAccessor.getName ());
+        return addOneWayMapping (sourceAccessor, targetAccessor);
+    }
+
+
+    public JavaBeanMapping<S,T,H> overrideWithBackwardsOneWayMapping(String sourceExpression, String targetExpression)                     throws Exception { return overrideWithBackwardsOneWayMapping (sourceExpression, targetExpression, deferredStrategy); }
+    public JavaBeanMapping<S,T,H> overrideWithBackwardsOneWayMapping(String sourceExpression, String targetExpression, boolean isDeferred) throws Exception { return overrideWithBackwardsOneWayMapping (sourceExpression, targetExpression, new AIsDeferredStrategy.LiteralStrategy (isDeferred)); }
+    public JavaBeanMapping<S,T,H> overrideWithBackwardsOneWayMapping(String sourceExpression, String targetExpression, AIsDeferredStrategy deferredStrategy) throws Exception { //TODO test this
+        final APropertyAccessor sourceAccessor = new ABeanExpressionParser (qualifierExtractor).parseHeuristically (sourceCls, sourceExpression, deferredStrategy);
+        final APropertyAccessor targetAccessor = new ABeanExpressionParser (qualifierExtractor).parseHeuristically (targetCls, targetExpression, deferredStrategy);
+
+        return overrideWithBackwardsOneWayMapping (sourceAccessor, targetAccessor);
+    }
+
     public JavaBeanMapping<S,T,H> overrideWithBackwardsOneWayMapping(String sourceExpression, Class<?> sourceClass,                              String targetExpression, Class<?> targetClass                                                 ) throws Exception { return overrideWithBackwardsOneWayMapping(sourceExpression, JavaBeanTypes.create(sourceClass), targetExpression, JavaBeanTypes.create(targetClass), false); }
     public JavaBeanMapping<S,T,H> overrideWithBackwardsOneWayMapping(String sourceExpression, Class<?> sourceClass,                              String targetExpression, Class<?> targetClass,                              boolean isDeferred) throws Exception { return overrideWithBackwardsOneWayMapping(sourceExpression, JavaBeanTypes.create(sourceClass), targetExpression, JavaBeanTypes.create(targetClass), isDeferred); }
     public JavaBeanMapping<S,T,H> overrideWithBackwardsOneWayMapping(String sourceExpression, Class<?> sourceClass, Class<?> sourceElementClass, String targetExpression, Class<?> targetClass, Class<?> targetElementClass                    ) throws Exception { return overrideWithBackwardsOneWayMapping(sourceExpression, JavaBeanTypes.create(sourceClass, sourceElementClass), targetExpression, JavaBeanTypes.create(targetClass, targetElementClass), false); }
     public JavaBeanMapping<S,T,H> overrideWithBackwardsOneWayMapping(String sourceExpression, Class<?> sourceClass, Class<?> sourceElementClass, String targetExpression, Class<?> targetClass, Class<?> targetElementClass, boolean isDeferred) throws Exception { return overrideWithBackwardsOneWayMapping(sourceExpression, JavaBeanTypes.create(sourceClass, sourceElementClass), targetExpression, JavaBeanTypes.create(targetClass, targetElementClass), isDeferred); }
 
-    public JavaBeanMapping<S,T,H> overrideWithBackwardsOneWayMapping(String sourceExpression, JavaBeanType<?> sourceType, String targetExpression, JavaBeanType<?> targetType, boolean isDeferred) throws Exception {
+    public JavaBeanMapping<S,T,H> overrideWithBackwardsOneWayMapping (String sourceExpression, JavaBeanType<?> sourceType, String targetExpression, JavaBeanType<?> targetType, boolean isDeferred) throws Exception {
         removeMappingForSourceProp(sourceExpression);
         removeMappingForTargetProp(targetExpression);
         return addBackwardsOneWayMapping(sourceExpression, sourceType, targetExpression, targetType, isDeferred);
+    }
+
+    public JavaBeanMapping<S,T,H> overrideWithBackwardsOneWayMapping (APropertyAccessor sourceAccessor, APropertyAccessor targetAccessor) throws Exception {
+        removeMappingForSourceProp (sourceAccessor.getName ());
+        removeMappingForTargetProp (targetAccessor.getName ());
+        return addBackwardsOneWayMapping (sourceAccessor, targetAccessor);
     }
 
     public JavaBeanMapping<S,T,H> makeOneWay(String sourceExpression) {
@@ -246,7 +332,7 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
 
         for(Iterator<APartialBeanMapping<S, T, ?>> iter = forwardProps.iterator(); iter.hasNext(); ) {
             final APartialBeanMapping<S, T, ?> cur = iter.next();
-            if(cur.getSourceName().equals(sourceExpression)) {
+            if(cur.getSourceName().equals (sourceExpression)) {
                 iter.remove();
                 replacements.add(new AGuardedPartialMapping<S, T, Object>((APartialBeanMapping) cur, (AGuardCondition) guard));
             }
@@ -262,7 +348,7 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
 
         for(Iterator<APartialBeanMapping<S, T, ?>> iter = forwardProps.iterator(); iter.hasNext(); ) {
             final APartialBeanMapping<S, T, ?> cur = iter.next();
-            if(cur.getTargetName().equals(targetExpression)) {
+            if(cur.getTargetName().equals (targetExpression)) {
                 iter.remove();
                 replacements.add(new AGuardedPartialMapping<S, T, Object>((APartialBeanMapping) cur, (AGuardCondition) guard));
             }
@@ -278,7 +364,7 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
 
         for(Iterator<APartialBeanMapping<T, S, ?>> iter = backwardProps.iterator(); iter.hasNext(); ) {
             final APartialBeanMapping<T, S, ?> cur = iter.next();
-            if(cur.getSourceName().equals(sourceExpression)) {
+            if(cur.getSourceName().equals (sourceExpression)) {
                 iter.remove();
                 replacements.add(new AGuardedPartialMapping<T, S, Object>((APartialBeanMapping) cur, (AGuardCondition) guard));
             }
@@ -294,7 +380,7 @@ public class JavaBeanMapping<S,T, H extends JavaBeanMappingHelper> { //TODO flag
 
         for(Iterator<APartialBeanMapping<T, S, ?>> iter = backwardProps.iterator(); iter.hasNext(); ) {
             final APartialBeanMapping<T, S, ?> cur = iter.next();
-            if(cur.getTargetName().equals(targetExpression)) {
+            if(cur.getTargetName().equals (targetExpression)) {
                 iter.remove();
                 replacements.add(new AGuardedPartialMapping<T, S, Object>((APartialBeanMapping) cur, (AGuardCondition) guard));
             }

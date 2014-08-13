@@ -1,8 +1,5 @@
 todo
 ----
-* JavaBeanMapping:
-  * source and target types optional (--> exception if OGNL)
-  * builder methods for APropertyAccessor
 * ListByIdentifierAsSet
 * EqualsBased
 
