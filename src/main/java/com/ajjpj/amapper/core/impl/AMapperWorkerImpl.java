@@ -182,7 +182,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
                     else {
                         logger.deferredWithoutInitial(path); //TODO special treatment for collections etc. --> flag in the mapping def?
                         // create a new, empty context: context is accumulated only from parents to children
-                        final AOption<Object> mapped = mapObject(path, source, target.apply (), types, AHashMap.<String, Object>empty());
+                        final AOption<Object> mapped = map(path, source, target.apply (), types, AHashMap.<String, Object>empty());
                         if(mapped.isDefined()) {
                             callback.apply(mapped.get());
                         }
