@@ -1,14 +1,15 @@
 package com.ajjpj.amapper.core.path;
 
-
 import com.ajjpj.abase.collection.immutable.AList;
 
+import java.io.Serializable;
 import java.util.Arrays;
+
 
 /**
  * @author arno
  */
-public class APath {
+public class APath implements Serializable {
     public static final APath EMPTY = new APath(AList.<APathSegment> nil());
 
     // root is last, leaf is head
