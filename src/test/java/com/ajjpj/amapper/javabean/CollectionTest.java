@@ -13,6 +13,7 @@ import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinCollectionMappingDefs;
 import org.junit.Test;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -137,5 +138,26 @@ public class CollectionTest {
         assertTrue (target1.get(1).getClass() == ClassA.class);
 
         assertNotSame(target1.get(0), target1.get(1));
+    }
+
+    @Test
+    public void testListFromArrayByIdentifier() throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
+            .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
+            .withBeanMapping(JavaBeanMapping.create(ClassA.class, ClassA.class))
+            .build();
+
+        final ClassA[] source1 = new ClassA[] {new ClassA(), new ClassA()};
+
+        // list of two different instances --> mapped to two separate instances
+        @SuppressWarnings("unchecked")
+        final List<ClassA> target1 = mapper.map (
+                source1, Array.class, ClassA.class,
+                null,    List.class, ClassA.class);
+        assertEquals (2, target1.size());
+        assertTrue (target1.get (0).getClass () == ClassA.class);
+        assertTrue (target1.get(1).getClass() == ClassA.class);
+
+        assertNotSame (target1.get (0), target1.get (1));
     }
 }

@@ -8,6 +8,7 @@ import com.ajjpj.amapper.core.tpe.AType;
 import com.ajjpj.amapper.javabean.JavaBeanTypes;
 import com.ajjpj.amapper.javabean.SingleParamBeanType;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +47,9 @@ public class BuiltinCollectionMappingDefs {
     //TODO ListAsSetByEqualityMapping
 
     public static boolean isBeanCollectionType(AType tpe) {
-        return tpe instanceof SingleParamBeanType && JavaBeanTypes.isSubtypeOrSameOf(tpe, Collection.class);
+        return tpe instanceof SingleParamBeanType && (
+                JavaBeanTypes.isSubtypeOrSameOf (tpe, Collection.class) ||
+                JavaBeanTypes.isSubtypeOrSameOf (tpe, Array.class)
+        );
     }
 }

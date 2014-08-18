@@ -23,6 +23,19 @@ public class SimpleJavaBeanMappingHelper implements JavaBeanMappingHelper {
 
     @SuppressWarnings("unchecked")
     @Override public <T> Collection<T> asJuCollection(Object coll, AQualifiedType tpe) {
+        if (coll.getClass ().isArray ()) {
+            final Class<?> componentType = (coll.getClass ().getComponentType ());
+            if (! componentType.isPrimitive ())  return (Collection<T>) Arrays.asList ((Object[]) coll);
+            if (componentType == Boolean.TYPE)   return (Collection<T>) Arrays.asList ((boolean[]) coll);
+            if (componentType == Integer.TYPE)   return (Collection<T>) Arrays.asList ((int[]) coll);
+            if (componentType == Long.TYPE)      return (Collection<T>) Arrays.asList ((long[]) coll);
+            if (componentType == Double.TYPE)    return (Collection<T>) Arrays.asList ((double[]) coll);
+            if (componentType == Byte.TYPE)      return (Collection<T>) Arrays.asList ((byte[]) coll);
+            if (componentType == Short.TYPE)     return (Collection<T>) Arrays.asList ((short[]) coll);
+            if (componentType == Float.TYPE)     return (Collection<T>) Arrays.asList ((float[]) coll);
+            if (componentType == Character.TYPE) return (Collection<T>) Arrays.asList ((char[]) coll);
+        }
+
         return (Collection<T>) coll;
     }
 
