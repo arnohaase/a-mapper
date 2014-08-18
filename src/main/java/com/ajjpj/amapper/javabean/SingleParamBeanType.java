@@ -15,7 +15,7 @@ public class SingleParamBeanType<T,P> extends JavaBeanType<T> {
         return cls.getName() + "<" + paramCls.getName() + ">";
     }
 
-    public JavaBeanType<P> getParamType() {
+    public JavaBeanType<?> getParamType() {
         return JavaBeanTypes.create(paramCls);
     }
 

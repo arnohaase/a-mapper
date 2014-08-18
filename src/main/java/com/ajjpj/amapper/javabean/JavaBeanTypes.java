@@ -3,6 +3,7 @@ package com.ajjpj.amapper.javabean;
 import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.amapper.core.tpe.AType;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -25,7 +26,11 @@ public class JavaBeanTypes {
         boxedEquivalents.put(Double.   TYPE, Double.class);
     }
 
-    public static <T> JavaBeanType<T> create(Class<T> cls) {
+    public static <T> JavaBeanType<?> create(Class<T> cls) {
+        if (cls.isArray ()) {
+            return create (Array.class, cls.getComponentType ());
+        }
+
         return new JavaBeanType<T>(cls);
     }
     public static <T,P> SingleParamBeanType<T,P> create (Class<T> cls, Class<P> param) {

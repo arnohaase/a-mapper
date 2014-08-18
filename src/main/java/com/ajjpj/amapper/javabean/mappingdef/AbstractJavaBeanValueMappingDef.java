@@ -9,8 +9,8 @@ import com.ajjpj.amapper.javabean.JavaBeanTypes;
  * @author arno
  */
 public abstract class AbstractJavaBeanValueMappingDef<S,T,H> implements AValueMappingDef<S,T,H> {
-    private final JavaBeanType<S> sourceType;
-    private final JavaBeanType<T> targetType;
+    private final JavaBeanType<?> sourceType;
+    private final JavaBeanType<?> targetType;
 
     public AbstractJavaBeanValueMappingDef(Class<S> sourceClass, Class<T> targetClass) {
         this.sourceType = JavaBeanTypes.create(sourceClass);

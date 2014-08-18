@@ -16,8 +16,8 @@ import com.ajjpj.amapper.javabean.JavaBeanTypes;
  * @author arno
  */
 public abstract class AbstractJavaBeanObjectMappingDefWithoutDefaultNullHandling<S,T,H extends JavaBeanMappingHelper> implements AObjectMappingDef<S,T,H> {
-    public final JavaBeanType<S> sourceType;
-    public final JavaBeanType<T> targetType;
+    public final JavaBeanType<?> sourceType;
+    public final JavaBeanType<?> targetType;
 
     public AbstractJavaBeanObjectMappingDefWithoutDefaultNullHandling(Class<S> sourceClass, Class<T> targetClass) {
         sourceType = JavaBeanTypes.create(sourceClass);

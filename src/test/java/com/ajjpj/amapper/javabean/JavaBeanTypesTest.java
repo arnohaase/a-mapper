@@ -4,6 +4,7 @@ import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.amapper.classes.ForTypeTests;
 import org.junit.Test;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,15 @@ public class JavaBeanTypesTest {
         assertEquals(String.class, JavaBeanTypes.create(List.class, String.class).paramCls);
         assertEquals(Set.class, JavaBeanTypes.create(Set.class, String.class).cls);
         assertEquals(String.class, JavaBeanTypes.create(Set.class, String.class).paramCls);
+    }
+
+    @SuppressWarnings ("InstantiatingObjectToGetClassObject") @Test
+    public void testArray() throws Exception {
+        assertEquals (new SingleParamBeanType<> (Array.class, String.class), JavaBeanTypes.create (new String[0].getClass ()));
+        assertEquals (new SingleParamBeanType<> (Array.class, boolean.class), JavaBeanTypes.create (new boolean[0].getClass ()));
+
+        assertEquals (new SingleParamBeanType<> (Array.class, String.class), JavaBeanTypes.create ((Type) new String[0].getClass ()).get());
+        assertEquals (new SingleParamBeanType<> (Array.class, boolean.class), JavaBeanTypes.create ((Type) new boolean[0].getClass ()).get());
     }
 
     @Test

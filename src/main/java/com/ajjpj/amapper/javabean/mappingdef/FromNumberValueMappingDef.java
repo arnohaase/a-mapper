@@ -17,7 +17,7 @@ import com.ajjpj.amapper.javabean.JavaBeanTypes;
  * @author arno
  */
 public abstract class FromNumberValueMappingDef<T> implements AValueMappingDef<Number, T, Object> {
-    protected final JavaBeanType<T> tpe;
+    protected final JavaBeanType<?> tpe;
 
     protected FromNumberValueMappingDef(Class<T> cls) {
         this.tpe = JavaBeanTypes.create(cls);
