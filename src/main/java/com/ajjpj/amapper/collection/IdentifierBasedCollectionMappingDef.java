@@ -64,7 +64,7 @@ public class IdentifierBasedCollectionMappingDef implements AObjectMappingDef<Ob
         if(targetColl.isEmpty()) {
             // this is an optimization for the common case that the target collection is initially empty
             for(Object s: sourceColl) {
-                final APath elPath = ACollectionMappingTools.elementPath(path, worker.getIdentifierExtractor().uniqueIdentifier (s, types.source (), types.target ()));
+                final APath elPath = path.withElementChild (worker.getIdentifierExtractor().uniqueIdentifier (s, types.source (), types.target ()));
 
                 final AOption<Object> optT = worker.map(elPath, s, null, elementTypes, context);
                 if(optT.isDefined()) {
@@ -79,14 +79,14 @@ public class IdentifierBasedCollectionMappingDef implements AObjectMappingDef<Ob
         // now apply the changes to the target collection
         targetColl.removeAll(equiv.targetWithoutSource);
         for (Object s: equiv.sourceWithoutTarget) {
-            final APath elPath = ACollectionMappingTools.elementPath(path, worker.getIdentifierExtractor().uniqueIdentifier (s, types.source (), types.target ()));
+            final APath elPath = path.withElementChild (worker.getIdentifierExtractor().uniqueIdentifier (s, types.source (), types.target ()));
             final AOption<Object> tc = worker.map(elPath, s, null, elementTypes, context);
             if(tc.isDefined()) {
                 targetColl.add(tc.get());
             }
         }
         for (Map.Entry<Object, Object> e: equiv.equiv.entrySet()) {
-            final APath elPath = ACollectionMappingTools.elementPath(path, worker.getIdentifierExtractor().uniqueIdentifier (e.getKey(), types.source (), types.target ()));
+            final APath elPath = path.withElementChild (worker.getIdentifierExtractor().uniqueIdentifier (e.getKey(), types.source (), types.target ()));
             final AOption<Object> tc = worker.map(elPath, e.getKey(), e.getValue(), elementTypes, context);
 
             if(tc.isEmpty()) {
@@ -154,19 +154,19 @@ public class IdentifierBasedCollectionMappingDef implements AObjectMappingDef<Ob
 
         // elements present in both old and new collection: no difference as far as the collection is concerned, recursive diff
         for(Map.Entry<Object,Object> e: equiv.equiv.entrySet()) {
-            final APath elPath = ACollectionMappingTools.elementPath(path, worker.getIdentifierExtractor().uniqueIdentifier(e.getKey(), elementTypes.source (), elementTypes.target ()));
+            final APath elPath = path.withElementChild (worker.getIdentifierExtractor().uniqueIdentifier(e.getKey(), elementTypes.source (), elementTypes.target ()));
             worker.diff(elPath, e.getKey(), e.getValue(), elementTypes, contextOld, contextNew, isDerived);
         }
 
         // elements only in the new collection: 'added' diff element + recursive diff with 'derived' = true
         for(Object newEl: equiv.targetWithoutSource) {
-            final APath elPath = ACollectionMappingTools.elementPath(path, worker.getIdentifierExtractor().uniqueIdentifier (newEl, elementTypes.target (), elementTypes.target ()));
+            final APath elPath = path.withElementChild (worker.getIdentifierExtractor().uniqueIdentifier (newEl, elementTypes.target (), elementTypes.target ()));
             worker.diff(elPath, null, newEl, elementTypes, contextOld, contextNew, isDerived);
         }
 
         // elements only in the old collection: 'removed' diff element + recursive diff with 'derived' = true
         for(Object oldEl: equiv.sourceWithoutTarget) {
-            final APath elPath = ACollectionMappingTools.elementPath(path, worker.getIdentifierExtractor().uniqueIdentifier(oldEl, elementTypes.source (), elementTypes.target ()));
+            final APath elPath = path.withElementChild (worker.getIdentifierExtractor().uniqueIdentifier(oldEl, elementTypes.source (), elementTypes.target ()));
             worker.diff(elPath, oldEl, null, elementTypes, contextOld, contextNew, isDerived);
         }
     }

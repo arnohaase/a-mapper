@@ -3,7 +3,6 @@ package com.ajjpj.amapper.javabean.mappingdef;
 import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.amapper.collection.ACollectionHelper;
-import com.ajjpj.amapper.collection.ACollectionMappingTools;
 import com.ajjpj.amapper.core.AIdentifierExtractor;
 import com.ajjpj.amapper.core.AMapperDiffWorker;
 import com.ajjpj.amapper.core.AMapperWorker;
@@ -56,7 +55,7 @@ class CollectionToArrayMappingDef implements AObjectMappingDef<Object, Object, A
         for (Object sourceEl: worker.getHelpers ().asJuCollection (source, types.source ())) {
             final Object sourceIdent = worker.getIdentifierExtractor ().uniqueIdentifier (sourceEl, sourceElementType, targetElementType);
 
-            final APath elPath = ACollectionMappingTools.elementPath (path, sourceIdent); //TODO move 'elementPath()' to APath
+            final APath elPath = path.withElementChild (sourceIdent);
             final AOption<Object> mappedOpt = worker.map (elPath, sourceEl, targetValuesByIdentifier.get (sourceIdent), elTypes, context);
             if (mappedOpt.isDefined ()) {
                 mappedTargetList.add (mappedOpt.get ());

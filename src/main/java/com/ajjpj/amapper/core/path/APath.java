@@ -28,6 +28,10 @@ public class APath implements Serializable {
         return new APath (reverseSegments.cons(child));
     }
 
+    public APath withElementChild (Object childIdentifier) {
+        return withChild (APathSegment.parameterized ("elements", childIdentifier));
+    }
+
     public APath getParent() {
         return new APath(reverseSegments.tail());
     }
