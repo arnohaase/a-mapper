@@ -11,7 +11,9 @@ import com.ajjpj.amapper.core.diff.ADiffBuilder;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.core.tpe.AQualifiedType;
+import com.ajjpj.amapper.core.tpe.AType;
 import com.ajjpj.amapper.javabean.JavaBeanType;
+import com.ajjpj.amapper.javabean.JavaBeanTypes;
 import com.ajjpj.amapper.javabean.SingleParamBeanType;
 import com.ajjpj.amapper.util.AArraySupport;
 
@@ -72,12 +74,6 @@ class CollectionToArrayMappingDef implements AObjectMappingDef<Object, Object, A
         return target;
     }
 
-    private void setBooleanArray (boolean[] arr, List<Object> values) {
-        for (int i=0; i<arr.length; i++) {
-            arr[i] = (boolean) values.get(i);
-        }
-    }
-
     private Map<Object, Object> byIdentifier (Collection<?> coll, AIdentifierExtractor identifierExtractor, AQualifiedType type, AQualifiedType targetType) {
         final Map<Object, Object> result = new HashMap<> ();
 
@@ -92,8 +88,12 @@ class CollectionToArrayMappingDef implements AObjectMappingDef<Object, Object, A
         return result;
     }
 
-
+    //TODO test this
     @Override public void diff (ADiffBuilder diff, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMapperDiffWorker<? extends ACollectionHelper> worker, AMap<String, Object> contextOld, AMap<String, Object> contextNew, APath path, boolean isDerived) throws Exception {
-        throw new UnsupportedOperationException ("TODO");
+        final AType targetElementType = worker.getHelpers ().elementType (types.target ()).tpe;
+        final AType targetTypeAsList = JavaBeanTypes.create (List.class, ((JavaBeanType) targetElementType).cls);
+        final AQualifiedSourceAndTargetType typesWithListTarget = AQualifiedSourceAndTargetType.create (types.source (), new AQualifiedType (targetTypeAsList, types.targetQualifier ()));
+
+        worker.diff (path, sourceOld, sourceNew, typesWithListTarget, contextOld, contextNew, isDerived);
     }
 }
