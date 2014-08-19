@@ -15,14 +15,14 @@ public class SubTypeCheckingPassThroughValueMappingDef<T> extends PassThroughVal
     }
 
     @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
-        if (! types.sourceType.equals(types.targetType)) {
+        if (! types.sourceType().equals(types.targetType())) {
             return false;
         }
 
-        if(! (types.sourceType instanceof JavaBeanType)) {
+        if(! (types.sourceType() instanceof JavaBeanType)) {
             return false;
         }
 
-        return tpe.cls.isAssignableFrom (((JavaBeanType<?>) types.sourceType).cls);
+        return tpe.cls.isAssignableFrom (((JavaBeanType<?>) types.sourceType()).cls);
     }
 }

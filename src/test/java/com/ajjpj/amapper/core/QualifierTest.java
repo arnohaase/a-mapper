@@ -25,7 +25,7 @@ public class QualifierTest {
             if (!super.canHandle(types)) {
                 return false;
             }
-            return types.sourceQualifier.get("qualifier-test").isDefined();
+            return types.sourceQualifier().get("qualifier-test").isDefined();
         }
 
         @Override public String map(String sourceValue, AQualifiedSourceAndTargetType types, AMapperWorker<?> worker, AMap<String, Object> context) {
@@ -41,11 +41,11 @@ public class QualifierTest {
             if (!super.canHandle(types)) {
                 return false;
             }
-            return types.targetQualifier.get("qualifier-test").isDefined();
+            return types.targetQualifier().get("qualifier-test").isDefined();
         }
 
         @Override public String map(String sourceValue, AQualifiedSourceAndTargetType types, AMapperWorker<? extends JavaBeanMappingHelper> worker, AMap<String, Object> context) {
-            return sourceValue + " to qualifier " + types.targetQualifier.get("qualifier-test").get();
+            return sourceValue + " to qualifier " + types.targetQualifier().get("qualifier-test").get();
         }
 
         @Override public void diff(ADiffBuilder diff, String sourceOld, String sourceNew, AQualifiedSourceAndTargetType types, AMapperDiffWorker<? extends JavaBeanMappingHelper> worker, AMap<String, Object> contextOld, AMap<String, Object> contextNew, APath path, boolean isDerived) {

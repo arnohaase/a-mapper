@@ -1,6 +1,8 @@
 package com.ajjpj.amapper.core;
 
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
+import com.ajjpj.amapper.core.tpe.AQualifiedType;
+
 
 /**
  * @author arno
@@ -22,10 +24,13 @@ public interface AIdentifierExtractor {
      * <li> serializable / human readable: is often a direct consequence of "stable"
      * </ul>
      *
-     * @param types contains the qualified type of the object that is passed in, as well as the type in terms of which it is viewed. <p>
-     *              This information be redundant for some domains, e.g. for Java Beans. In other domains, an object's 'AType' may not be easily retrieved
-     *              from the object, e.g. because all objects are represented by Map instances. So use what you need, and feel free to ignore
-     *              the rest.
+     * @param type the qualified type of the object for which the identifier is extracted. For some domains this is redundant, e.g. for Java Beans. In other domains this
+     *              information is however difficult or impossible to extract from the object itself, e.g. if all objects are represented as maps. Just ignore this if you
+     *              don't need this.
+     *
+     * @param targetType the qualified type in terms of which the identifier is to be generated. This is useful for the rare case that an object's identifier depends on the the
+     *                    target domain - e.g. a business object may be represented by a synthetic primary key in the context of a database and by a business key in the context
+     *                    of an external API. If this does not make sense to you, just ignore this parameter.
      */
-    Object uniqueIdentifier(Object o, AQualifiedSourceAndTargetType types);
+    Object uniqueIdentifier (Object o, AQualifiedType type, AQualifiedType targetType);
 }

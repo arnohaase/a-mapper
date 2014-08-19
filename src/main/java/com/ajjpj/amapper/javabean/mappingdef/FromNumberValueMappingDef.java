@@ -17,18 +17,18 @@ import com.ajjpj.amapper.javabean.JavaBeanTypes;
  * @author arno
  */
 public abstract class FromNumberValueMappingDef<T> implements AValueMappingDef<Number, T, Object> {
-    protected final JavaBeanType<?> tpe;
+    protected final JavaBeanType<T> tpe;
 
     protected FromNumberValueMappingDef(Class<T> cls) {
         this.tpe = JavaBeanTypes.create(cls);
     }
 
     @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
-        if(! types.targetType.equals(tpe)) {
+        if(! types.targetType().equals(tpe)) {
             return false;
         }
 
-        return types.sourceType instanceof JavaBeanType && JavaBeanTypes.isSubtypeOrSameOf(types.sourceType, Number.class);
+        return types.sourceType() instanceof JavaBeanType && JavaBeanTypes.isSubtypeOrSameOf(types.sourceType(), Number.class);
     }
 
     @Override public T map(Number sourceValue, AQualifiedSourceAndTargetType types, AMapperWorker<?> worker, AMap<String, Object> context) {

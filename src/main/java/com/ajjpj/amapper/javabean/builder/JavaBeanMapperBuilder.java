@@ -5,7 +5,7 @@ import com.ajjpj.amapper.core.*;
 import com.ajjpj.amapper.core.exclog.AMapperExceptionHandler;
 import com.ajjpj.amapper.core.exclog.AMapperLogger;
 import com.ajjpj.amapper.core.path.APath;
-import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
+import com.ajjpj.amapper.core.tpe.AQualifiedType;
 import com.ajjpj.amapper.javabean.AnnotationBasedContextExtractor;
 import com.ajjpj.amapper.javabean.JavaBeanMapper;
 import com.ajjpj.amapper.javabean.JavaBeanMappingHelper;
@@ -45,8 +45,8 @@ public class JavaBeanMapperBuilder <H extends JavaBeanMappingHelper> {
     };
     private AIdentifierExtractor identifierExtractor = new AIdentifierExtractor() {
         @Override
-        public Object uniqueIdentifier(Object o, AQualifiedSourceAndTargetType types) {
-            return o.toString();
+        public Object uniqueIdentifier(Object o, AQualifiedType type, AQualifiedType targetType) {
+            return o == null ? null : o.toString();
         }
     };
     private AContextExtractor contextExtractor = new AnnotationBasedContextExtractor();

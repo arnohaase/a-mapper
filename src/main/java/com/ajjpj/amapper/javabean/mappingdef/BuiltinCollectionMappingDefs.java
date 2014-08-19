@@ -18,12 +18,18 @@ import java.util.Set;
  */
 public class BuiltinCollectionMappingDefs {
     /**
+     * This is a generic mapping of arbitrary collections to arrays, delegating to a corresponding mapping of a collection to a <code>list</code>. So in
+     *  order to use this, be sure to register a mapping to java.util.List as well.
+     */
+    public static final AObjectMappingDef<?, ?, ACollectionHelper> ArrayFromCollectionMapping = new CollectionToArrayMappingDef ();
+
+    /**
      * This strategy for mapping sets matches source and target elements by equality of their respective identifiers (as returned by ACollectionHelper
      *  implementations).
      */
     public static final AObjectMappingDef<Object, Object, ACollectionHelper> SetByIdentifierMapping = new IdentifierBasedCollectionMappingDef() {
         @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
-            return isBeanCollectionType(types.sourceType) && JavaBeanTypes.isSubtypeOrSameOf (types.targetType, Set.class);
+            return isBeanCollectionType(types.sourceType()) && JavaBeanTypes.isSubtypeOrSameOf (types.targetType(), Set.class);
         }
     };
 
@@ -34,7 +40,7 @@ public class BuiltinCollectionMappingDefs {
      */
     public static final AObjectMappingDef<Object, Object, ACollectionHelper> ListWithoutDuplicatesByIdentifierMapping = new IdentifierBasedCollectionMappingDef() {
         @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
-            return isBeanCollectionType(types.sourceType) && JavaBeanTypes.isSubtypeOrSameOf (types.targetType, List.class);
+            return isBeanCollectionType(types.sourceType()) && JavaBeanTypes.isSubtypeOrSameOf (types.targetType(), List.class);
         }
     };
 

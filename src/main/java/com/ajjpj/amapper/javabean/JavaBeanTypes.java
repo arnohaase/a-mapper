@@ -26,9 +26,9 @@ public class JavaBeanTypes {
         boxedEquivalents.put(Double.   TYPE, Double.class);
     }
 
-    public static <T> JavaBeanType<?> create(Class<T> cls) {
+    public static <T> JavaBeanType<T> create(Class<T> cls) {
         if (cls.isArray ()) {
-            return create (Array.class, cls.getComponentType ());
+            return create (cls, cls.getComponentType ());
         }
 
         return new JavaBeanType<T>(cls);

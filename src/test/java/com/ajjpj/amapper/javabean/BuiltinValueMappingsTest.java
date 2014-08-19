@@ -2,7 +2,6 @@ package com.ajjpj.amapper.javabean;
 
 import com.ajjpj.amapper.core.AValueMappingDef;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
-import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinValueMappingDefs;
 import org.junit.Test;
@@ -24,7 +23,7 @@ public class BuiltinValueMappingsTest {
         return tpe(cls, cls);
     }
     private AQualifiedSourceAndTargetType tpe(Class<?> sourceCls, Class<?> targetCls) {
-        return new AQualifiedSourceAndTargetType(JavaBeanTypes.create(sourceCls), AQualifier.NO_QUALIFIER, JavaBeanTypes.create(targetCls), AQualifier.NO_QUALIFIER);
+        return AQualifiedSourceAndTargetType.create (JavaBeanTypes.create (sourceCls), JavaBeanTypes.create (targetCls));
     }
 
     @Test

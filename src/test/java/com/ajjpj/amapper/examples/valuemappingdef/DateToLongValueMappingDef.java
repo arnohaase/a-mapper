@@ -19,8 +19,8 @@ import java.util.Date;
 public class DateToLongValueMappingDef implements AValueMappingDef<Date, Long, Object> {
     @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
         return
-                types.sourceType.equals (JavaBeanTypes.create(Date.class)) &&
-                types.targetType.equals (JavaBeanTypes.create(Long.class));
+                types.sourceType().equals (JavaBeanTypes.create(Date.class)) &&
+                types.targetType().equals (JavaBeanTypes.create(Long.class));
     }
 
     @Override

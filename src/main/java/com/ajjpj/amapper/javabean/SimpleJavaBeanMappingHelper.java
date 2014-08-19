@@ -1,7 +1,6 @@
 package com.ajjpj.amapper.javabean;
 
 import com.ajjpj.amapper.core.tpe.AQualifiedType;
-import com.ajjpj.amapper.core.tpe.AType;
 
 import java.util.*;
 
@@ -17,12 +16,16 @@ public class SimpleJavaBeanMappingHelper implements JavaBeanMappingHelper {
         return targetRaw != null ? targetRaw : targetType.cls.newInstance();
     }
 
-    @Override public AType elementType(AType tpe) {
-        return ((SingleParamBeanType<?,?>) tpe).getParamType();
+    @Override public AQualifiedType elementType(AQualifiedType tpe) {
+        return new AQualifiedType (((SingleParamBeanType<?,?>) tpe.tpe).getParamType(), tpe.qualifier);
     }
 
     @SuppressWarnings("unchecked")
     @Override public <T> Collection<T> asJuCollection(Object coll, AQualifiedType tpe) {
+        if (coll == null) {
+            return null;
+        }
+
         if (coll.getClass ().isArray ()) {
             final Class<?> componentType = (coll.getClass ().getComponentType ());
             if (! componentType.isPrimitive ())  return (Collection<T>) Arrays.asList ((Object[]) coll);

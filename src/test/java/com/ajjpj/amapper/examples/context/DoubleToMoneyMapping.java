@@ -16,8 +16,8 @@ import com.ajjpj.amapper.javabean.JavaBeanTypes;
 public class DoubleToMoneyMapping implements AValueMappingDef<Double, Money, Object> {
     @Override
     public boolean canHandle(AQualifiedSourceAndTargetType types) {
-        return types.sourceType.equals(JavaBeanTypes.create(Double.class)) &&
-               types.targetType.equals(JavaBeanTypes.create(Money.class));
+        return types.sourceType().equals(JavaBeanTypes.create(Double.class)) &&
+               types.targetType().equals(JavaBeanTypes.create(Money.class));
     }
 
     @Override

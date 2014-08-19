@@ -80,7 +80,7 @@ public class CollectionTest {
             }
 
             @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
-                return types.sourceType.equals(JavaBeanTypes.create(StringHolder.class)) && types.targetType.equals(JavaBeanTypes.create(StringHolder.class));
+                return types.sourceType().equals(JavaBeanTypes.create(StringHolder.class)) && types.targetType().equals(JavaBeanTypes.create(StringHolder.class));
             }
 
             @Override public StringHolder map(StringHolder source, StringHolder target, AQualifiedSourceAndTargetType types, AMapperWorker<?> worker, AMap<String, Object> context, APath path) throws Exception {
@@ -153,11 +153,69 @@ public class CollectionTest {
         @SuppressWarnings("unchecked")
         final List<ClassA> target1 = mapper.map (
                 source1, Array.class, ClassA.class,
-                null,    List.class, ClassA.class);
+                null,    List.class,  ClassA.class);
         assertEquals (2, target1.size());
         assertTrue (target1.get (0).getClass () == ClassA.class);
         assertTrue (target1.get(1).getClass() == ClassA.class);
 
         assertNotSame (target1.get (0), target1.get (1));
+    }
+
+    @Test
+    public void testListToArrayByIdentifier() throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+                .withObjectMapping (BuiltinCollectionMappingDefs.ArrayFromCollectionMapping)
+                .withObjectMapping (BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
+                .withBeanMapping (JavaBeanMapping.create (ClassA.class, ClassA.class))
+                .build ();
+
+        final List<ClassA> source1 = Arrays.asList(new ClassA(), new ClassA());
+
+        final ClassA[] target1 = mapper.map (
+                source1, List.class, ClassA.class,
+                null,    ClassA[].class, ClassA.class);
+        assertEquals (2, target1.length);
+        assertTrue (target1[0].getClass () == ClassA.class);
+        assertTrue (target1[1].getClass() == ClassA.class);
+
+        assertNotSame (target1[0], target1[1]);
+    }
+
+    @Test
+    public void testListToArrayOfSameSizeByIdentifier() throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+                .withObjectMapping (BuiltinCollectionMappingDefs.ArrayFromCollectionMapping)
+                .withObjectMapping (BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
+                .withBeanMapping(JavaBeanMapping.create (ClassA.class, ClassA.class))
+                .build();
+
+        final List<ClassA> source1 = Arrays.asList(new ClassA(), new ClassA());
+
+        final ClassA[] prevTarget = new ClassA[2];
+
+        final ClassA[] target1 = mapper.map (
+                source1,    List.class, ClassA.class,
+                prevTarget, ClassA[].class, ClassA.class);
+        assertSame (prevTarget, target1);
+        assertEquals (2, target1.length);
+        assertTrue (target1[0].getClass () == ClassA.class);
+        assertTrue (target1[1].getClass () == ClassA.class);
+
+        assertNotSame (target1[0], target1[1]);
+    }
+
+    @Test
+    public void testPrimitiveCollectionToArray() throws Exception {
+        fail ("TODO");
+    }
+
+    @Test
+    public void testCollectionToArrayWithTransformation() throws Exception {
+        fail ("TODO");
+    }
+
+    @Test
+    public void testCollectionToArrayWithValueTransformation() throws Exception {
+        fail ("TODO");
     }
 }

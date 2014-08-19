@@ -14,7 +14,7 @@ public class MappingDefTools {
     public static<S,T,H> AObjectMappingDef<S,T,H> forTypes(final AType sourceType, final AType targetType, final AObjectMappingDef<S,T,H> inner) {
         return new AObjectMappingDef<S, T, H>() {
             @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
-                return types.sourceType.equals(sourceType) && types.targetType.equals(targetType);
+                return types.sourceType().equals(sourceType) && types.targetType().equals(targetType);
             }
 
             @Override public boolean isCacheable() {
@@ -35,7 +35,7 @@ public class MappingDefTools {
         return new AObjectMappingDef<S, T, H>() {
             @Override
             public boolean canHandle(AQualifiedSourceAndTargetType types) throws Exception {
-                return inner.canHandle(types) && types.sourceQualifier.get(sourceQualifier).isDefined();
+                return inner.canHandle(types) && types.sourceQualifier().get(sourceQualifier).isDefined();
             }
 
             @Override public boolean isCacheable() {
@@ -55,7 +55,7 @@ public class MappingDefTools {
     public static<S,T,H> AObjectMappingDef<S,T,H> requireTargetQualifier(final String targetQualifier, final AObjectMappingDef<S,T,H> inner) {
         return new AObjectMappingDef<S, T, H>() {
             @Override public boolean canHandle(AQualifiedSourceAndTargetType types) throws Exception {
-                return inner.canHandle(types) && types.targetQualifier.get(targetQualifier).isDefined();
+                return inner.canHandle(types) && types.targetQualifier().get(targetQualifier).isDefined();
             }
 
             @Override public boolean isCacheable() {
@@ -75,7 +75,7 @@ public class MappingDefTools {
     public static<S,T,H> AValueMappingDef<S,T,H> requireSourceQualifier(final String sourceQualifier, final AValueMappingDef<S,T,H> inner) {
         return new AValueMappingDef<S, T, H>() {
             @Override public boolean canHandle(AQualifiedSourceAndTargetType types) throws Exception {
-                return inner.canHandle(types) && types.sourceQualifier.get(sourceQualifier).isDefined();
+                return inner.canHandle(types) && types.sourceQualifier().get(sourceQualifier).isDefined();
             }
 
             @Override public T map(S sourceValue, AQualifiedSourceAndTargetType types, AMapperWorker<? extends H> worker, AMap<String, Object> context) throws Exception {
@@ -91,7 +91,7 @@ public class MappingDefTools {
     public static<S,T,H> AValueMappingDef<S,T,H> requireTargetQualifier(final String targetQualifier, final AValueMappingDef<S,T,H> inner) {
         return new AValueMappingDef<S, T, H>() {
             @Override public boolean canHandle(AQualifiedSourceAndTargetType types) throws Exception {
-                return inner.canHandle(types) && types.targetQualifier.get(targetQualifier).isDefined();
+                return inner.canHandle(types) && types.targetQualifier().get(targetQualifier).isDefined();
             }
 
             @Override public T map(S sourceValue, AQualifiedSourceAndTargetType types, AMapperWorker<? extends H> worker, AMap<String, Object> context) throws Exception {

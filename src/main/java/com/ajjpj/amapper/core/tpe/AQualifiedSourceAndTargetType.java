@@ -4,10 +4,10 @@ package com.ajjpj.amapper.core.tpe;
  * @author arno
  */
 public class AQualifiedSourceAndTargetType {
-    public final AType sourceType;
-    public final AQualifier sourceQualifier;
-    public final AType targetType;
-    public final AQualifier targetQualifier;
+    private final AType sourceType;
+    private final AQualifier sourceQualifier;
+    private final AType targetType;
+    private final AQualifier targetQualifier;
 
     /**
      * convenience factory method for unqualified types
@@ -16,17 +16,37 @@ public class AQualifiedSourceAndTargetType {
         return new AQualifiedSourceAndTargetType (sourceType, AQualifier.NO_QUALIFIER, targetType, AQualifier.NO_QUALIFIER);
     }
 
-    public AQualifiedSourceAndTargetType(AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier) {
+    public static AQualifiedSourceAndTargetType create (AQualifiedType source, AQualifiedType target) {
+        return create (source.tpe, source.qualifier, target.tpe, target.qualifier);
+    }
+
+    public static AQualifiedSourceAndTargetType create (AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier) {
+        return new AQualifiedSourceAndTargetType (sourceType, sourceQualifier, targetType, targetQualifier);
+    }
+
+    private AQualifiedSourceAndTargetType(AType sourceType, AQualifier sourceQualifier, AType targetType, AQualifier targetQualifier) {
         this.sourceType = sourceType;
         this.sourceQualifier = sourceQualifier;
         this.targetType = targetType;
         this.targetQualifier = targetQualifier;
     }
 
+    public AType sourceType() {
+        return sourceType;
+    }
+    public AQualifier sourceQualifier() {
+        return sourceQualifier;
+    }
     public AQualifiedType source() {
         return new AQualifiedType(sourceType, sourceQualifier);
     }
 
+    public AType targetType() {
+        return targetType;
+    }
+    public AQualifier targetQualifier() {
+        return targetQualifier;
+    }
     public AQualifiedType target() {
         return new AQualifiedType(targetType, targetQualifier);
     }

@@ -19,9 +19,9 @@ import java.math.RoundingMode;
 public class DoubleToBigDecimalForCurrencyMappingDef implements AValueMappingDef<Double, BigDecimal, Object> {
     @Override
     public boolean canHandle(AQualifiedSourceAndTargetType types) {
-        return types.sourceType.equals(JavaBeanTypes.create(Double.class)) &&
-               types.targetType.equals(JavaBeanTypes.create(BigDecimal.class)) &&
-               types.targetQualifier.get("Currency Rounding").isDefined();
+        return types.sourceType().equals(JavaBeanTypes.create(Double.class)) &&
+               types.targetType().equals(JavaBeanTypes.create(BigDecimal.class)) &&
+               types.targetQualifier().get("Currency Rounding").isDefined();
     }
 
     @Override

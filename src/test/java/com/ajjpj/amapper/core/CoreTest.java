@@ -95,9 +95,9 @@ public class CoreTest {
     public void testObjectMappingPerElementClass () throws Exception {
         final AObjectMappingDef<List<?>, List<?>, JavaBeanMappingHelper> stringListMapping = new AObjectMappingDef<List<?>, List<?>, JavaBeanMappingHelper> () {
             @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
-                if(types.sourceType instanceof SingleParamBeanType && types.targetType instanceof SingleParamBeanType) {
-                    final SingleParamBeanType sourceType = (SingleParamBeanType) types.sourceType;
-                    final SingleParamBeanType targetType = (SingleParamBeanType) types.targetType;
+                if(types.sourceType() instanceof SingleParamBeanType && types.targetType() instanceof SingleParamBeanType) {
+                    final SingleParamBeanType sourceType = (SingleParamBeanType) types.sourceType();
+                    final SingleParamBeanType targetType = (SingleParamBeanType) types.targetType();
 
                     return sourceType.cls == List.class && sourceType.paramCls == Integer.class && targetType.cls == List.class && targetType.paramCls == String.class;
                 }
@@ -133,7 +133,7 @@ public class CoreTest {
 
             @Override
             public boolean canHandle(AQualifiedSourceAndTargetType types) {
-                return types.sourceType.equals(JavaBeanTypes.create(Number.class)) && types.targetType.equals(JavaBeanTypes.create(String.class));
+                return types.sourceType().equals(JavaBeanTypes.create(Number.class)) && types.targetType().equals(JavaBeanTypes.create(String.class));
             }
         };
 

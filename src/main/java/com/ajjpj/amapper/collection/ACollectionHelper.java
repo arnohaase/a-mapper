@@ -27,7 +27,7 @@ public interface ACollectionHelper {
 //     * creates an empty 'wrapped' collection of given (target) type
 //     */
 //    <T> Collection<T> createEmptyCollection(AQualifiedSourceAndTargetType types);
-    AType elementType(AType tpe);
+    AQualifiedType elementType (AQualifiedType tpe);
 
     <T> Collection<T> asJuCollection(Object coll, AQualifiedType tpe);
     Object fromJuCollection(Collection<?> coll, AQualifiedType tpe);

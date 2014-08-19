@@ -9,6 +9,7 @@ import com.ajjpj.amapper.core.exclog.AMapperLogger;
 import com.ajjpj.amapper.core.impl.AMapperImpl;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
+import com.ajjpj.amapper.core.tpe.AQualifiedType;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.core.tpe.AType;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinValueMappingDefs;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 
 import static org.junit.Assert.*;
 
@@ -70,16 +70,16 @@ public class PrePostProcessorTest {
     final APreProcessor pre = new APreProcessor() {
         @Override
         public boolean canHandle(AQualifiedSourceAndTargetType types) {
-            return types.targetType == type1 || types.targetType == type2;
+            return types.targetType() == type1 || types.targetType() == type2;
         }
 
         @Override
         public <T> AOption<T> preProcess(T o, AQualifiedSourceAndTargetType qt) {
-            if(qt.sourceType == type1) {
+            if(qt.sourceType() == type1) {
                 ((DataClass)o).x = "type1";
                 return AOption.some(o);
             }
-            if(qt.sourceType == type2) {
+            if(qt.sourceType() == type2) {
                 ((DataClass)o).x = "type2";
                 return AOption.some(o);
             }
@@ -90,12 +90,12 @@ public class PrePostProcessorTest {
     final APostProcessor post = new APostProcessor() {
         @Override
         public boolean canHandle(AQualifiedSourceAndTargetType types) {
-            return types.targetType == type1 || types.targetType == type3;
+            return types.targetType() == type1 || types.targetType() == type3;
         }
 
         @Override
         public <T> T postProcess(T o, AQualifiedSourceAndTargetType qt) {
-            if(qt.sourceType == type1) {
+            if(qt.sourceType() == type1) {
                 ((DataClass)o).z += 1;
             }
             return o;
@@ -109,7 +109,7 @@ public class PrePostProcessorTest {
     };
 
     final AIdentifierExtractor ie = new AIdentifierExtractor() {
-        @Override public Object uniqueIdentifier(Object o, AQualifiedSourceAndTargetType types) {
+        @Override public Object uniqueIdentifier(Object o, AQualifiedType type, AQualifiedType targetType) {
             return String.valueOf(o);
         }
     };

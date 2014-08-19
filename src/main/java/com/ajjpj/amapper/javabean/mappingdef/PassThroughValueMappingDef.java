@@ -19,14 +19,14 @@ import com.ajjpj.amapper.javabean.JavaBeanTypes;
  * @author arno
  */
 public class PassThroughValueMappingDef<T> implements AValueMappingDef<T,T,Object>, AInlineableValueMappingDef { //TODO show this in the documentation
-    protected final JavaBeanType<?> tpe;
+    protected final JavaBeanType<T> tpe;
 
     public PassThroughValueMappingDef(Class<T> cls) {
         this.tpe = JavaBeanTypes.create(cls);
     }
 
     @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
-        return tpe.equals(types.sourceType) && tpe.equals (types.targetType);
+        return tpe.equals(types.sourceType()) && tpe.equals (types.targetType());
     }
 
     @Override public T map(T sourceValue, AQualifiedSourceAndTargetType types, AMapperWorker<?> worker, AMap<String, Object> context) {

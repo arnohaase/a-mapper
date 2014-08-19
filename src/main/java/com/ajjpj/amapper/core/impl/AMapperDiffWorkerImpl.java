@@ -128,21 +128,21 @@ public class AMapperDiffWorkerImpl<H> implements AMapperDiffWorker<H> {
 
 
     private void doDiffObject(APath path, Object sourceOld, Object sourceNew, AQualifiedSourceAndTargetType types, AMap<String, Object> contextOldOrig, AMap<String, Object> contextNewOrig, boolean isDerived) throws Exception {
-        final AMap<String, Object> oldContext = contextExtractor.withContext (contextOldOrig, sourceOld, types.sourceType);
-        final AMap<String, Object> newContext = contextExtractor.withContext (contextNewOrig, sourceNew, types.sourceType);
+        final AMap<String, Object> oldContext = contextExtractor.withContext (contextOldOrig, sourceOld, types.sourceType());
+        final AMap<String, Object> newContext = contextExtractor.withContext (contextNewOrig, sourceNew, types.sourceType());
 
         boolean causesDerived = false;
         if(sourceOld == null && sourceNew != null) {
-            diffBuilder.add (ADiffElement.added(path, isDerived, identifierExtractor.uniqueIdentifier(sourceNew, types)));
+            diffBuilder.add (ADiffElement.added(path, isDerived, identifierExtractor.uniqueIdentifier (sourceNew, types.source (), types.target ())));
             causesDerived = true;
         }
         else if(sourceOld != null && sourceNew == null) {
-            diffBuilder.add (ADiffElement.removed(path, isDerived, identifierExtractor.uniqueIdentifier(sourceOld, types)));
+            diffBuilder.add (ADiffElement.removed(path, isDerived, identifierExtractor.uniqueIdentifier(sourceOld, types.source (), types.target ())));
             causesDerived = true;
         }
         else {
-            final Object oldIdent = identifierExtractor.uniqueIdentifier (sourceOld, types);
-            final Object newIdent = identifierExtractor.uniqueIdentifier (sourceNew, types);
+            final Object oldIdent = identifierExtractor.uniqueIdentifier (sourceOld, types.source (), types.target ());
+            final Object newIdent = identifierExtractor.uniqueIdentifier (sourceNew, types.source (), types.target ());
             if (! oldIdent.equals(newIdent)) {
                 diffBuilder.add(ADiffElement.refChanged(path, isDerived, oldIdent, newIdent));
                 causesDerived = true;

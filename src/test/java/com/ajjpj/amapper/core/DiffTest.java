@@ -7,7 +7,7 @@ import com.ajjpj.amapper.core.diff.ADiff;
 import com.ajjpj.amapper.core.diff.ADiffElement;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.path.APathSegment;
-import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
+import com.ajjpj.amapper.core.tpe.AQualifiedType;
 import com.ajjpj.amapper.javabean.JavaBeanMapper;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
@@ -19,8 +19,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 /**
@@ -61,7 +60,7 @@ public class DiffTest {
     //TODO ref with same identifier
 
     final AIdentifierExtractor ie = new AIdentifierExtractor() {
-        @Override public Object uniqueIdentifier(Object o, AQualifiedSourceAndTargetType types) {
+        @Override public Object uniqueIdentifier(Object o, AQualifiedType type, AQualifiedType targetType) {
             if(o instanceof DiffSource) {
                 return ((DiffSource)o).getOid();
             }

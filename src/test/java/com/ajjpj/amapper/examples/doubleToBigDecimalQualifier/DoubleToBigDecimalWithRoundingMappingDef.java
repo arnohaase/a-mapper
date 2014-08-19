@@ -19,9 +19,9 @@ import java.math.RoundingMode;
 public class DoubleToBigDecimalWithRoundingMappingDef implements AValueMappingDef<Double, BigDecimal, Object> {
     @Override
     public boolean canHandle(AQualifiedSourceAndTargetType types) {
-        return types.sourceType.equals(JavaBeanTypes.create(Double.class)) &&
-                types.targetType.equals(JavaBeanTypes.create(BigDecimal.class)) &&
-                types.targetQualifier.get("round n digits").isDefined();
+        return types.sourceType().equals(JavaBeanTypes.create(Double.class)) &&
+                types.targetType().equals(JavaBeanTypes.create(BigDecimal.class)) &&
+                types.targetQualifier().get("round n digits").isDefined();
     }
 
     @Override
@@ -30,7 +30,7 @@ public class DoubleToBigDecimalWithRoundingMappingDef implements AValueMappingDe
             return null;
         }
 
-        final int numDigits = Integer.valueOf(types.targetQualifier.get("round n digits").get());
+        final int numDigits = Integer.valueOf(types.targetQualifier().get("round n digits").get());
         return BigDecimal.valueOf(sourceValue).setScale(numDigits, RoundingMode.HALF_UP);
     }
 

@@ -100,7 +100,7 @@ public class AMapperWorkerImpl<H> implements AMapperWorker<H> {
                 return cached;
             }
 
-            final AMap<String, Object> newContext = contextExtractor.withContext(context, sourceRaw, types.sourceType);
+            final AMap<String, Object> newContext = contextExtractor.withContext(context, sourceRaw, types.sourceType());
             final Object resultRaw = m.map(source, target, types, this, newContext, path);
 
             final Object result = postProcess(postProcessors.allEntriesFor(types), resultRaw, types);

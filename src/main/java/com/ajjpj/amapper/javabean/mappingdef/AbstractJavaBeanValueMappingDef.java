@@ -9,8 +9,8 @@ import com.ajjpj.amapper.javabean.JavaBeanTypes;
  * @author arno
  */
 public abstract class AbstractJavaBeanValueMappingDef<S,T,H> implements AValueMappingDef<S,T,H> {
-    private final JavaBeanType<?> sourceType;
-    private final JavaBeanType<?> targetType;
+    private final JavaBeanType<S> sourceType;
+    private final JavaBeanType<T> targetType;
 
     public AbstractJavaBeanValueMappingDef(Class<S> sourceClass, Class<T> targetClass) {
         this.sourceType = JavaBeanTypes.create(sourceClass);
@@ -18,6 +18,6 @@ public abstract class AbstractJavaBeanValueMappingDef<S,T,H> implements AValueMa
     }
 
     @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
-        return sourceType.equals(types.sourceType) && targetType.equals(types.targetType);
+        return sourceType.equals(types.sourceType()) && targetType.equals(types.targetType());
     }
 }

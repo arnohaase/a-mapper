@@ -38,7 +38,7 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
         this.sourceProp = sourceProp;
         this.targetProp = targetProp;
 
-        this.types = new AQualifiedSourceAndTargetType (sourceProp.getType(), sourceProp.getSourceQualifier(), targetProp.getType(), targetProp.getTargetQualifier());
+        this.types = AQualifiedSourceAndTargetType.create (sourceProp.getType(), sourceProp.getSourceQualifier(), targetProp.getType(), targetProp.getTargetQualifier());
     }
 
     public ASourceAndTargetProp<T,S> reverse() {
