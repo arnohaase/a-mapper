@@ -3,7 +3,6 @@ package com.ajjpj.amapper.javabean;
 import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.amapper.core.tpe.AType;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -57,6 +56,10 @@ public class JavaBeanTypes {
 
     public static boolean isSubtypeOrSameOf(AType tpe, Class<?> cls) {
         return tpe instanceof JavaBeanType && cls.isAssignableFrom(((JavaBeanType) tpe).cls);
+    }
+
+    public static boolean isArrayType (AType tpe) {
+        return tpe instanceof JavaBeanType && ((JavaBeanType)tpe).cls.isArray ();
     }
 
     @SuppressWarnings("unchecked")

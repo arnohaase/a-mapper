@@ -1,8 +1,8 @@
 package com.ajjpj.amapper.javabean;
 
 import com.ajjpj.amapper.core.tpe.AQualifiedType;
+import com.ajjpj.amapper.util.AArraySupport;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -28,16 +28,7 @@ public class SimpleJavaBeanMappingHelper implements JavaBeanMappingHelper {
         }
 
         if (coll.getClass ().isArray ()) {
-            final Class<?> componentType = (coll.getClass ().getComponentType ());
-            if (! componentType.isPrimitive ())  return (Collection<T>) Arrays.asList ((Object[]) coll);
-            if (componentType == Boolean.TYPE)   return (Collection<T>) Arrays.asList ((boolean[]) coll); //TODO does not work!
-            if (componentType == Integer.TYPE)   return (Collection<T>) Arrays.asList ((int[]) coll);
-            if (componentType == Long.TYPE)      return (Collection<T>) Arrays.asList ((long[]) coll);
-            if (componentType == Double.TYPE)    return (Collection<T>) Arrays.asList ((double[]) coll);
-            if (componentType == Byte.TYPE)      return (Collection<T>) Arrays.asList ((byte[]) coll);
-            if (componentType == Short.TYPE)     return (Collection<T>) Arrays.asList ((short[]) coll);
-            if (componentType == Float.TYPE)     return (Collection<T>) Arrays.asList ((float[]) coll);
-            if (componentType == Character.TYPE) return (Collection<T>) Arrays.asList ((char[]) coll);
+            return AArraySupport.wrap (coll);
         }
 
         return (Collection<T>) coll;

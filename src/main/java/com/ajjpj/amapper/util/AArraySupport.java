@@ -1,9 +1,7 @@
 package com.ajjpj.amapper.util;
 
 import java.lang.reflect.Array;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -16,6 +14,13 @@ public class AArraySupport {
 
     static {
         primitiveHandlers.put (boolean.class, new TypeHandler () {
+            @Override public Collection wrap (Object array) {
+                return new WrappedArray (array) {
+                    @Override Object getValue (Object array, int idx) {
+                        return Array.getBoolean (array, idx);
+                    }
+                };
+            }
             @Override public void setArray (Object array, List<Object> values) {
                 final boolean[] arr = (boolean[]) array;
 
@@ -25,6 +30,13 @@ public class AArraySupport {
             }
         });
         primitiveHandlers.put (char.class, new TypeHandler () {
+            @Override public Collection wrap (Object array) {
+                return new WrappedArray (array) {
+                    @Override Object getValue (Object array, int idx) {
+                        return Array.getChar (array, idx);
+                    }
+                };
+            }
             @Override public void setArray (Object array, List<Object> values) {
                 final char[] arr = (char[]) array;
 
@@ -35,6 +47,13 @@ public class AArraySupport {
         });
 
         primitiveHandlers.put (byte.class, new TypeHandler () {
+            @Override public Collection wrap (Object array) {
+                return new WrappedArray (array) {
+                    @Override Object getValue (Object array, int idx) {
+                        return Array.getByte (array, idx);
+                    }
+                };
+            }
             @Override public void setArray (Object array, List<Object> values) {
                 final byte[] arr = (byte[]) array;
 
@@ -44,6 +63,13 @@ public class AArraySupport {
             }
         });
         primitiveHandlers.put (short.class, new TypeHandler () {
+            @Override public Collection wrap (Object array) {
+                return new WrappedArray (array) {
+                    @Override Object getValue (Object array, int idx) {
+                        return Array.getShort (array, idx);
+                    }
+                };
+            }
             @Override public void setArray (Object array, List<Object> values) {
                 final short[] arr = (short[]) array;
 
@@ -53,6 +79,13 @@ public class AArraySupport {
             }
         });
         primitiveHandlers.put (int.class, new TypeHandler () {
+            @Override public Collection wrap (Object array) {
+                return new WrappedArray (array) {
+                    @Override Object getValue (Object array, int idx) {
+                        return Array.getInt (array, idx);
+                    }
+                };
+            }
             @Override public void setArray (Object array, List<Object> values) {
                 final int[] arr = (int[]) array;
 
@@ -62,6 +95,13 @@ public class AArraySupport {
             }
         });
         primitiveHandlers.put (long.class, new TypeHandler () {
+            @Override public Collection wrap (Object array) {
+                return new WrappedArray (array) {
+                    @Override Object getValue (Object array, int idx) {
+                        return Array.getLong (array, idx);
+                    }
+                };
+            }
             @Override public void setArray (Object array, List<Object> values) {
                 final long[] arr = (long[]) array;
 
@@ -72,6 +112,13 @@ public class AArraySupport {
         });
 
         primitiveHandlers.put (float.class, new TypeHandler () {
+            @Override public Collection wrap (Object array) {
+                return new WrappedArray (array) {
+                    @Override Object getValue (Object array, int idx) {
+                        return Array.getFloat (array, idx);
+                    }
+                };
+            }
             @Override public void setArray (Object array, List<Object> values) {
                 final float[] arr = (float[]) array;
 
@@ -81,6 +128,13 @@ public class AArraySupport {
             }
         });
         primitiveHandlers.put (double.class, new TypeHandler () {
+            @Override public Collection wrap (Object array) {
+                return new WrappedArray (array) {
+                    @Override Object getValue (Object array, int idx) {
+                        return Array.getDouble (array, idx);
+                    }
+                };
+            }
             @Override public void setArray (Object array, List<Object> values) {
                 final double[] arr = (double[]) array;
 
@@ -92,6 +146,9 @@ public class AArraySupport {
     }
 
     private static final TypeHandler defaultHandler = new TypeHandler () {
+        @Override public Collection wrap (Object array) {
+            return Arrays.asList ((Object[]) array);
+        }
         @Override public void setArray (Object array, List<Object> values) {
             final int arrLength = Array.getLength (array);
             for (int i=0; i<arrLength; i++) {
@@ -99,6 +156,16 @@ public class AArraySupport {
             }
         }
     };
+
+    public static Collection wrap (Object array) {
+        final Class<?> componentType = array.getClass ().getComponentType ();
+        if (componentType.isPrimitive ()) {
+            return primitiveHandlers.get (componentType).wrap (array);
+        }
+        else {
+            return defaultHandler.wrap (array);
+        }
+    }
 
     public static void setValues (Object array, List<Object> values) {
         final Class<?> componentType = array.getClass ().getComponentType ();
@@ -113,6 +180,40 @@ public class AArraySupport {
 
     private interface TypeHandler {
         void setArray(Object array, List<Object> values);
+        Collection wrap (Object array);
+    }
+
+    private static abstract class WrappedArray extends AbstractCollection {
+        private final Object array;
+        private final int length;
+
+        protected WrappedArray (Object array) {
+            this.array = array;
+            this.length = Array.getLength (array);
+        }
+
+        @SuppressWarnings ("NullableProblems")
+        @Override public Iterator iterator () {
+            return new Iterator () {
+                int nextIdx = 0;
+
+                @Override public boolean hasNext () {
+                    return nextIdx < size ();
+                }
+                @Override public Object next () {
+                    return getValue (array, nextIdx++);
+                }
+                @Override public void remove () {
+                    throw new UnsupportedOperationException ();
+                }
+            };
+        }
+
+        abstract Object getValue (Object array, int idx);
+
+        @Override public int size () {
+            return length;
+        }
     }
 }
 

@@ -13,11 +13,9 @@ import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinCollectionMappingDefs;
 import org.junit.Test;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 
 public class CollectionTest {
@@ -153,7 +151,7 @@ public class CollectionTest {
         // list of two different instances --> mapped to two separate instances
         @SuppressWarnings("unchecked")
         final List<ClassA> target1 = mapper.map (
-                source1, Array.class, ClassA.class,
+                source1, ClassA[].class, ClassA.class,
                 null,    List.class,  ClassA.class);
         assertEquals (2, target1.size());
         assertTrue (target1.get (0).getClass () == ClassA.class);
@@ -225,18 +223,16 @@ public class CollectionTest {
     @Test
     public void testPrimitiveArrayToCollection() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
-                .withObjectMapping (BuiltinCollectionMappingDefs.ArrayFromCollectionMapping)
+                .withObjectMapping (BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
                 .build();
 
         final List<Boolean> mapped = mapper.map (
-                new boolean[] {true, false, false, true}, boolean[].class, boolean.class,
+                new boolean[] {true, false}, boolean[].class, boolean.class,
                 null, List.class, Boolean.class);
 
-        assertEquals (4, mapped.size());
+        assertEquals (2, mapped.size());
         assertEquals (true,  mapped.get(0));
         assertEquals (false, mapped.get(1));
-        assertEquals (false, mapped.get(2));
-        assertEquals (true,  mapped.get(3));
     }
 
     //TODO boolean[] <-> Boolean[]

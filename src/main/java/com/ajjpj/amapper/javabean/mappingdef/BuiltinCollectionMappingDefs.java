@@ -54,7 +54,7 @@ public class BuiltinCollectionMappingDefs {
     public static boolean isBeanCollectionType(AType tpe) {
         return tpe instanceof SingleParamBeanType && (
                 JavaBeanTypes.isSubtypeOrSameOf (tpe, Collection.class) ||
-                JavaBeanTypes.isSubtypeOrSameOf (tpe, Array.class)
+                JavaBeanTypes.isArrayType (tpe)
         );
     }
 }
