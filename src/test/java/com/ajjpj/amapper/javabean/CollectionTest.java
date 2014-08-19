@@ -17,6 +17,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 public class CollectionTest {
@@ -80,7 +81,7 @@ public class CollectionTest {
             }
 
             @Override public boolean canHandle(AQualifiedSourceAndTargetType types) {
-                return types.sourceType().equals(JavaBeanTypes.create(StringHolder.class)) && types.targetType().equals(JavaBeanTypes.create(StringHolder.class));
+                return types.sourceType().equals (JavaBeanTypes.create (StringHolder.class)) && types.targetType().equals (JavaBeanTypes.create (StringHolder.class));
             }
 
             @Override public StringHolder map(StringHolder source, StringHolder target, AQualifiedSourceAndTargetType types, AMapperWorker<?> worker, AMap<String, Object> context, APath path) throws Exception {
@@ -165,7 +166,6 @@ public class CollectionTest {
     public void testListToArrayByIdentifier() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
                 .withObjectMapping (BuiltinCollectionMappingDefs.ArrayFromCollectionMapping)
-                .withObjectMapping (BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
                 .withBeanMapping (JavaBeanMapping.create (ClassA.class, ClassA.class))
                 .build ();
 
@@ -185,8 +185,7 @@ public class CollectionTest {
     public void testListToArrayOfSameSizeByIdentifier() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
                 .withObjectMapping (BuiltinCollectionMappingDefs.ArrayFromCollectionMapping)
-                .withObjectMapping (BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
-                .withBeanMapping(JavaBeanMapping.create (ClassA.class, ClassA.class))
+                .withBeanMapping (JavaBeanMapping.create (ClassA.class, ClassA.class))
                 .build();
 
         final List<ClassA> source1 = Arrays.asList(new ClassA(), new ClassA());
@@ -206,8 +205,41 @@ public class CollectionTest {
 
     @Test
     public void testPrimitiveCollectionToArray() throws Exception {
-        fail ("TODO");
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+                .withObjectMapping (BuiltinCollectionMappingDefs.ArrayFromCollectionMapping)
+                .build();
+
+        final boolean[] mapped = mapper.map (
+                Arrays.asList (true, false, false, true), List.class, Boolean.class,
+                null, boolean[].class, boolean.class);
+
+        assertEquals (boolean.class, mapped.getClass ().getComponentType ());
+        assertEquals (4, mapped.length);
+        assertEquals (true,  mapped[0]);
+        assertEquals (false, mapped[1]);
+        assertEquals (false, mapped[2]);
+        assertEquals (true,  mapped[3]);
     }
+
+    @SuppressWarnings ("unchecked")
+    @Test
+    public void testPrimitiveArrayToCollection() throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+                .withObjectMapping (BuiltinCollectionMappingDefs.ArrayFromCollectionMapping)
+                .build();
+
+        final List<Boolean> mapped = mapper.map (
+                new boolean[] {true, false, false, true}, boolean[].class, boolean.class,
+                null, List.class, Boolean.class);
+
+        assertEquals (4, mapped.size());
+        assertEquals (true,  mapped.get(0));
+        assertEquals (false, mapped.get(1));
+        assertEquals (false, mapped.get(2));
+        assertEquals (true,  mapped.get(3));
+    }
+
+    //TODO boolean[] <-> Boolean[]
 
     @Test
     public void testCollectionToArrayWithTransformation() throws Exception {

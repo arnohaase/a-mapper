@@ -8,7 +8,7 @@ public class SingleParamBeanType<T,P> extends JavaBeanType<T> {
 
     public SingleParamBeanType(Class<T> cls, Class<P> param) {
         super(cls);
-        this.paramCls = JavaBeanTypes.normalized(param);
+        this.paramCls = param;
     }
 
     @Override public String getName() {

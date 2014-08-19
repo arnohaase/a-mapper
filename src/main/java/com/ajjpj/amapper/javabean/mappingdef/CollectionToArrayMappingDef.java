@@ -14,6 +14,7 @@ import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.core.tpe.AQualifiedType;
 import com.ajjpj.amapper.javabean.JavaBeanType;
 import com.ajjpj.amapper.javabean.SingleParamBeanType;
+import com.ajjpj.amapper.util.AArraySupport;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -62,17 +63,20 @@ class CollectionToArrayMappingDef implements AObjectMappingDef<Object, Object, A
             }
         }
 
-        final Class<?> targetElementClass = ((SingleParamBeanType<?,?>) types.targetType()).getParamType ().cls;
+        final Class<?> targetElementClass = ((SingleParamBeanType<?,?>) types.targetType()).paramCls;
         if (target == null || Array.getLength (target) != mappedTargetList.size ()) {
             target = Array.newInstance (targetElementClass, mappedTargetList.size ());
         }
 
-        int idx = 0;
-        for (Object mapped: mappedTargetList) {
-            Array.set (target, idx++, mapped);
-        }
+        AArraySupport.setValues (target, mappedTargetList);
 
         return target;
+    }
+
+    private void setBooleanArray (boolean[] arr, List<Object> values) {
+        for (int i=0; i<arr.length; i++) {
+            arr[i] = (boolean) values.get(i);
+        }
     }
 
     private Map<Object, Object> byIdentifier (Collection<?> coll, AIdentifierExtractor identifierExtractor, AQualifiedType type, AQualifiedType targetType) {

@@ -18,8 +18,7 @@ import java.util.Set;
  */
 public class BuiltinCollectionMappingDefs {
     /**
-     * This is a generic mapping of arbitrary collections to arrays, delegating to a corresponding mapping of a collection to a <code>list</code>. So in
-     *  order to use this, be sure to register a mapping to java.util.List as well.
+     * This is a generic mapping of arbitrary collections to arrays.
      */
     public static final AObjectMappingDef<?, ?, ACollectionHelper> ArrayFromCollectionMapping = new CollectionToArrayMappingDef ();
 

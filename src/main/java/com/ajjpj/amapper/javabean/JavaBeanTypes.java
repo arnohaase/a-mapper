@@ -34,7 +34,7 @@ public class JavaBeanTypes {
         return new JavaBeanType<T>(cls);
     }
     public static <T,P> SingleParamBeanType<T,P> create (Class<T> cls, Class<P> param) {
-        return new SingleParamBeanType<T,P>(cls, param);
+        return new SingleParamBeanType<>(cls, param);
     }
     public static AOption<? extends JavaBeanType> create(Type javaType) {
         if (javaType instanceof Class<?>) {

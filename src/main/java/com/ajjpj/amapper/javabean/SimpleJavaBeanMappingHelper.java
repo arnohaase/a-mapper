@@ -2,6 +2,7 @@ package com.ajjpj.amapper.javabean;
 
 import com.ajjpj.amapper.core.tpe.AQualifiedType;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -29,7 +30,7 @@ public class SimpleJavaBeanMappingHelper implements JavaBeanMappingHelper {
         if (coll.getClass ().isArray ()) {
             final Class<?> componentType = (coll.getClass ().getComponentType ());
             if (! componentType.isPrimitive ())  return (Collection<T>) Arrays.asList ((Object[]) coll);
-            if (componentType == Boolean.TYPE)   return (Collection<T>) Arrays.asList ((boolean[]) coll);
+            if (componentType == Boolean.TYPE)   return (Collection<T>) Arrays.asList ((boolean[]) coll); //TODO does not work!
             if (componentType == Integer.TYPE)   return (Collection<T>) Arrays.asList ((int[]) coll);
             if (componentType == Long.TYPE)      return (Collection<T>) Arrays.asList ((long[]) coll);
             if (componentType == Double.TYPE)    return (Collection<T>) Arrays.asList ((double[]) coll);
