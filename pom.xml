@@ -46,7 +46,7 @@
         <dependency>
             <groupId>com.ajjpj.a-base</groupId>
             <artifactId>a-base</artifactId>
-            <version>1.0-pre4</version>
+            <version>1.0-pre6</version>
         </dependency>
 
         <dependency>
