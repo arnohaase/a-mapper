@@ -2,6 +2,7 @@ package com.ajjpj.amapper.javabean;
 
 import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.amapper.classes.ClassA;
+import com.ajjpj.amapper.classes.ClassB;
 import com.ajjpj.amapper.core.AMapperDiffWorker;
 import com.ajjpj.amapper.core.AMapperWorker;
 import com.ajjpj.amapper.core.AObjectMappingDef;
@@ -235,15 +236,73 @@ public class CollectionTest {
         assertEquals (false, mapped.get(1));
     }
 
-    //TODO boolean[] <-> Boolean[]
+    @Test
+    public void testPrimitiveArrayToWrappedArray() throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+                .withObjectMapping (BuiltinCollectionMappingDefs.ArrayFromCollectionMapping)
+                .build();
+
+        final Boolean[] mapped = mapper.map (
+                new boolean[] {true, false, false, true}, boolean[].class, boolean.class,
+                null, Boolean[].class, Boolean.class);
+
+        assertEquals (Boolean.class, mapped.getClass ().getComponentType ());
+        assertEquals (4, mapped.length);
+        assertEquals (true,  mapped[0]);
+        assertEquals (false, mapped[1]);
+        assertEquals (false, mapped[2]);
+        assertEquals (true,  mapped[3]);
+    }
+
+    @Test
+    public void testPrimitiveArrayFromWrappedArray() throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+                .withObjectMapping (BuiltinCollectionMappingDefs.ArrayFromCollectionMapping)
+                .build();
+
+        final boolean[] mapped = mapper.map (
+                new Boolean[] {true, false, false, true}, Boolean[].class, Boolean.class,
+                null, boolean[].class, boolean.class);
+
+        assertEquals (boolean.class, mapped.getClass ().getComponentType ());
+        assertEquals (4, mapped.length);
+        assertEquals (true,  mapped[0]);
+        assertEquals (false, mapped[1]);
+        assertEquals (false, mapped[2]);
+        assertEquals (true,  mapped[3]);
+    }
 
     @Test
     public void testCollectionToArrayWithTransformation() throws Exception {
-        fail ("TODO");
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+                .withObjectMapping (BuiltinCollectionMappingDefs.ArrayFromCollectionMapping)
+                .withBeanMapping (JavaBeanMapping.create (ClassA.class, ClassB.class).addMapping ("firstName", "firstName"))
+                .build ();
+
+        final ClassA a = new ClassA();
+        a.setFirstName ("First");
+
+        final ClassB[] mapped = mapper.map (new ClassA[] {a}, new ClassB[0]);
+
+        assertEquals (ClassB.class, mapped.getClass ().getComponentType ());
+        assertEquals (1, mapped.length);
+        assertEquals ("First", mapped[0].getFirstName ());
     }
 
     @Test
     public void testCollectionToArrayWithValueTransformation() throws Exception {
-        fail ("TODO");
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+                .withObjectMapping (BuiltinCollectionMappingDefs.ArrayFromCollectionMapping)
+                .build();
+
+        final int[] mapped = mapper.map (
+                new long[] {1, 2, 3, 4}, long[].class, long.class,
+                null, int[].class, int.class);
+
+        assertEquals (4, mapped.length);
+        assertEquals (1,  mapped[0]);
+        assertEquals (2, mapped[1]);
+        assertEquals (3, mapped[2]);
+        assertEquals (4, mapped[3]);
     }
 }
