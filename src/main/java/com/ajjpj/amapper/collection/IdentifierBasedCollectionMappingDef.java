@@ -54,7 +54,7 @@ public class IdentifierBasedCollectionMappingDef implements AObjectMappingDef<Ob
         final ACollectionHelper h = worker.getHelpers();
 
         final Collection<Object> sourceColl = h.asJuCollection(source, types.source());
-        if(source == null) {
+        if(sourceColl == null) {
             return null;
         }
 
