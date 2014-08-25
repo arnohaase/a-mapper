@@ -28,13 +28,12 @@ public class LevenshteinDistance <S, T> {
 
     private final Collection<S> source;
     private final List<T> target;
-    // TODO create and use APredicate2 instead of AFunction2
+    // TODO create and use APredicate2 instead of AFunction2 + APredicate3
     private final AFunction2NoThrow<S, T, Boolean> eqFunction;
-    private final AFunction2NoThrow<S, T, AOption<T>> mapFunction;
 
-    List <List <MElement>> m;
+    private List <List <MElement>> m = null;
 
-    enum EditChoice {
+    public enum EditChoice {
         noOp, // (diagonal)
         replace, // (diagonal)
         delete, // (up)
@@ -57,27 +56,24 @@ public class LevenshteinDistance <S, T> {
      * @param source source collection (list A)
      * @param target target collection (list B) - implementing the List interface (in fact a List is expected, with has random write access implemented - e.g. ArrayList)
      * @param eqFunction equality function returning true, if object of list A is equivalent to object of List B
-     * @param mapFunction mapping function from object in source list A to object in target list B.
-     *                    1. param: source object
-     *                    2. param: eventual existing target object
-     *                    return: mapped source - if successful, AOption.none otherwise
      */
     public LevenshteinDistance (Collection<S> source, List<T> target,
-                                AFunction2NoThrow<S, T, Boolean> eqFunction,
-                                AFunction2NoThrow<S, T, AOption<T>> mapFunction) {
+                                AFunction2NoThrow<S, T, Boolean> eqFunction) {
         this.source = source;
         this.target = target;
         this.eqFunction = eqFunction;
-        this.mapFunction = mapFunction;
     }
 
     /**
      * transform target list into a representation of source list
+     * @param mapFunction mapping function from object in source list A to object in target list B.
+     *                    1. param: source object
+     *                    2. param: eventual existing target object
+     *                    return: mapped source - if successful, AOption.none otherwise
      * @return number of edit steps
      */
-    public int editTarget () {
-        calcEditDistanceMatrix();
-        return edit (getEditPath());
+    public int editTarget (AFunction2NoThrow<S, T, AOption<T>> mapFunction) {
+        return edit (getEditPath(), mapFunction);
     }
 
     private void calcEditDistanceMatrix() {
@@ -128,7 +124,13 @@ public class LevenshteinDistance <S, T> {
     }
 
 
-    private List<EditChoice> getEditPath() {
+    /**
+     * @return one possible edit-path of minimal distance
+     */
+    public List<EditChoice> getEditPath() {
+        if (m==null) {
+            calcEditDistanceMatrix();
+        }
         List<EditChoice> result = new ArrayList<>();
         int i = source.size();
         int j = target.size();
@@ -155,7 +157,7 @@ public class LevenshteinDistance <S, T> {
         return result;
     }
 
-    private int edit (List<EditChoice> editPath) {
+    private int edit (List<EditChoice> editPath, AFunction2NoThrow<S, T, AOption<T>> mapFunction) {
         Iterator<S> sIter = source.iterator();
         int operations = 0;
         int j=0;

@@ -14,9 +14,9 @@ import static org.junit.Assert.*;
 
 
 /**
- * @author bitmagier
+ * @author Roman
  */
-public class LevenshteinBasedListMappingDefTest {
+public class LevenshteinDistanceTest {
 
     @Test public void testLevenshteinMap1() throws Exception {
         final Collection<Integer> source = Arrays.asList (4,5,6,7,8,9);
@@ -35,8 +35,8 @@ public class LevenshteinBasedListMappingDefTest {
             }
         };
 
-        final LevenshteinDistance<Integer, String> lev = new LevenshteinDistance<> (source, target, eqFunction, mapFunction);
-        final int steps = lev.editTarget();
+        final LevenshteinDistance<Integer, String> lev = new LevenshteinDistance<> (source, target, eqFunction);
+        final int steps = lev.editTarget (mapFunction);
 
         assertEquals (3, steps);
 
@@ -63,8 +63,8 @@ public class LevenshteinBasedListMappingDefTest {
             }
         };
 
-        final LevenshteinDistance<Character, Character> lev = new LevenshteinDistance<> (source, target, eqFunction, mapFunction);
-        final int steps = lev.editTarget();
+        final LevenshteinDistance<Character, Character> lev = new LevenshteinDistance<> (source, target, eqFunction);
+        final int steps = lev.editTarget (mapFunction);
 
         assertEquals (5, steps);
 
@@ -135,10 +135,11 @@ public class LevenshteinBasedListMappingDefTest {
             }
         };
 
-        final LevenshteinDistance<MyClassA, MyClassB> lev = new LevenshteinDistance<> (source, target, eqFunction, mapFunction);
-        final int steps = lev.editTarget();
+        final LevenshteinDistance<MyClassA, MyClassB> lev = new LevenshteinDistance<> (source, target, eqFunction);
+        final int steps = lev.editTarget (mapFunction);
 
         assertEquals (1, steps);
         assertEquals (Arrays.asList (new MyClassB (1, "A"), new MyClassB (2, "B"), new MyClassB (3, "X")), target);
     }
+
 }
