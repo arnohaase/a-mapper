@@ -4,6 +4,7 @@ import com.ajjpj.abase.collection.AEquality;
 import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.abase.function.AFunction2NoThrow;
+import com.ajjpj.abase.util.AObjectHolder;
 import com.ajjpj.amapper.core.AIdentifierExtractor;
 import com.ajjpj.amapper.core.AMapperDiffWorker;
 import com.ajjpj.amapper.core.AMapperWorker;
@@ -28,7 +29,7 @@ import java.util.List;
  *
  * @author Roman
  */
-public class IdentiferBasedListMappingDef implements AObjectMappingDef<Object, Object, ACollectionHelper> {
+public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object, Object, ACollectionHelper> {
 
     @Override public boolean isCacheable () {
         return true;
@@ -49,9 +50,10 @@ public class IdentiferBasedListMappingDef implements AObjectMappingDef<Object, O
         final AQualifiedSourceAndTargetType elementTypes = AQualifiedSourceAndTargetType.create (h.elementType (types.source()), h.elementType(types.target()));
 
         if (targetColl.isEmpty()) {
+            int index=0;
             // this is an optimization for the common case that the target collection is initially empty
             for (Object s: sourceColl) {
-                final APath elPath = path.withElementChild (worker.getIdentifierExtractor().uniqueIdentifier (s, types.source (), types.target ()));
+                final APath elPath = path.withElementChild (index, worker.getIdentifierExtractor().uniqueIdentifier (s, types.source (), types.target ()));
 
                 final AOption<Object> optT = worker.map (elPath, s, null, elementTypes, context);
                 if (optT.isDefined()) {
@@ -72,9 +74,10 @@ public class IdentiferBasedListMappingDef implements AObjectMappingDef<Object, O
             }
         };
 
+        final AObjectHolder<Integer> index = new AObjectHolder<> (0);
         final AFunction2NoThrow <Object, Object, AOption<Object>> mapFunction = new AFunction2NoThrow<Object, Object, AOption<Object>> () {
             @Override public AOption<Object> apply (Object s, Object t) {
-                final APath elPath = path.withElementChild (worker.getIdentifierExtractor().uniqueIdentifier (s, types.source (), types.target ()));
+                final APath elPath = path.withElementChild (index.value++, worker.getIdentifierExtractor().uniqueIdentifier (s, types.source (), types.target ()));
                 return worker.map (elPath, s, t, elementTypes, context);
             }
         };

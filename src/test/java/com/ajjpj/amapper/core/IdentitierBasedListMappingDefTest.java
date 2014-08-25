@@ -1,6 +1,7 @@
 package com.ajjpj.amapper.core;
 
 import com.ajjpj.abase.collection.immutable.AOption;
+import com.ajjpj.abase.function.AFunction2;
 import com.ajjpj.abase.function.AFunction2NoThrow;
 import com.ajjpj.amapper.collection.LevenshteinDistance;
 import org.junit.Test;
@@ -16,10 +17,9 @@ import static org.junit.Assert.*;
 /**
  * @author bitmagier
  */
-public class IdentitierBasedCollectionMappingDefTest {
+public class IdentitierBasedListMappingDefTest {
 
-
-    @Test public void testLevenshteinDistance() throws Exception {
+    @Test public void testLevenshteinDistanceMap1() throws Exception {
         final Collection<Integer> source = Arrays.asList (4,5,6,7,8,9);
         final List<String> target = new ArrayList<> (Arrays.asList ("3","6","7","8","4"));
 
@@ -46,5 +46,29 @@ public class IdentitierBasedCollectionMappingDefTest {
             expectedTarget.add (mapFunction.apply (s, null).get());
         }
         assertArrayEquals (expectedTarget.toArray(), target.toArray ());
+    }
+
+    @Test public void testLevenshteinDistanceMap2() throws Exception {
+        final List<Character> source = Arrays.asList ('p','h','y','s','a','l','i','s');
+        final List<Character> target = new ArrayList (Arrays.asList ('p','h','o','s','p','h','o','r'));
+
+        final AFunction2NoThrow<Character, Character, Boolean> eqFunction = new AFunction2NoThrow<Character, Character, Boolean> () {
+            @Override public Boolean apply (Character param1, Character param2) {
+                return param1.equals (param2);
+            }
+        };
+
+        final AFunction2NoThrow<Character, Character, AOption<Character>> mapFunction = new AFunction2NoThrow<Character, Character, AOption<Character>> () {
+            @Override public AOption<Character> apply (Character character1, Character character2) {
+                return AOption.some (character1);
+            }
+        };
+
+        final LevenshteinDistance<Character, Character> lev = new LevenshteinDistance<> (source, target, eqFunction, mapFunction);
+        int steps = lev.editTarget();
+
+        assertEquals (5, steps);
+
+        assertArrayEquals (source.toArray (), target.toArray ());
     }
 }

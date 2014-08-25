@@ -53,11 +53,12 @@ class CollectionToArrayMappingDef implements AObjectMappingDef<Object, Object, A
                 targetElementType);
 
 
+        int index = 0;
         final List<Object> mappedTargetList = new ArrayList<> ();
         for (Object sourceEl: worker.getHelpers ().asJuCollection (source, types.source ())) {
             final Object sourceIdent = worker.getIdentifierExtractor ().uniqueIdentifier (sourceEl, sourceElementType, targetElementType);
 
-            final APath elPath = path.withElementChild (sourceIdent);
+            final APath elPath = path.withElementChild (index++, sourceIdent);
             final AOption<Object> mappedOpt = worker.map (elPath, sourceEl, targetValuesByIdentifier.get (sourceIdent), elTypes, context);
             if (mappedOpt.isDefined ()) {
                 mappedTargetList.add (mappedOpt.get ());

@@ -26,13 +26,14 @@ public class PathTest {
     @Test
     public void testToString() {
         assertEquals("APath{a.b[keyB]}", APath.fromSegments(APathSegment.simple("a"), APathSegment.parameterized("b", "keyB")).toString());
+        assertEquals("APath{a.b[keyB@0]}", APath.fromSegments(APathSegment.simple("a"), APathSegment.parameterized("b", 0, "keyB")).toString());
     }
 
     @Test
     public void testDecompose() {
-        final APath p = APath.fromSegments(APathSegment.simple("a"), APathSegment.parameterized("b", "keyB"));
+        final APath p = APath.fromSegments(APathSegment.simple("a"), APathSegment.parameterized("b", 0, "keyB"));
 
-        assertEquals(APathSegment.parameterized("b", "keyB"), p.getLastSegment());
+        assertEquals(APathSegment.parameterized("b", 0, "keyB"), p.getLastSegment());
         assertEquals(APath.fromSegments(APathSegment.simple("a")), p.getParent());
 
         assertEquals(APathSegment.simple("a"), p.getParent().getLastSegment());

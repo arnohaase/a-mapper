@@ -11,7 +11,10 @@ public abstract class APathSegment {
     }
 
     public static AParameterizedPathSegment parameterized(String name, Object key) {
-        return new AParameterizedPathSegment(name, key);
+        return new AParameterizedPathSegment(name, -1, key);
+    }
+    public static AParameterizedPathSegment parameterized(String name, int index, Object key) {
+        return new AParameterizedPathSegment(name, index, key);
     }
 
     protected APathSegment(String name) {
