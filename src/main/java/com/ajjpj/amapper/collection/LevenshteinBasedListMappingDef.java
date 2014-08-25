@@ -15,10 +15,7 @@ import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.javabean.JavaBeanTypes;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinCollectionMappingDefs;
 
-import java.util.AbstractSequentialList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  *  This class handles list objects based on the unique identifiers of their elements. A source and a target element correspond
@@ -46,7 +43,7 @@ public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object,
 
         final ACollectionHelper h = worker.getHelpers();
         final Collection<Object> sourceColl = h.asJuCollection (source, types.source());
-        final List<Object> targetColl = (List) h.asJuCollection (target, types.target());
+        final List<Object> targetColl = (List<Object>) h.asJuCollection (target, types.target());
         final AQualifiedSourceAndTargetType elementTypes = AQualifiedSourceAndTargetType.create (h.elementType (types.source()), h.elementType(types.target()));
 
         if (targetColl.isEmpty()) {
@@ -69,8 +66,8 @@ public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object,
             @Override
             public Boolean apply (Object param1, Object param2) {
                 final Object sourceIdent = identifierExtractor.uniqueIdentifier (param1, types.source (), types.target ());
-                final AOption<Object> equivTarget = findTarget (targetColl, sourceIdent, identifierExtractor, types);
-                return equivTarget.isDefined ();
+                final Object targetIdent = identifierExtractor.uniqueIdentifier (param2, types.target (), types.target ());
+                return Objects.equals (sourceIdent, targetIdent);
             }
         };
 
@@ -82,8 +79,8 @@ public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object,
             }
         };
 
-        LevenshteinDistance<Object, Object> levenshteinDistance = new LevenshteinDistance<> (sourceColl, targetColl, eqFunction, mapFunction);
-        levenshteinDistance.editTarget();
+        LevenshteinDistance<Object, Object> levenshteinDistance = new LevenshteinDistance<> (sourceColl, targetColl, eqFunction);
+        levenshteinDistance.editTarget (mapFunction);
 
         return h.fromJuCollection(targetColl, types.target());
     }
@@ -99,14 +96,60 @@ public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object,
 
 
     @Override public void diff (ADiffBuilder diff,
-                                Object sourceOld, Object sourceNew,
-                                AQualifiedSourceAndTargetType types,
+                                final Object sourceOld, final Object sourceNew,
+                                final AQualifiedSourceAndTargetType types,
                                 AMapperDiffWorker<? extends ACollectionHelper> worker,
                                 AMap<String, Object> contextOld,
                                 AMap<String, Object> contextNew,
                                 APath path,
                                 boolean isDerived) throws Exception {
+        final ACollectionHelper h = worker.getHelpers();
 
+        final List<Object> sourceOldColl = (List<Object>) h.asJuCollection(sourceOld, types.source());
+        final List<Object> sourceNewColl = (List<Object>) h.asJuCollection(sourceNew, types.source());
+
+        final AQualifiedSourceAndTargetType elementTypes = AQualifiedSourceAndTargetType.create (h.elementType(types.source()), h.elementType(types.target()));
+        final AQualifiedSourceAndTargetType sourceTypes = AQualifiedSourceAndTargetType.create (types.source(), types.source());
+
+        final AIdentifierExtractor identifierExtractor = worker.getIdentifierExtractor();
+
+        final AFunction2NoThrow <Object, Object, Boolean> eqFunction = new AFunction2NoThrow<Object, Object, Boolean> () {
+            @Override
+            public Boolean apply (Object param1, Object param2) {
+                final Object ident1 = identifierExtractor.uniqueIdentifier (param1, types.source (), types.target ());
+                final Object ident2 = identifierExtractor.uniqueIdentifier (param2, types.source (), types.target ());
+                return Objects.equals (ident1, ident2);
+            }
+        };
+
+        LevenshteinDistance<Object, Object> levenshtein = new LevenshteinDistance<> (sourceOldColl, sourceNewColl, eqFunction);
+        List<LevenshteinDistance.EditChoice> editPath = levenshtein.getEditPath();
+
+        int i=0;
+        int j=0;
+        for (LevenshteinDistance.EditChoice c: editPath) {
+            final APath elPath = path.withElementChild (j, worker.getIdentifierExtractor().uniqueIdentifier (sourceOldColl.get (i), elementTypes.source(), elementTypes.target ()));
+            switch (c) {
+                case replace:
+                case noOp: {
+                    worker.diff (elPath, sourceOldColl.get (i), sourceNewColl.get(j), elementTypes, contextOld, contextNew, isDerived);
+                    i++;
+                    j++;
+                    break;
+                }
+                case delete: {
+                    worker.diff (elPath, sourceOldColl.get (i), null, elementTypes, contextOld, contextNew, true);
+                    i++;
+                    break;
+                }
+                case insert: {
+                    worker.diff (elPath, null, sourceNewColl.get (j), elementTypes, contextOld, contextNew, true);
+                    j++;
+                    break;
+                }
+            }
+
+        }
     }
 
     @Override public boolean canHandle (AQualifiedSourceAndTargetType types) throws Exception {
