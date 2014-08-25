@@ -31,6 +31,9 @@ public class APath implements Serializable {
     public APath withElementChild (Object childIdentifier) {
         return withChild (APathSegment.parameterized ("elements", childIdentifier));
     }
+    public APath withElementChild (int childIndex, Object childIdentifier) {
+        return withChild (APathSegment.parameterized ("elements", childIndex, childIdentifier));
+    }
 
     public APath getParent() {
         return new APath(reverseSegments.tail());

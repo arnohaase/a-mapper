@@ -34,7 +34,7 @@ public class DiffTest {
                         .addMapping("lastName", String.class, "lastName", String.class))
                 .build();
 
-        final ClassA  a1 = new ClassA();
+        final ClassA a1 = new ClassA();
         final ClassA a2 = new ClassA();
 
         a1.setFirstName("Arno");
@@ -45,7 +45,7 @@ public class DiffTest {
 
         final ADiff diff = mapper.diff(a1, a2, ClassA.class, ClassB.class);
         assertEquals (2, diff.getElements().size());
-        assertTrue(diff.getPaths().contains(APath.EMPTY));
+        assertTrue (diff.getPaths().contains(APath.EMPTY));
         assertTrue (diff.getPaths().contains(APath.fromSegments(APathSegment.simple("firstName"))));
 
         final AOption<ADiffElement> firstNameDiff = diff.getSingle(APath.fromSegments(APathSegment.simple("firstName")));
