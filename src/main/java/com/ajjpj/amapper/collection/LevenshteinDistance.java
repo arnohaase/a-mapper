@@ -161,15 +161,13 @@ public class LevenshteinDistance <S, T> {
         int j=0;
         for (EditChoice c: editPath) {
             switch (c) {
-                case noOp:
-                    sIter.next();
-                    break;
-                case replace: {
+                case replace:
+                    operations++; // fall through is intended
+                case noOp: {
                     final AOption<T> mapResult = mapFunction.apply (sIter.next(), target.get (j));
                     if (mapResult.isDefined ()) {
                         target.set (j, mapResult.get());
                     }
-                    operations++;
                     break;
                 }
                 case delete: {
