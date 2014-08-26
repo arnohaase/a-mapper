@@ -4,6 +4,7 @@ import com.ajjpj.abase.collection.AEquality;
 import com.ajjpj.abase.collection.immutable.AMap;
 import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.abase.function.AFunction2NoThrow;
+import com.ajjpj.abase.function.APredicate2NoThrow;
 import com.ajjpj.abase.util.AObjectHolder;
 import com.ajjpj.amapper.core.AIdentifierExtractor;
 import com.ajjpj.amapper.core.AMapperDiffWorker;
@@ -62,9 +63,8 @@ public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object,
 
         final AIdentifierExtractor identifierExtractor = worker.getIdentifierExtractor();
 
-        final AFunction2NoThrow <Object, Object, Boolean> eqFunction = new AFunction2NoThrow<Object, Object, Boolean> () {
-            @Override
-            public Boolean apply (Object param1, Object param2) {
+        final APredicate2NoThrow<Object, Object> eqPredicate = new APredicate2NoThrow<Object, Object> () {
+            @Override public boolean apply (Object param1, Object param2) {
                 final Object sourceIdent = identifierExtractor.uniqueIdentifier (param1, types.source (), types.target ());
                 final Object targetIdent = identifierExtractor.uniqueIdentifier (param2, types.target (), types.target ());
                 return Objects.equals (sourceIdent, targetIdent);
@@ -79,21 +79,11 @@ public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object,
             }
         };
 
-        LevenshteinDistance<Object, Object> levenshteinDistance = new LevenshteinDistance<> (sourceColl, targetColl, eqFunction);
+        LevenshteinDistance<Object, Object> levenshteinDistance = new LevenshteinDistance<> (sourceColl, targetColl, eqPredicate);
         levenshteinDistance.editTarget (mapFunction);
 
         return h.fromJuCollection(targetColl, types.target());
     }
-
-    private static AOption<Object> findTarget(List<Object> targetColl, Object ident, AIdentifierExtractor identifierExtractor, AQualifiedSourceAndTargetType types) {
-        for (Object candidate: targetColl) {
-            if (AEquality.EQUALS.equals (ident, identifierExtractor.uniqueIdentifier (candidate, types.target (), types.target ()))) {
-                return AOption.some(candidate);
-            }
-        }
-        return AOption.none();
-    }
-
 
     @Override public void diff (ADiffBuilder diff,
                                 final Object sourceOld, final Object sourceNew,
@@ -109,20 +99,18 @@ public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object,
         final List<Object> sourceNewColl = (List<Object>) h.asJuCollection(sourceNew, types.source());
 
         final AQualifiedSourceAndTargetType elementTypes = AQualifiedSourceAndTargetType.create (h.elementType(types.source()), h.elementType(types.target()));
-        final AQualifiedSourceAndTargetType sourceTypes = AQualifiedSourceAndTargetType.create (types.source(), types.source());
 
         final AIdentifierExtractor identifierExtractor = worker.getIdentifierExtractor();
 
-        final AFunction2NoThrow <Object, Object, Boolean> eqFunction = new AFunction2NoThrow<Object, Object, Boolean> () {
-            @Override
-            public Boolean apply (Object param1, Object param2) {
-                final Object ident1 = identifierExtractor.uniqueIdentifier (param1, types.source (), types.target ());
-                final Object ident2 = identifierExtractor.uniqueIdentifier (param2, types.source (), types.target ());
+        final APredicate2NoThrow <Object, Object> equalsPredicate = new APredicate2NoThrow<Object, Object> () {
+            @Override public boolean apply (Object param1, Object param2) {
+                final Object ident1 = identifierExtractor.uniqueIdentifier (param1, types.source(), types.target());
+                final Object ident2 = identifierExtractor.uniqueIdentifier (param2, types.source(), types.target());
                 return Objects.equals (ident1, ident2);
             }
         };
 
-        LevenshteinDistance<Object, Object> levenshtein = new LevenshteinDistance<> (sourceOldColl, sourceNewColl, eqFunction);
+        LevenshteinDistance<Object, Object> levenshtein = new LevenshteinDistance<> (sourceOldColl, sourceNewColl, equalsPredicate);
         List<LevenshteinDistance.EditChoice> editPath = levenshtein.getEditPath();
 
         int i=0;
@@ -132,7 +120,7 @@ public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object,
             switch (c) {
                 case replace:
                 case noOp: {
-                    worker.diff (elPath, sourceOldColl.get (i), sourceNewColl.get(j), elementTypes, contextOld, contextNew, isDerived);
+                    worker.diff (elPath, sourceOldColl.get (i), sourceNewColl.get (j), elementTypes, contextOld, contextNew, isDerived);
                     i++;
                     j++;
                     break;

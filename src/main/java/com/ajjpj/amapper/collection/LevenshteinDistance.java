@@ -2,6 +2,7 @@ package com.ajjpj.amapper.collection;
 
 import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.abase.function.AFunction2NoThrow;
+import com.ajjpj.abase.function.APredicate2NoThrow;
 
 import java.util.*;
 
@@ -28,8 +29,7 @@ public class LevenshteinDistance <S, T> {
 
     private final Collection<S> source;
     private final List<T> target;
-    // TODO create and use APredicate2 instead of AFunction2 + APredicate3
-    private final AFunction2NoThrow<S, T, Boolean> eqFunction;
+    private final APredicate2NoThrow<S, T> equalsPredicate;
 
     private List <List <MElement>> m = null;
 
@@ -55,13 +55,13 @@ public class LevenshteinDistance <S, T> {
     /**
      * @param source source collection (list A)
      * @param target target collection (list B) - implementing the List interface (in fact a List is expected, with has random write access implemented - e.g. ArrayList)
-     * @param eqFunction equality function returning true, if object of list A is equivalent to object of List B
+     * @param equalsPredicate equality function returning true, if object from source list is equivalent to object from target list
      */
     public LevenshteinDistance (Collection<S> source, List<T> target,
-                                AFunction2NoThrow<S, T, Boolean> eqFunction) {
+                                APredicate2NoThrow<S, T> equalsPredicate) {
         this.source = source;
         this.target = target;
-        this.eqFunction = eqFunction;
+        this.equalsPredicate = equalsPredicate;
     }
 
     /**
@@ -89,7 +89,7 @@ public class LevenshteinDistance <S, T> {
             m.get (i).add (new MElement (false, i, EditChoice.insert));
             int j=1;
             for (T tElem: target) {
-                m.get (i).add (levMin (eqFunction.apply (sElem, tElem), i, j));
+                m.get (i).add (levMin (equalsPredicate.apply (sElem, tElem), i, j));
                 j++;
             }
             i++;

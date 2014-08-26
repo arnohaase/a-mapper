@@ -2,6 +2,7 @@ package com.ajjpj.amapper.javabean.mappingdef;
 
 import com.ajjpj.amapper.collection.ACollectionHelper;
 import com.ajjpj.amapper.collection.IdentifierBasedCollectionMappingDef;
+import com.ajjpj.amapper.collection.LevenshteinBasedListMappingDef;
 import com.ajjpj.amapper.core.AObjectMappingDef;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
 import com.ajjpj.amapper.core.tpe.AType;
@@ -42,6 +43,14 @@ public class BuiltinCollectionMappingDefs {
             return isBeanCollectionType(types.sourceType()) && JavaBeanTypes.isSubtypeOrSameOf (types.targetType(), List.class);
         }
     };
+
+    /**
+     * This strategy for mapping list matches source and target elements by equality of their respective identifiers (as returned by ACollectionHelper
+     *  implementations) and by their present order in the list. So one the one hand the order of elements in the lists is considered and preserved,
+     *  and on the other hand list are allowed to have duplicates.
+     */
+    public static final AObjectMappingDef<Object, Object, ACollectionHelper> LevenshteinListByIdentifierMapping = new LevenshteinBasedListMappingDef();
+
 
     //TODO ListAsSetByIdentifierMapping
     //TODO ListByIdentifierMapping

@@ -14,10 +14,7 @@ import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinCollectionMappingDefs;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -334,41 +331,68 @@ public class DiffTest {
         assertEquals(1, diff.getElements().size());
         checkDiffElement(diff.getSingle("elements.targetName").get(), ADiffElement.Kind.Attribute, "old", "new", false);
     }
+
+    @Test public void testLevenshteinBasedListDiff() throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
+                .withIdentifierExtractor (ie)
+                .withObjectMapping (BuiltinCollectionMappingDefs.LevenshteinListByIdentifierMapping)
+                .withBeanMapping (JavaBeanMapping.create (DiffSource.class, DiffTarget.class)
+                                .addMapping ("sourceName", String.class, "targetName", String.class)
+                )
+                .withBeanMapping (JavaBeanMapping.create(DiffSourceChild.class, DiffTargetChild.class)
+                                .addMapping("oid", String.class, "oid", Long.class)
+                                .addMapping ("sourceNum", Double.class, "targetNum", Integer.class)
+                                .addMapping("sourceParent", DiffSource.class, "targetParent", DiffTarget.class)
+                )
+                .build ();
+
+
+        final List<DiffSource> leftList = new ArrayList<> (Arrays.asList (
+                new DiffSource (0, "elem0", null),
+                new DiffSource (1, "elem1", null)
+        ));
+        leftList.get (1).setSourceChildren (new ArrayList<> (Arrays.asList (
+                new DiffSourceChild (0,0), new DiffSourceChild (1,1))));
+
+        final List<DiffSource> rightList = new ArrayList<> (Arrays.asList (
+            new DiffSource (0, "elem0.0", null),
+            new DiffSource (0, "elem0.1", null)
+        ));
+
+        final ADiff diff = mapper.diffList (leftList, rightList, DiffSource.class, DiffTarget.class);
+
+        assertEquals (3, diff.getElements().size());
+
+        Iterator <ADiffElement> diffIter = diff.getElements().iterator ();
+
+        // eq element 0, targetName
+        ADiffElement de = diffIter.next();
+        assertEquals (ADiffElement.Kind.Attribute, de.kind);
+        assertEquals ("APath{elements[0@0].targetName}", de.path.toString()); // getName () + "[" + key + "@" + index + "]";
+        assertEquals ("elem0", de.oldValue);
+        assertEquals ("elem0.0", de.newValue);
+
+
+        // replace element 1, ID
+        de = diffIter.next();
+        assertEquals (ADiffElement.Kind.RefChange, de.kind);
+        assertEquals ("APath{elements[1@1]}", de.path.toString ());
+        assertEquals (leftList.get (1).getOid (), de.oldValue);
+        assertEquals (rightList.get (1).getOid(), de.newValue);
+
+        // replaced element 1, targetName
+        de = diffIter.next();
+        System.out.println (de);
+        assertEquals (ADiffElement.Kind.Attribute, de.kind);
+        assertEquals ("APath{elements[1@1].targetName}", de.path.toString());
+        assertEquals (leftList.get (1).getSourceName(), de.oldValue);
+        assertEquals (rightList.get (1).getSourceName(), de.newValue);
+
+        // TODO check if derived atrribute is valid
+        // TODO what about sourceChiuldren of source element 1? they are not in diff.
+
+    }
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

@@ -2,6 +2,7 @@ package com.ajjpj.amapper.core;
 
 import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.abase.function.AFunction2NoThrow;
+import com.ajjpj.abase.function.APredicate2NoThrow;
 import com.ajjpj.amapper.collection.LevenshteinDistance;
 import org.junit.Test;
 
@@ -10,7 +11,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -23,8 +25,8 @@ public class LevenshteinDistanceTest {
         final List<String> target = new ArrayList<> (Arrays.asList ("3","6","7","8","4"));
 
 
-        final AFunction2NoThrow<Integer, String, Boolean> eqFunction = new AFunction2NoThrow<Integer, String, Boolean> () {
-            @Override public Boolean apply (Integer param1, String param2) {
+        final APredicate2NoThrow<Integer, String> eq = new APredicate2NoThrow<Integer, String> () {
+            @Override public boolean apply (Integer param1, String param2) {
                 return Integer.valueOf (param2).equals (param1);
             }
         };
@@ -35,7 +37,7 @@ public class LevenshteinDistanceTest {
             }
         };
 
-        final LevenshteinDistance<Integer, String> lev = new LevenshteinDistance<> (source, target, eqFunction);
+        final LevenshteinDistance<Integer, String> lev = new LevenshteinDistance<> (source, target, eq);
         final int steps = lev.editTarget (mapFunction);
 
         assertEquals (3, steps);
@@ -51,8 +53,8 @@ public class LevenshteinDistanceTest {
         final List<Character> source = Arrays.asList ('p','h','y','s','a','l','i','s');
         final List<Character> target = new ArrayList (Arrays.asList ('p','h','o','s','p','h','o','r'));
 
-        final AFunction2NoThrow<Character, Character, Boolean> eqFunction = new AFunction2NoThrow<Character, Character, Boolean> () {
-            @Override public Boolean apply (Character param1, Character param2) {
+        final APredicate2NoThrow<Character, Character> eq = new APredicate2NoThrow<Character, Character> () {
+            @Override public boolean apply (Character param1, Character param2) {
                 return param1.equals (param2);
             }
         };
@@ -63,7 +65,7 @@ public class LevenshteinDistanceTest {
             }
         };
 
-        final LevenshteinDistance<Character, Character> lev = new LevenshteinDistance<> (source, target, eqFunction);
+        final LevenshteinDistance<Character, Character> lev = new LevenshteinDistance<> (source, target, eq);
         final int steps = lev.editTarget (mapFunction);
 
         assertEquals (5, steps);
@@ -123,9 +125,9 @@ public class LevenshteinDistanceTest {
         target.add (new MyClassB (5, "_"));
         target.add (new MyClassB (3, "Z"));
 
-        final AFunction2NoThrow<MyClassA, MyClassB, Boolean> eqFunction = new AFunction2NoThrow<MyClassA, MyClassB, Boolean> () {
-            @Override public Boolean apply (MyClassA myClassA, MyClassB myClassB) {
-                return myClassA.id == myClassB.id;
+        final APredicate2NoThrow<MyClassA, MyClassB> eq = new APredicate2NoThrow<MyClassA, MyClassB> () {
+            @Override public boolean apply (MyClassA a, MyClassB b) {
+                return a.id == b.id;
             }
         };
 
@@ -135,7 +137,7 @@ public class LevenshteinDistanceTest {
             }
         };
 
-        final LevenshteinDistance<MyClassA, MyClassB> lev = new LevenshteinDistance<> (source, target, eqFunction);
+        final LevenshteinDistance<MyClassA, MyClassB> lev = new LevenshteinDistance<> (source, target, eq);
         final int steps = lev.editTarget (mapFunction);
 
         assertEquals (1, steps);
