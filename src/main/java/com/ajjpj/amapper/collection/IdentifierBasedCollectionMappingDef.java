@@ -51,6 +51,10 @@ public class IdentifierBasedCollectionMappingDef implements AObjectMappingDef<Ob
     }
 
     @Override public Object map(Object source, Object target, AQualifiedSourceAndTargetType types, AMapperWorker<? extends ACollectionHelper> worker, AMap<String, Object> context, APath path) throws Exception {
+        if (source == null) {
+            return null;
+        }
+
         final ACollectionHelper h = worker.getHelpers();
 
         final Collection<Object> sourceColl = h.asJuCollection(source, types.source());

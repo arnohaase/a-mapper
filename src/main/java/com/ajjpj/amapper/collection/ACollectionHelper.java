@@ -29,7 +29,7 @@ public interface ACollectionHelper {
 //    <T> Collection<T> createEmptyCollection(AQualifiedSourceAndTargetType types);
     AQualifiedType elementType (AQualifiedType tpe);
 
-    <T> Collection<T> asJuCollection(Object coll, AQualifiedType tpe);
+    <T> Collection<T> asJuCollection(Object coll, AQualifiedType tpe) throws Exception;
     Object fromJuCollection(Collection<?> coll, AQualifiedType tpe);
 
     <T> Collection<T> createEmptyCollection(AQualifiedType tpe) throws Exception;
