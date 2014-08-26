@@ -95,8 +95,8 @@ public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object,
                                 boolean isDerived) throws Exception {
         final ACollectionHelper h = worker.getHelpers();
 
-        final List<Object> sourceOldColl = (List<Object>) h.asJuCollection(sourceOld, types.source());
-        final List<Object> sourceNewColl = (List<Object>) h.asJuCollection(sourceNew, types.source());
+        final List<Object> oldColl = (List<Object>) h.asJuCollection(sourceOld, types.source());
+        final List<Object> newColl = (List<Object>) h.asJuCollection(sourceNew, types.source());
 
         final AQualifiedSourceAndTargetType elementTypes = AQualifiedSourceAndTargetType.create (h.elementType(types.source()), h.elementType(types.target()));
 
@@ -110,29 +110,29 @@ public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object,
             }
         };
 
-        LevenshteinDistance<Object, Object> levenshtein = new LevenshteinDistance<> (sourceOldColl, sourceNewColl, equalsPredicate);
+        LevenshteinDistance<Object, Object> levenshtein = new LevenshteinDistance<> (newColl, oldColl, equalsPredicate);
         List<LevenshteinDistance.EditChoice> editPath = levenshtein.getEditPath();
 
         int i=0;
         int j=0;
         for (LevenshteinDistance.EditChoice c: editPath) {
-            final APath elPath = path.withElementChild (j, worker.getIdentifierExtractor().uniqueIdentifier (sourceOldColl.get (i), elementTypes.source(), elementTypes.target ()));
+            final APath elPath = path.withElementChild (j, worker.getIdentifierExtractor().uniqueIdentifier (oldColl.get (j), elementTypes.source (), elementTypes.target ()));
             switch (c) {
                 case replace:
                 case noOp: {
-                    worker.diff (elPath, sourceOldColl.get (i), sourceNewColl.get (j), elementTypes, contextOld, contextNew, isDerived);
+                    worker.diff (elPath, oldColl.get (j), newColl.get (i), elementTypes, contextOld, contextNew, isDerived);
                     i++;
                     j++;
                     break;
                 }
                 case delete: {
-                    worker.diff (elPath, sourceOldColl.get (i), null, elementTypes, contextOld, contextNew, true);
-                    i++;
+                    worker.diff (elPath, oldColl.get (j), null, elementTypes, contextOld, contextNew, true);
+                    j++;
                     break;
                 }
                 case insert: {
-                    worker.diff (elPath, null, sourceNewColl.get (j), elementTypes, contextOld, contextNew, true);
-                    j++;
+                    worker.diff (elPath, null, newColl.get (i), elementTypes, contextOld, contextNew, true);
+                    i++;
                     break;
                 }
             }

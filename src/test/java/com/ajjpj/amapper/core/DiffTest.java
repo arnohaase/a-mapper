@@ -370,14 +370,11 @@ public class DiffTest {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withIdentifierExtractor (ie)
                 .withObjectMapping (BuiltinCollectionMappingDefs.LevenshteinListByIdentifierMapping)
-                .withBeanMapping (JavaBeanMapping.create (DiffSource.class, DiffTarget.class)
-                                .addMapping ("sourceName", String.class, "targetName", String.class)
+                .withBeanMapping (JavaBeanMapping.create (DiffSource.class, DiffTarget.class).withMatchingPropsMappings ()
+                                .addMapping ("sourceName", "targetName")
+                                .addMapping ("sourceChildren", "targetChildren")
                 )
-                .withBeanMapping (JavaBeanMapping.create(DiffSourceChild.class, DiffTargetChild.class)
-                                .addMapping("oid", String.class, "oid", Long.class)
-                                .addMapping ("sourceNum", Double.class, "targetNum", Integer.class)
-                                .addMapping("sourceParent", DiffSource.class, "targetParent", DiffTarget.class)
-                )
+                .withBeanMapping (JavaBeanMapping.create (DiffSourceChild.class, DiffTargetChild.class).withMatchingPropsMappings ())
                 .build ();
 
 
@@ -395,36 +392,29 @@ public class DiffTest {
 
         final ADiff diff = mapper.diffList (leftList, rightList, DiffSource.class, DiffTarget.class);
 
-        assertEquals (3, diff.getElements().size());
+        assertEquals (8, diff.getElements().size());
 
-        Iterator <ADiffElement> diffIter = diff.getElements().iterator ();
+//        ADiffElement{kind=Attribute, path=APath{elements[0@0].targetName}, isDerived=false, oldValue=elem0, newValue=elem0.0}
+//        ADiffElement{kind=RefChange, path=APath{elements[1@1]}, isDerived=false, oldValue=1, newValue=0}
+//        ADiffElement{kind=Attribute, path=APath{elements[1@1].oid}, isDerived=true, oldValue=1, newValue=0}
+//        ADiffElement{kind=Attribute, path=APath{elements[1@1].targetName}, isDerived=true, oldValue=elem1, newValue=elem0.1}
 
-        // eq element 0, targetName
-        ADiffElement de = diffIter.next();
-        assertEquals (ADiffElement.Kind.Attribute, de.kind);
-        assertEquals ("APath{elements[0@0].targetName}", de.path.toString()); // getName () + "[" + key + "@" + index + "]";
-        assertEquals ("elem0", de.oldValue);
-        assertEquals ("elem0.0", de.newValue);
+//        ADiffElement{kind=Remove, path=APath{elements[1@1].targetChildren.elements[0@0]}, isDerived=true, oldValue=0, newValue=null}
+//        ADiffElement{kind=Attribute, path=APath{elements[1@1].targetChildren.elements[0@0].oid}, isDerived=true, oldValue=0, newValue=null}
+//        ADiffElement{kind=Remove, path=APath{elements[1@1].targetChildren.elements[1@1]}, isDerived=true, oldValue=1, newValue=null}
+//        ADiffElement{kind=Attribute, path=APath{elements[1@1].targetChildren.elements[1@1].oid}, isDerived=true, oldValue=1, newValue=null}
 
+        final APathSegment elSeg0 = APathSegment.parameterized("elements", 0, 0L);
+        final APathSegment elSeg1 = APathSegment.parameterized("elements", 1, 1L);
 
-        // replace element 1, ID
-        de = diffIter.next();
-        assertEquals (ADiffElement.Kind.RefChange, de.kind);
-        assertEquals ("APath{elements[1@1]}", de.path.toString ());
-        assertEquals (leftList.get (1).getOid (), de.oldValue);
-        assertEquals (rightList.get (1).getOid(), de.newValue);
-
-        // replaced element 1, targetName
-        de = diffIter.next();
-        System.out.println (de);
-        assertEquals (ADiffElement.Kind.Attribute, de.kind);
-        assertEquals ("APath{elements[1@1].targetName}", de.path.toString());
-        assertEquals (leftList.get (1).getSourceName(), de.oldValue);
-        assertEquals (rightList.get (1).getSourceName(), de.newValue);
-
-        // TODO check if derived atrribute is valid
-        // TODO what about sourceChiuldren of source element 1? they are not in diff.
-
+        checkDiffElement (diff.byPath.getRequired (APath.fromSegments (elSeg0, APathSegment.simple("targetName"))), ADiffElement.Kind.Attribute, "elem0", "elem0.0", false);
+        checkDiffElement (diff.byPath.getRequired (APath.fromSegments (elSeg1)), ADiffElement.Kind.RefChange, 1L, 0L, false);
+        checkDiffElement (diff.byPath.getRequired (APath.fromSegments (elSeg1, APathSegment.simple ("oid"))), ADiffElement.Kind.Attribute, 1L, 0L, true);
+        checkDiffElement (diff.byPath.getRequired (APath.fromSegments (elSeg1, APathSegment.simple ("targetName"))), ADiffElement.Kind.Attribute, "elem1", "elem0.1", true);
+        checkDiffElement (diff.byPath.getRequired (APath.fromSegments (elSeg1, APathSegment.simple ("targetChildren"), APathSegment.parameterized ("elements", 0, 0L))), ADiffElement.Kind.Remove, 0L, null, true);
+        checkDiffElement (diff.byPath.getRequired (APath.fromSegments (elSeg1, APathSegment.simple ("targetChildren"), APathSegment.parameterized ("elements", 0, 0L), APathSegment.simple ("oid"))), ADiffElement.Kind.Attribute, 0L, null, true);
+        checkDiffElement (diff.byPath.getRequired (APath.fromSegments (elSeg1, APathSegment.simple ("targetChildren"), APathSegment.parameterized ("elements", 1, 1L))), ADiffElement.Kind.Remove, 1L, null, true);
+        checkDiffElement (diff.byPath.getRequired (APath.fromSegments (elSeg1, APathSegment.simple ("targetChildren"), APathSegment.parameterized ("elements", 1, 1L), APathSegment.simple ("oid"))), ADiffElement.Kind.Attribute, 1L, null, true);
     }
 
 }
