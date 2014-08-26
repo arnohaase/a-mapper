@@ -3,6 +3,7 @@ package com.ajjpj.amapper.javabean;
 import com.ajjpj.amapper.core.tpe.AQualifiedType;
 import com.ajjpj.amapper.util.AArraySupport;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -22,9 +23,9 @@ public class SimpleJavaBeanMappingHelper implements JavaBeanMappingHelper {
     }
 
     @SuppressWarnings("unchecked")
-    @Override public <T> Collection<T> asJuCollection(Object coll, AQualifiedType tpe) {
+    @Override public <T> Collection<T> asJuCollection(Object coll, AQualifiedType tpe) throws Exception {
         if (coll == null) {
-            return null;
+            return createEmptyCollection (tpe);
         }
 
         if (coll.getClass ().isArray ()) {
@@ -42,6 +43,10 @@ public class SimpleJavaBeanMappingHelper implements JavaBeanMappingHelper {
     @Override public <T> Collection<T> createEmptyCollection(AQualifiedType tpe) throws Exception {
         if(tpe.tpe instanceof SingleParamBeanType) {
             final Class<?> collClass = ((SingleParamBeanType) tpe.tpe).cls;
+            if (collClass.isArray ()) {
+                return new ArrayList<> ();
+            }
+
             if(collClass == List.class) {
                 return new ArrayList<T>();
             }

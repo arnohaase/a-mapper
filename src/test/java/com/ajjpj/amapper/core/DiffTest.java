@@ -332,6 +332,40 @@ public class DiffTest {
         checkDiffElement(diff.getSingle("elements.targetName").get(), ADiffElement.Kind.Attribute, "old", "new", false);
     }
 
+    @Test
+    public void testDiffNestedLists() throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+                .withIdentifierExtractor (ie)
+                .withObjectMapping (BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
+                .withBeanMapping (JavaBeanMapping.create (DiffSource.class, DiffTarget.class).withMatchingPropsMappings ()
+                        .addMapping ("sourceChildren", "targetChildren")
+                )
+                .withBeanMapping (JavaBeanMapping.create (DiffSourceChild.class, DiffTargetChild.class).withMatchingPropsMappings ())
+                .build ();
+
+        final DiffSource s1 = new DiffSource (1, "1", null);
+        final DiffSource s2 = new DiffSource (2, "2", null);
+
+        s1.getSourceChildren ().add (new DiffSourceChild (10, 10));
+        s1.getSourceChildren ().add (new DiffSourceChild (11, 11));
+
+        final ADiff diff = mapper.diffList (Arrays.asList(s1, s2), new ArrayList<> (), DiffSource.class, DiffTarget.class);
+
+        final Collection<ADiffElement> targetChildren = diff.byPathString.getRequired ("elements.targetChildren.elements");
+        assertEquals (2, targetChildren.size ());
+        for (ADiffElement diffEl: targetChildren) {
+            assertEquals (ADiffElement.Kind.Remove, diffEl.kind);
+            assertEquals (true, diffEl.isDerived);
+        }
+
+        final Collection<ADiffElement> targetChildrenOids = diff.byPathString.getRequired ("elements.targetChildren.elements.oid");
+        assertEquals (2, targetChildrenOids.size ());
+        for (ADiffElement diffEl: targetChildrenOids) {
+            assertEquals (ADiffElement.Kind.Attribute, diffEl.kind);
+            assertEquals (true, diffEl.isDerived);
+        }
+    }
+
     @Test public void testLevenshteinBasedListDiff() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withIdentifierExtractor (ie)
