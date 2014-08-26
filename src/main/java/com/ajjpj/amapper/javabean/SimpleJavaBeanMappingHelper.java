@@ -22,9 +22,9 @@ public class SimpleJavaBeanMappingHelper implements JavaBeanMappingHelper {
     }
 
     @SuppressWarnings("unchecked")
-    @Override public <T> Collection<T> asJuCollection(Object coll, AQualifiedType tpe) {
+    @Override public <T> Collection<T> asJuCollection(Object coll, AQualifiedType tpe) throws Exception {
         if (coll == null) {
-            return null;
+            return createEmptyCollection (tpe);
         }
 
         if (coll.getClass ().isArray ()) {

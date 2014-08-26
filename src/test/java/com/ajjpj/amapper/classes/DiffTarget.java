@@ -11,7 +11,7 @@ public class DiffTarget {
     private String targetName;
     private DiffTargetChild targetChild;
     private int derivedTargetNum;
-    private List<DiffTargetChild> targetChildren = new ArrayList<DiffTargetChild>();
+    private List<DiffTargetChild> targetChildren = new ArrayList<>();
 
     public DiffTarget(long oid, String targetName, DiffTargetChild targetChild) {
         this.oid = oid;
