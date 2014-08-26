@@ -394,16 +394,6 @@ public class DiffTest {
 
         assertEquals (8, diff.getElements().size());
 
-//        ADiffElement{kind=Attribute, path=APath{elements[0@0].targetName}, isDerived=false, oldValue=elem0, newValue=elem0.0}
-//        ADiffElement{kind=RefChange, path=APath{elements[1@1]}, isDerived=false, oldValue=1, newValue=0}
-//        ADiffElement{kind=Attribute, path=APath{elements[1@1].oid}, isDerived=true, oldValue=1, newValue=0}
-//        ADiffElement{kind=Attribute, path=APath{elements[1@1].targetName}, isDerived=true, oldValue=elem1, newValue=elem0.1}
-
-//        ADiffElement{kind=Remove, path=APath{elements[1@1].targetChildren.elements[0@0]}, isDerived=true, oldValue=0, newValue=null}
-//        ADiffElement{kind=Attribute, path=APath{elements[1@1].targetChildren.elements[0@0].oid}, isDerived=true, oldValue=0, newValue=null}
-//        ADiffElement{kind=Remove, path=APath{elements[1@1].targetChildren.elements[1@1]}, isDerived=true, oldValue=1, newValue=null}
-//        ADiffElement{kind=Attribute, path=APath{elements[1@1].targetChildren.elements[1@1].oid}, isDerived=true, oldValue=1, newValue=null}
-
         final APathSegment elSeg0 = APathSegment.parameterized("elements", 0, 0L);
         final APathSegment elSeg1 = APathSegment.parameterized("elements", 1, 1L);
 
@@ -416,6 +406,8 @@ public class DiffTest {
         checkDiffElement (diff.byPath.getRequired (APath.fromSegments (elSeg1, APathSegment.simple ("targetChildren"), APathSegment.parameterized ("elements", 1, 1L))), ADiffElement.Kind.Remove, 1L, null, true);
         checkDiffElement (diff.byPath.getRequired (APath.fromSegments (elSeg1, APathSegment.simple ("targetChildren"), APathSegment.parameterized ("elements", 1, 1L), APathSegment.simple ("oid"))), ADiffElement.Kind.Attribute, 1L, null, true);
     }
+
+    // TODO diff with source=null and/or target=null
 
 }
 

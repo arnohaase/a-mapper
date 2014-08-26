@@ -51,7 +51,7 @@ public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object,
             int index=0;
             // this is an optimization for the common case that the target collection is initially empty
             for (Object s: sourceColl) {
-                final APath elPath = path.withElementChild (index, worker.getIdentifierExtractor().uniqueIdentifier (s, types.source (), types.target ()));
+                final APath elPath = path.withElementChild (index++, worker.getIdentifierExtractor().uniqueIdentifier (s, types.source (), types.target ()));
 
                 final AOption<Object> optT = worker.map (elPath, s, null, elementTypes, context);
                 if (optT.isDefined()) {
