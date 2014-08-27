@@ -191,4 +191,8 @@ public class AMethodPathBasedPropertyAccessor implements APropertyAccessor {
             return nullSafe;
         }
     }
+
+    @Override public String toString () {
+        return "AMethodPathBasedPropertyAccessor{" + name + '}';
+    }
 }
