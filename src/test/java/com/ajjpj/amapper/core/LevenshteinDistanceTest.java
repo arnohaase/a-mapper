@@ -191,4 +191,26 @@ public class LevenshteinDistanceTest {
         assertArrayEquals (expectedTarget.toArray (), target.toArray ());
     }
 
+    @Test public void testMappingWithElementsDroppedByMapping() throws Exception {
+        final APredicate2NoThrow<Character, Character> eq = new APredicate2NoThrow<Character, Character> () {
+            @Override public boolean apply (Character param1, Character param2) {
+                return param1.equals (param2);
+            }
+        };
+        final AFunction2NoThrow<Character, Character, AOption<Character>> mapFunction = new AFunction2NoThrow<Character, Character, AOption<Character>> () {
+            @Override public AOption<Character> apply (Character character1, Character character2) {
+                if (character1.equals ('x'))
+                    return AOption.none (); // drop 'x'
+                else
+                    return AOption.some (character1);
+            }
+        };
+        Collection<Character> source = new ArrayList<> (Arrays.asList ('a','x', 'y', 'z', 'x'));
+        List<Character> target = new LinkedList<>(Arrays.asList ('a', 'x', 'y'));
+        List<Character> expectedTarget = Arrays.asList ('a','y','z');
+        new LevenshteinDistance<> (source, target, eq).editTarget (mapFunction);
+
+        assertArrayEquals (expectedTarget.toArray (), target.toArray ());
+    }
+
 }
