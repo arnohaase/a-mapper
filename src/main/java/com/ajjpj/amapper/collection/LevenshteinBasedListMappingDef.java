@@ -48,18 +48,18 @@ public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object,
         final AQualifiedSourceAndTargetType elementTypes = AQualifiedSourceAndTargetType.create (h.elementType (types.source()), h.elementType(types.target()));
         final AIdentifierExtractor identifierExtractor = worker.getIdentifierExtractor();
 
-//        if (targetColl.isEmpty()) {
-//            int index=0;
-//            // this is an optimization for the common case that the target collection is initially empty
-//            for (Object s: sourceColl) {
-//                final APath elPath = path.withElementChild (index++, identifierExtractor.uniqueIdentifier (s, types.source (), types.target ()));
-//                final AOption<Object> optT = worker.map (elPath, s, null, elementTypes, context);
-//                if (optT.isDefined()) {
-//                    targetColl.add(optT.get());
-//                }
-//            }
-//            return h.fromJuCollection(targetColl, types.target());
-//        }
+        if (targetColl.isEmpty()) {
+            int index=0;
+            // this is an optimization for the common case that the target collection is initially empty
+            for (Object s: sourceColl) {
+                final APath elPath = path.withElementChild (index++, identifierExtractor.uniqueIdentifier (s, types.source (), types.target ()));
+                final AOption<Object> optT = worker.map (elPath, s, null, elementTypes, context);
+                if (optT.isDefined()) {
+                    targetColl.add(optT.get());
+                }
+            }
+            return h.fromJuCollection(targetColl, types.target());
+        }
 
         final APredicate2NoThrow<Object, Object> eqPredicate = new APredicate2NoThrow<Object, Object> () {
             @Override public boolean apply (Object param1, Object param2) {

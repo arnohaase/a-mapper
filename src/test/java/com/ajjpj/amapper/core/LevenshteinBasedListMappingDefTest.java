@@ -74,6 +74,7 @@ public class LevenshteinBasedListMappingDefTest {
         );
         final List<TargetParentWithId> mapResult = mapper.mapList (source, SourceParentWithId.class, null, TargetParentWithId.class);
 
+        assertEquals (expectedResult.size(), mapResult.size());
         assertArrayEquals (expectedResult.toArray (), mapResult.toArray ());
     }
 
@@ -107,6 +108,7 @@ public class LevenshteinBasedListMappingDefTest {
         );
         final List<TargetParentWithId> mapResult = mapper.mapList (source, SourceParentWithId.class, target, TargetParentWithId.class);
 
+        assertEquals (expectedResult.size(), mapResult.size());
         assertArrayEquals (expectedResult.toArray(), mapResult.toArray ());
     }
 

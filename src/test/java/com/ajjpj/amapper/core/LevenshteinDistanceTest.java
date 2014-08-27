@@ -7,13 +7,9 @@ import com.ajjpj.abase.function.APredicate2NoThrow;
 import com.ajjpj.amapper.collection.LevenshteinDistance;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 
 /**
@@ -62,20 +58,18 @@ public class LevenshteinDistanceTest {
 
     @Test public void testLevenshteinMap2() throws Exception {
         final List<Character> source = Arrays.asList ('p','h','y','s','a','l','i','s');
-        final List<Character> target = new ArrayList (Arrays.asList ('p','h','o','s','p','h','o','r'));
+        final List<Character> target = new ArrayList<> (Arrays.asList ('p','h','o','s','p','h','o','r'));
 
         final APredicate2NoThrow<Character, Character> eq = new APredicate2NoThrow<Character, Character> () {
             @Override public boolean apply (Character param1, Character param2) {
                 return param1.equals (param2);
             }
         };
-
         final AFunction2NoThrow<Character, Character, AOption<Character>> mapFunction = new AFunction2NoThrow<Character, Character, AOption<Character>> () {
             @Override public AOption<Character> apply (Character character1, Character character2) {
                 return AOption.some (character1);
             }
         };
-
         final LevenshteinDistance<Character, Character> lev = new LevenshteinDistance<> (source, target, eq);
         List<LevenshteinDistance.EditChoice> editPath = lev.getEditPath();
         final int steps = countOperations (editPath);
@@ -156,6 +150,45 @@ public class LevenshteinDistanceTest {
 
         assertEquals (1, steps);
         assertEquals (Arrays.asList (new MyClassB (1, "A"), new MyClassB (2, "B"), new MyClassB (3, "X")), target);
+    }
+
+    @Test public void testEmptySource() throws Exception {
+        final APredicate2NoThrow<Character, Character> eq = new APredicate2NoThrow<Character, Character> () {
+            @Override public boolean apply (Character param1, Character param2) {
+                return param1.equals (param2);
+            }
+        };
+        final AFunction2NoThrow<Character, Character, AOption<Character>> mapFunction = new AFunction2NoThrow<Character, Character, AOption<Character>> () {
+            @Override public AOption<Character> apply (Character character1, Character character2) {
+                return AOption.some (character1);
+            }
+        };
+        List<Character> target = new LinkedList<>(Arrays.asList ('x'));
+        final LevenshteinDistance<Character, Character> lev = new LevenshteinDistance<> (Collections.<Character>emptyList (), target, eq);
+        lev.editTarget (mapFunction);
+
+        assertTrue (target.isEmpty ());
+        // important difference to MappingDefs - pure levenshtein algorithm does not return a null pointer but an empty result instead
+        // null handling needs tro be done outside
+    }
+
+    @Test public void testEmptyTarget() throws Exception {
+        final APredicate2NoThrow<Character, Character> eq = new APredicate2NoThrow<Character, Character> () {
+            @Override public boolean apply (Character param1, Character param2) {
+                return param1.equals (param2);
+            }
+        };
+        final AFunction2NoThrow<Character, Character, AOption<Character>> mapFunction = new AFunction2NoThrow<Character, Character, AOption<Character>> () {
+            @Override public AOption<Character> apply (Character character1, Character character2) {
+                return AOption.some (character1);
+            }
+        };
+        Collection<Character> source = new TreeSet<> (Arrays.asList ('x', 'y', 'z', 'a'));
+        List<Character> target = new LinkedList<>();
+        List<Character> expectedTarget = Arrays.asList ('a','x','y','z');
+        new LevenshteinDistance<> (source, target, eq).editTarget (mapFunction);
+
+        assertArrayEquals (expectedTarget.toArray (), target.toArray ());
     }
 
 }

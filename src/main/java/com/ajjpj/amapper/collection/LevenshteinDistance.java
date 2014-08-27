@@ -53,8 +53,8 @@ public class LevenshteinDistance <S, T> {
     }
 
     /**
-     * @param source source collection (list A)
-     * @param target target collection (list B) - implementing the List interface (in fact a List is expected, with has random write access implemented - e.g. ArrayList)
+     * @param source source collection (not null)
+     * @param target target collection (not null) - implementing the List interface (in fact a List is expected, with has random write access implemented - e.g. ArrayList)
      * @param equalsPredicate equality function returning true, if object from source list is equivalent to object from target list
      */
     public LevenshteinDistance (Collection<S> source, List<T> target,
