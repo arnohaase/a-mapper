@@ -9,6 +9,8 @@ import com.ajjpj.amapper.core.AMapperWorker;
 import com.ajjpj.amapper.core.AValueMappingDef;
 import com.ajjpj.amapper.core.compile.*;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;
+import com.ajjpj.amapper.core.exclog.AMapperException;
+import com.ajjpj.amapper.core.exclog.AMapperExceptionHandler;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.path.APathSegment;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;
@@ -68,7 +70,6 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
                     return targetProp.get(target);
                 }
             };
-
             worker.mapDeferred (childPath(path, true), sourceProp.get(source), tp, types, new AStatement1<Object, Exception>() {
                 @Override public void apply(Object o) throws Exception {
                     targetProp.set(target, o);
@@ -76,10 +77,15 @@ public class ASourceAndTargetProp<S,T> implements APartialBeanMapping<S,T,JavaBe
             });
         }
         else {
-            final Object oldTargetValue = targetProp.get(target);
-            final AOption<Object> opt = worker.map(childPath(path, true), sourceProp.get(source), oldTargetValue, types, context);
-            if(opt.isDefined() && opt.get() != oldTargetValue) {
-                targetProp.set(target, opt.get());
+            try {
+                final Object oldTargetValue = targetProp.get(target);
+                final AOption<Object> opt = worker.map(childPath(path, true), sourceProp.get(source), oldTargetValue, types, context);
+                if(opt.isDefined() && opt.get() != oldTargetValue) {
+                    targetProp.set(target, opt.get());
+                }
+            }
+            catch (Exception exc) {
+                AMapperExceptionHandler.onError (exc, childPath (path, true));
             }
         }
     }
