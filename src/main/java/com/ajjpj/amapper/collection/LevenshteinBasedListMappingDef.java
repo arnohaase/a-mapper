@@ -46,22 +46,20 @@ public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object,
         final Collection<Object> sourceColl = h.asJuCollection (source, types.source());
         final List<Object> targetColl = (List<Object>) h.asJuCollection (target, types.target());
         final AQualifiedSourceAndTargetType elementTypes = AQualifiedSourceAndTargetType.create (h.elementType (types.source()), h.elementType(types.target()));
-
-        if (targetColl.isEmpty()) {
-            int index=0;
-            // this is an optimization for the common case that the target collection is initially empty
-            for (Object s: sourceColl) {
-                final APath elPath = path.withElementChild (index++, worker.getIdentifierExtractor().uniqueIdentifier (s, types.source (), types.target ()));
-
-                final AOption<Object> optT = worker.map (elPath, s, null, elementTypes, context);
-                if (optT.isDefined()) {
-                    targetColl.add(optT.get());
-                }
-            }
-            return h.fromJuCollection(targetColl, types.target());
-        }
-
         final AIdentifierExtractor identifierExtractor = worker.getIdentifierExtractor();
+
+//        if (targetColl.isEmpty()) {
+//            int index=0;
+//            // this is an optimization for the common case that the target collection is initially empty
+//            for (Object s: sourceColl) {
+//                final APath elPath = path.withElementChild (index++, identifierExtractor.uniqueIdentifier (s, types.source (), types.target ()));
+//                final AOption<Object> optT = worker.map (elPath, s, null, elementTypes, context);
+//                if (optT.isDefined()) {
+//                    targetColl.add(optT.get());
+//                }
+//            }
+//            return h.fromJuCollection(targetColl, types.target());
+//        }
 
         final APredicate2NoThrow<Object, Object> eqPredicate = new APredicate2NoThrow<Object, Object> () {
             @Override public boolean apply (Object param1, Object param2) {
@@ -74,7 +72,7 @@ public class LevenshteinBasedListMappingDef implements AObjectMappingDef<Object,
         final AObjectHolder<Integer> index = new AObjectHolder<> (0);
         final AFunction2NoThrow <Object, Object, AOption<Object>> mapFunction = new AFunction2NoThrow<Object, Object, AOption<Object>> () {
             @Override public AOption<Object> apply (Object s, Object t) {
-                final APath elPath = path.withElementChild (index.value++, worker.getIdentifierExtractor().uniqueIdentifier (s, types.source (), types.target ()));
+                final APath elPath = path.withElementChild (index.value++, identifierExtractor.uniqueIdentifier (s, types.source (), types.target ()));
                 return worker.map (elPath, s, t, elementTypes, context);
             }
         };

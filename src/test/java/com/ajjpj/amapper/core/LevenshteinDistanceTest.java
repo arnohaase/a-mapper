@@ -1,5 +1,6 @@
 package com.ajjpj.amapper.core;
 
+import com.ajjpj.abase.collection.ACollectionHelper;
 import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.abase.function.AFunction2NoThrow;
 import com.ajjpj.abase.function.APredicate2NoThrow;
@@ -38,7 +39,9 @@ public class LevenshteinDistanceTest {
         };
 
         final LevenshteinDistance<Integer, String> lev = new LevenshteinDistance<> (source, target, eq);
-        final int steps = lev.editTarget (mapFunction);
+        List<LevenshteinDistance.EditChoice> editPath = lev.getEditPath();
+        final int steps = countOperations (editPath);
+        lev.editTarget (mapFunction);
 
         assertEquals (3, steps);
 
@@ -47,6 +50,14 @@ public class LevenshteinDistanceTest {
             expectedTarget.add (mapFunction.apply (s, null).get());
         }
         assertArrayEquals (expectedTarget.toArray(), target.toArray ());
+    }
+
+    private Integer countOperations (List<LevenshteinDistance.EditChoice> editPath) {
+        return ACollectionHelper.foldLeft (editPath, 0, new AFunction2NoThrow<Integer, LevenshteinDistance.EditChoice, Integer> () {
+            @Override public Integer apply (Integer param1, LevenshteinDistance.EditChoice param2) {
+                return param1 + ((LevenshteinDistance.EditChoice.noOp == param2) ? 0 : 1);
+            }
+        });
     }
 
     @Test public void testLevenshteinMap2() throws Exception {
@@ -66,10 +77,11 @@ public class LevenshteinDistanceTest {
         };
 
         final LevenshteinDistance<Character, Character> lev = new LevenshteinDistance<> (source, target, eq);
-        final int steps = lev.editTarget (mapFunction);
+        List<LevenshteinDistance.EditChoice> editPath = lev.getEditPath();
+        final int steps = countOperations (editPath);
+        lev.editTarget (mapFunction);
 
         assertEquals (5, steps);
-
         assertArrayEquals (source.toArray (), target.toArray ());
     }
 
@@ -138,7 +150,9 @@ public class LevenshteinDistanceTest {
         };
 
         final LevenshteinDistance<MyClassA, MyClassB> lev = new LevenshteinDistance<> (source, target, eq);
-        final int steps = lev.editTarget (mapFunction);
+        List<LevenshteinDistance.EditChoice> editPath = lev.getEditPath();
+        final int steps = countOperations (editPath);
+        lev.editTarget (mapFunction);
 
         assertEquals (1, steps);
         assertEquals (Arrays.asList (new MyClassB (1, "A"), new MyClassB (2, "B"), new MyClassB (3, "X")), target);

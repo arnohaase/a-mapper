@@ -70,10 +70,9 @@ public class LevenshteinDistance <S, T> {
      *                    1. param: source object
      *                    2. param: eventual existing target object
      *                    return: mapped source - if successful, AOption.none otherwise
-     * @return number of edit steps
      */
-    public int editTarget (AFunction2NoThrow<S, T, AOption<T>> mapFunction) {
-        return edit (getEditPath(), mapFunction);
+    public void editTarget (AFunction2NoThrow<S, T, AOption<T>> mapFunction) {
+        edit (getEditPath(), mapFunction);
     }
 
     private void calcEditDistanceMatrix() {
@@ -157,24 +156,22 @@ public class LevenshteinDistance <S, T> {
         return result;
     }
 
-    private int edit (List<EditChoice> editPath, AFunction2NoThrow<S, T, AOption<T>> mapFunction) {
+    private void edit (List<EditChoice> editPath, AFunction2NoThrow<S, T, AOption<T>> mapFunction) {
         Iterator<S> sIter = source.iterator();
-        int operations = 0;
         int j=0;
         for (EditChoice c: editPath) {
             switch (c) {
-                case replace:
-                    operations++; // fall through is intended
+                case replace: // fall through is intended
                 case noOp: {
                     final AOption<T> mapResult = mapFunction.apply (sIter.next(), target.get (j));
                     if (mapResult.isDefined ()) {
                         target.set (j, mapResult.get());
                     }
+                    j++;
                     break;
                 }
                 case delete: {
                     target.remove (j);
-                    operations++;
                     break;
                 }
                 case insert: {
@@ -182,12 +179,10 @@ public class LevenshteinDistance <S, T> {
                     if (mapResult.isDefined ()) {
                         target.add (j, mapResult.get());
                     }
-                    operations++;
+                    j++;
                     break;
                 }
             }
-            j++;
         }
-        return operations;
     }
 }
