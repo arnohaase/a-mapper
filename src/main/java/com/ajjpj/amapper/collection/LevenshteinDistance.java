@@ -166,8 +166,10 @@ public class LevenshteinDistance <S, T> {
                     final AOption<T> mapResult = mapFunction.apply (sIter.next(), target.get (j));
                     if (mapResult.isDefined ()) {
                         target.set (j, mapResult.get());
+                        j++;
+                    } else {
+                        target.remove (j);
                     }
-                    j++;
                     break;
                 }
                 case delete: {
@@ -178,8 +180,8 @@ public class LevenshteinDistance <S, T> {
                     final AOption<T> mapResult = mapFunction.apply (sIter.next(), null);
                     if (mapResult.isDefined ()) {
                         target.add (j, mapResult.get());
+                        j++;
                     }
-                    j++;
                     break;
                 }
             }

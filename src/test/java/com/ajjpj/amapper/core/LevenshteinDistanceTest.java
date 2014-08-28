@@ -35,7 +35,7 @@ public class LevenshteinDistanceTest {
         };
 
         final LevenshteinDistance<Integer, String> lev = new LevenshteinDistance<> (source, target, eq);
-        List<LevenshteinDistance.EditChoice> editPath = lev.getEditPath();
+        final List<LevenshteinDistance.EditChoice> editPath = lev.getEditPath();
         final int steps = countOperations (editPath);
         lev.editTarget (mapFunction);
 
@@ -71,7 +71,7 @@ public class LevenshteinDistanceTest {
             }
         };
         final LevenshteinDistance<Character, Character> lev = new LevenshteinDistance<> (source, target, eq);
-        List<LevenshteinDistance.EditChoice> editPath = lev.getEditPath();
+        final List<LevenshteinDistance.EditChoice> editPath = lev.getEditPath();
         final int steps = countOperations (editPath);
         lev.editTarget (mapFunction);
 
@@ -144,7 +144,7 @@ public class LevenshteinDistanceTest {
         };
 
         final LevenshteinDistance<MyClassA, MyClassB> lev = new LevenshteinDistance<> (source, target, eq);
-        List<LevenshteinDistance.EditChoice> editPath = lev.getEditPath();
+        final List<LevenshteinDistance.EditChoice> editPath = lev.getEditPath();
         final int steps = countOperations (editPath);
         lev.editTarget (mapFunction);
 
@@ -163,7 +163,7 @@ public class LevenshteinDistanceTest {
                 return AOption.some (character1);
             }
         };
-        List<Character> target = new LinkedList<>(Arrays.asList ('x'));
+        final List<Character> target = new LinkedList<>(Arrays.asList ('x'));
         final LevenshteinDistance<Character, Character> lev = new LevenshteinDistance<> (Collections.<Character>emptyList (), target, eq);
         lev.editTarget (mapFunction);
 
@@ -183,9 +183,31 @@ public class LevenshteinDistanceTest {
                 return AOption.some (character1);
             }
         };
-        Collection<Character> source = new TreeSet<> (Arrays.asList ('x', 'y', 'z', 'a'));
-        List<Character> target = new LinkedList<>();
-        List<Character> expectedTarget = Arrays.asList ('a','x','y','z');
+        final Collection<Character> source = new TreeSet<> (Arrays.asList ('x', 'y', 'z', 'a'));
+        final List<Character> target = new LinkedList<>();
+        final List<Character> expectedTarget = Arrays.asList ('a','x','y','z');
+        new LevenshteinDistance<> (source, target, eq).editTarget (mapFunction);
+
+        assertArrayEquals (expectedTarget.toArray (), target.toArray ());
+    }
+
+    @Test public void testMappingWithElementsDroppedByMapping() throws Exception {
+        final APredicate2NoThrow<Character, Character> eq = new APredicate2NoThrow<Character, Character> () {
+            @Override public boolean apply (Character param1, Character param2) {
+                return param1.equals (param2);
+            }
+        };
+        final AFunction2NoThrow<Character, Character, AOption<Character>> mapFunction = new AFunction2NoThrow<Character, Character, AOption<Character>> () {
+            @Override public AOption<Character> apply (Character character1, Character character2) {
+                if (character1.equals ('x'))
+                    return AOption.none (); // drop 'x'
+                else
+                    return AOption.some (character1);
+            }
+        };
+        final Collection<Character> source = new ArrayList<> (Arrays.asList ('a','x', 'y', 'z', 'x'));
+        final List<Character> target = new LinkedList<>(Arrays.asList ('a', 'x', 'y'));
+        final List<Character> expectedTarget = Arrays.asList ('a','y','z');
         new LevenshteinDistance<> (source, target, eq).editTarget (mapFunction);
 
         assertArrayEquals (expectedTarget.toArray (), target.toArray ());

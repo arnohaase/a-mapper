@@ -87,7 +87,7 @@ public class LevenshteinBasedListMappingDefTest {
 
     @Test public void testMapSourceEmpty() throws Exception {
         final List<SourceParentWithId> source = new ArrayList<>();
-        List<TargetParentWithId> target = new ArrayList<>(Arrays.asList (
+        final List<TargetParentWithId> target = new ArrayList<>(Arrays.asList (
                 new TargetParentWithId (0, "elem0"),
                 new TargetParentWithId (1, "elem1")
         ));
@@ -101,7 +101,7 @@ public class LevenshteinBasedListMappingDefTest {
                 new SourceParentWithId (0, "elem0"),
                 new SourceParentWithId (1, "elem1")
         );
-        List<TargetParentWithId> target = new ArrayList<>();
+        final List<TargetParentWithId> target = new ArrayList<>();
         final List<TargetParentWithId> expectedResult = Arrays.asList (
                 new TargetParentWithId (0, "elem0"),
                 new TargetParentWithId (1, "elem1")
