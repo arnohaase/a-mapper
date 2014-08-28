@@ -193,6 +193,6 @@ public class AMethodPathBasedPropertyAccessor implements APropertyAccessor {
     }
 
     @Override public String toString () {
-        return "AMethodPathBasedPropertyAccessor{" + name + '}';
+        return "MtdPathProp{" + name + '}';
     }
 }

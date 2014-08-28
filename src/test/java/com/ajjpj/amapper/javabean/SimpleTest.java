@@ -92,6 +92,117 @@ public class SimpleTest {
         assertEquals ("first name", mapper.map (new ClassAWrapper (a), new ClassB()).getFirstName ());
     }
 
+    @SuppressWarnings ("unchecked")
+    @Test public void testMappingBuilderTypeCheck() throws Exception {
+        final JavaBeanMapping m = JavaBeanMapping.create(DiffSource.class, DiffTarget.class);
+
+        m.addMapping("oid", "oid");
+        m.addMapping("oid", Long.class, "oid", Long.class);
+        m.addMapping("oid", long.class, "oid", Long.class);
+        m.addMapping("oid", Long.class, "oid", long.class);
+
+        try {
+            m.addMapping("oid", String.class, "oid", long.class);
+        }
+        catch (IllegalArgumentException e) {} // expected
+        try {
+            m.addMapping("oid", String.class, "oid", Long.class);
+            fail ("exception expected");
+        }
+        catch (IllegalArgumentException e) {} // expected
+
+        try {
+            m.addMapping("oid", long.class, "oid", String.class);
+            fail ("exception expected");
+        }
+        catch (IllegalArgumentException e) {} // expected
+        try {
+            m.addMapping("oid", Long.class, "oid", String.class);
+            fail ("exception expected");
+        }
+        catch (IllegalArgumentException e) {} //expected
+
+        try {
+            m.addMapping("oid", String.class, "oid", String.class);
+            fail ("exception expected");
+        }
+        catch (IllegalArgumentException e) {} //expected
+    }
+
+    @SuppressWarnings ("unchecked")
+    @Test public void testMappingBuilderTypeCheckForTargetPath() throws Exception {
+        final JavaBeanMapping m = JavaBeanMapping.create(DiffSource.class, DiffTarget.class);
+
+        m.addMapping("oid", "targetChild.oid");
+        m.addMapping("oid", Long.class, "targetChild.oid", Long.class);
+        m.addMapping("oid", long.class, "targetChild.oid", Long.class);
+        m.addMapping("oid", Long.class, "targetChild.oid", long.class);
+
+        try {
+            m.addMapping("oid", String.class, "targetChild.oid", long.class);
+        }
+        catch (IllegalArgumentException e) {} // expected
+        try {
+            m.addMapping("oid", String.class, "targetChild.oid", Long.class);
+            fail ("exception expected");
+        }
+        catch (IllegalArgumentException e) {} // expected
+
+        try {
+            m.addMapping("oid", long.class, "targetChild.oid", String.class);
+            fail ("exception expected");
+        }
+        catch (IllegalArgumentException e) {} // expected
+        try {
+            m.addMapping("oid", Long.class, "targetChild.oid", String.class);
+            fail ("exception expected");
+        }
+        catch (IllegalArgumentException e) {} //expected
+
+        try {
+            m.addMapping("oid", String.class, "targetChild.oid", String.class);
+            fail ("exception expected");
+        }
+        catch (IllegalArgumentException e) {} //expected
+    }
+
+    @SuppressWarnings ("unchecked")
+    @Test public void testMappingBuilderTypeCheckForSourcePath() throws Exception {
+        final JavaBeanMapping m = JavaBeanMapping.create(DiffSource.class, DiffTarget.class);
+
+        m.addMapping("sourceChild.oid", "oid");
+        m.addMapping("sourceChild.oid", Long.class, "oid", Long.class);
+        m.addMapping("sourceChild.oid", long.class, "oid", Long.class);
+        m.addMapping("sourceChild.oid", Long.class, "oid", long.class);
+
+        try {
+            m.addMapping("sourceChild.oid", String.class, "oid", long.class);
+        }
+        catch (IllegalArgumentException e) {} // expected
+        try {
+            m.addMapping("sourceChild.oid", String.class, "oid", Long.class);
+            fail ("exception expected");
+        }
+        catch (IllegalArgumentException e) {} // expected
+
+        try {
+            m.addMapping("sourceChild.oid", long.class, "oid", String.class);
+            fail ("exception expected");
+        }
+        catch (IllegalArgumentException e) {} // expected
+        try {
+            m.addMapping("sourceChild.oid", Long.class, "oid", String.class);
+            fail ("exception expected");
+        }
+        catch (IllegalArgumentException e) {} //expected
+
+        try {
+            m.addMapping("sourceChild.oid", String.class, "oid", String.class);
+            fail ("exception expected");
+        }
+        catch (IllegalArgumentException e) {} //expected
+    }
+
     static class ClassAWrapper {
         final ClassA inner;
 

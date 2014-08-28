@@ -1,8 +1,10 @@
 package com.ajjpj.amapper.javabean.builder;
 
+import com.ajjpj.abase.collection.ACollectionHelper;
 import com.ajjpj.abase.collection.immutable.AOption;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
+import com.ajjpj.amapper.javabean.JavaBeanTypes;
 import com.ajjpj.amapper.javabean.builder.qualifier.AQualifierExtractor;
 import com.ajjpj.amapper.javabean.propbased.accessors.AMethodPathBasedPropertyAccessor;
 import com.ajjpj.amapper.javabean.propbased.accessors.AOgnlPropertyAccessor;
@@ -10,6 +12,7 @@ import com.ajjpj.amapper.javabean.propbased.accessors.APropertyAccessor;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,9 +30,17 @@ public class ABeanExpressionParser {
 
         try {
             switch(segments.length) {
-                case 1: return new JavaBeanSupport(new AIsDeferredStrategy.LiteralStrategy(isDeferred), qualifierExtractor).getBeanProperty(parentClass, expression).get();
+                case 1:
+                    final APropertyAccessor result = new JavaBeanSupport(new AIsDeferredStrategy.LiteralStrategy(isDeferred), qualifierExtractor).getBeanProperty(parentClass, expression).get();
+                    if (!JavaBeanTypes.normalized (tpe.cls).equals (JavaBeanTypes.normalized (result.getType ().cls))) {
+                        throw new IllegalArgumentException ("property " + expression + " of type " + parentClass.getName () + " has type " + result.getType().cls.getName () + " instead of specified type " + tpe.cls.getName());
+                    }
+                    return result;
                 default: return asPropCascade(parentClass, expression, segments, tpe, isDeferred);
             }
+        }
+        catch(IllegalArgumentException exc) {
+            throw exc;
         }
         catch(Exception exc) {
             return new AOgnlPropertyAccessor(expression, expression, parentClass, isDeferred, tpe, AQualifier.NO_QUALIFIER, AQualifier.NO_QUALIFIER);
@@ -91,6 +102,11 @@ public class ABeanExpressionParser {
         final Method finalSetter = optFinalSetter.isDefined() ? optFinalSetter.get().method : null;
         final AQualifier sourceQualifier = lastGetterDetails.qualifier;
         final AQualifier targetQualifier = optFinalSetter.isDefined() ? optFinalSetter.get().qualifier : AQualifier.NO_QUALIFIER;
+
+        if (! JavaBeanTypes.normalized (finalGetter.getReturnType ()).equals (JavaBeanTypes.normalized (tpe.cls))) {
+            final String path = ACollectionHelper.mkString (Arrays.asList (segments), ".");
+            throw new IllegalArgumentException ("property " + path + " of type " + parentClass.getName () + " has type " + finalGetter.getReturnType ().getName () + " instead of specified type " + tpe.cls.getName ());
+        }
 
         return new AMethodPathBasedPropertyAccessor(propName, steps, finalGetter, finalSetter, isFinalStepNullSafe, isDeferred, tpe, sourceQualifier, targetQualifier);
     }

@@ -84,13 +84,13 @@ public class DiffTest {
             mapper = JavaBeanMapperBuilder.create()
                     .withIdentifierExtractor(ie)
                     .withBeanMapping(JavaBeanMapping.create(DiffSource.class, DiffTarget.class)
-                            .addMapping("oid", String.class, "oid", Long.class)
-                            .addMapping("sourceName", String.class, "targetName", String.class)
-                            .addMapping("sourceChild", DiffSourceChild.class, "targetChild", DiffTargetChild.class)
+                            .addMapping("oid", "oid")
+                            .addMapping("sourceName", "targetName")
+                            .addMapping("sourceChild", "targetChild")
                     )
                     .withBeanMapping(JavaBeanMapping.create(DiffSourceChild.class, DiffTargetChild.class)
-                            .addMapping("oid", String.class, "oid", Long.class)
-                            .addMapping("sourceNum", Double.class, "targetNum", Integer.class)
+                            .addMapping("oid", "oid")
+                            .addMapping("sourceNum", "targetNum")
                     )
                     .build();
         } catch (Exception e) {
@@ -183,7 +183,7 @@ public class DiffTest {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withIdentifierExtractor(ie)
                 .withBeanMapping(JavaBeanMapping.create(DiffSource.class, DiffTarget.class)
-                        .addMapping("sourceChild.sourceNum", Double.class, "derivedTargetNum", Integer.class)
+                        .addMapping("sourceChild.sourceNum", "derivedTargetNum")
                 )
                 .build();
 
@@ -203,7 +203,7 @@ public class DiffTest {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create()
                 .withIdentifierExtractor(ie)
                 .withBeanMapping(JavaBeanMapping.create(DiffSource.class, DiffTarget.class)
-                        .addMapping("sourceChild.sourceNum", Double.class, "derivedTargetNum", Integer.class)
+                        .addMapping("sourceChild.sourceNum", "derivedTargetNum")
                 )
                 .build();
 
@@ -261,8 +261,8 @@ public class DiffTest {
                         .addMapping("sourceChildren", List.class, DiffSourceChild.class, "targetChildren", List.class, DiffTargetChild.class)
                 )
                 .withBeanMapping(JavaBeanMapping.create(DiffSourceChild.class, DiffTargetChild.class)
-                        .addMapping("oid", String.class, "oid", Long.class)
-                        .addMapping("sourceNum", Double.class, "targetNum", Integer.class)
+                        .addMapping("oid", "oid")
+                        .addMapping("sourceNum", "targetNum")
                 )
                 .build();
 
@@ -305,13 +305,13 @@ public class DiffTest {
                 .withIdentifierExtractor(ie)
                 .withObjectMapping(BuiltinCollectionMappingDefs.ListWithoutDuplicatesByIdentifierMapping)
                 .withBeanMapping(JavaBeanMapping.create(DiffSource.class, DiffTarget.class)
-                        .addMapping("sourceName", String.class, "targetName", String.class)
+                        .addMapping("sourceName", "targetName")
 //                        .addMapping("sourceChildren", List.class, DiffSourceChild.class, "targetChildren", List.class, DiffTargetChild.class)
                 )
                 .withBeanMapping(JavaBeanMapping.create(DiffSourceChild.class, DiffTargetChild.class)
-                        .addMapping("oid", String.class, "oid", Long.class)
-                        .addMapping("sourceNum", Double.class, "targetNum", Integer.class)
-                        .addMapping("sourceParent", DiffSource.class, "targetParent", DiffTarget.class)
+                        .addMapping("oid", "oid")
+                        .addMapping("sourceNum", "targetNum")
+                        .addMapping("sourceParent", "targetParent")
                 )
                 .build();
 
