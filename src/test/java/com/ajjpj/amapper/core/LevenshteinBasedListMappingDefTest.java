@@ -2,6 +2,7 @@ package com.ajjpj.amapper.core;
 
 import com.ajjpj.amapper.classes.SourceParentWithId;
 import com.ajjpj.amapper.classes.TargetParentWithId;
+import com.ajjpj.amapper.collection.LevenshteinBasedListMappingDef;
 import com.ajjpj.amapper.core.tpe.AQualifiedType;
 import com.ajjpj.amapper.javabean.JavaBeanMapper;
 import com.ajjpj.amapper.javabean.builder.JavaBeanMapperBuilder;
@@ -9,10 +10,7 @@ import com.ajjpj.amapper.javabean.builder.JavaBeanMapping;
 import com.ajjpj.amapper.javabean.mappingdef.BuiltinCollectionMappingDefs;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -144,4 +142,27 @@ public class LevenshteinBasedListMappingDefTest {
         assertArrayEquals (expectedResult.toArray(), mapResult.toArray());
     }
 
+    @Test public void testShotgun() throws Exception {
+        final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
+                .withObjectMapping (new LevenshteinBasedListMappingDef ())
+                .build ();
+
+        final Random random = new Random (12345);
+
+        final List<Integer> l1 = new ArrayList<> ();
+        for (int i=0; i<2000; i++) {
+            l1.add (random.nextInt (10));
+        }
+
+        final List<Integer> l2 = new ArrayList<> ();
+        for (int i=0; i<2000; i++) {
+            l2.add (random.nextInt (10));
+        }
+
+        final long start = System.currentTimeMillis ();
+        mapper.mapList (l1, Integer.class, l2, Integer.class);
+        System.out.println ((System.currentTimeMillis () - start) + "ms");
+
+        assertEquals (l1, l2);
+    }
 }
