@@ -31,25 +31,16 @@ public class LevenshteinDistance <S, T> {
     private final List<T> target;
     private final APredicate2NoThrow<S, T> equalsPredicate;
 
-    private List <List <MElement>> m = null;
+    final int[][] mCost;
+    final EditChoice[][] mChoice;
+
+    boolean costsCalculated = false;
 
     public enum EditChoice {
         noOp, // (diagonal)
         replace, // (diagonal)
         delete, // (up)
         insert // (left)
-    }
-
-    class MElement {
-        boolean eq;
-        int cost;
-        EditChoice choice;
-
-        MElement (boolean eq, int cost, EditChoice choice) {
-            this.eq = eq;
-            this.cost = cost;
-            this.choice = choice;
-        }
     }
 
     /**
@@ -62,6 +53,8 @@ public class LevenshteinDistance <S, T> {
         this.source = source;
         this.target = target;
         this.equalsPredicate = equalsPredicate;
+        mCost = new int [source.size()+1] [target.size()+1];
+        mChoice = new EditChoice [source.size()+1] [target.size()+1];
     }
 
     /**
@@ -76,50 +69,53 @@ public class LevenshteinDistance <S, T> {
     }
 
     private void calcEditDistanceMatrix() {
-        m = new ArrayList<> (source.size()+1);
-        m.add (new ArrayList<MElement> (target.size()+1));
-        m.get (0).add (new MElement (false, 0, EditChoice.noOp));
+        mCost[0][0] = 0;
+        mChoice[0][0] = EditChoice.noOp;
+
         for (int j=1; j <= target.size(); j++) {
-            m.get (0).add (new MElement(false, j, EditChoice.delete));
+            mCost[0][j] = j;
+            mChoice[0][j] = EditChoice.delete;
         }
         int i=1;
         for (S sElem: source) {
-            m.add (new ArrayList<MElement> (target.size()+1));
-            m.get (i).add (new MElement (false, i, EditChoice.insert));
+            mCost[i][0] = i;
+            mChoice[i][0] = EditChoice.insert;
             int j=1;
             for (T tElem: target) {
-                m.get (i).add (levMin (equalsPredicate.apply (sElem, tElem), i, j));
+                setLevMin (equalsPredicate.apply (sElem, tElem), i, j);
                 j++;
             }
             i++;
         }
+        costsCalculated = true;
     }
 
-    private MElement levMin (boolean eq, int i, int j) {
-        MElement result = null;
+    private void setLevMin (boolean eq, int i, int j) {
+        int cost = -1;
+        EditChoice choice = null;
 
         if (i>0 && j>0) {
-            result = new MElement (
-                    eq,
-                    m.get (i - 1).get (j-1).cost + (eq ? 0 : 1),
-                    eq ? EditChoice.noOp : EditChoice.replace
-            );
+            cost = mCost[i-1][j-1] + (eq ? 0 : 1);
+            choice = eq ? EditChoice.noOp : EditChoice.replace;
         }
 
         if (j>0) {
-            int delCost = m.get (i).get (j-1).cost + 1;
-            if (result==null || delCost < result.cost) {
-                result = new MElement (eq, delCost, EditChoice.delete);
+            int delCost = mCost[i][j-1] + 1;
+            if (choice==null || delCost < cost) {
+                cost = delCost;
+                choice = EditChoice.delete;
             }
         }
 
         if (i>0) {
-            int insCost = m.get (i-1).get (j).cost + 1;
-            if (result==null || insCost < result.cost) {
-                result = new MElement (eq, insCost, EditChoice.insert);
+            int insCost = mCost[i-1][j] + 1;
+            if (choice==null || insCost < cost) {
+                cost = insCost;
+                choice = EditChoice.insert;
             }
         }
-        return result;
+        mCost[i][j] = cost;
+        mChoice[i][j] = choice;
     }
 
 
@@ -127,14 +123,14 @@ public class LevenshteinDistance <S, T> {
      * @return one possible edit-path of minimal distance
      */
     public List<EditChoice> getEditPath() {
-        if (m==null) {
+        if (!costsCalculated) {
             calcEditDistanceMatrix();
         }
-        List<EditChoice> result = new ArrayList<>();
+        final List<EditChoice> result = new ArrayList<>();
         int i = source.size();
         int j = target.size();
         while (i > 0 || j > 0) {
-            final EditChoice c = m.get (i).get (j).choice;
+            final EditChoice c = mChoice[i][j];
             result.add (0, c);
             switch (c) {
                 case noOp:
@@ -157,7 +153,7 @@ public class LevenshteinDistance <S, T> {
     }
 
     private void edit (List<EditChoice> editPath, AFunction2NoThrow<S, T, AOption<T>> mapFunction) {
-        Iterator<S> sIter = source.iterator();
+        final Iterator<S> sIter = source.iterator();
         int j=0;
         for (EditChoice c: editPath) {
             switch (c) {
