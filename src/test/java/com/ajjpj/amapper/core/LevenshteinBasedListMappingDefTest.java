@@ -47,7 +47,7 @@ public class LevenshteinBasedListMappingDefTest {
                     )
                     .build ();
         } catch (Exception e) {
-            throw new RuntimeException ();
+            throw new RuntimeException (e);
         }
     }
 
@@ -57,7 +57,6 @@ public class LevenshteinBasedListMappingDefTest {
                 new TargetParentWithId (1, "elem1")
         );
         final List<TargetParentWithId> mapResult = mapper.mapList (null, SourceParentWithId.class, target, TargetParentWithId.class);
-
         assertNull (mapResult);
     }
 
@@ -141,6 +140,8 @@ public class LevenshteinBasedListMappingDefTest {
 
         assertArrayEquals (expectedResult.toArray(), mapResult.toArray());
     }
+
+    //TODO test diff
 
     @Test public void testShotgun() throws Exception {
         final JavaBeanMapper mapper = JavaBeanMapperBuilder.create ()
