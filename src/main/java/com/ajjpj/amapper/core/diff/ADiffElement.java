@@ -7,7 +7,22 @@ import com.ajjpj.amapper.core.path.APath;
  */
 public class ADiffElement {
     public enum Kind {
-        Attribute, RefChange, Add, Remove
+        /**
+         * Member attribute changed (to a value or null)
+         */
+        Attribute,
+        /**
+         * TO-ONE reference changed
+         */
+        RefChange,
+        /**
+         * TO-MANY reference element added
+         */
+        Add,
+        /**
+         * TO-MANY reference element removed
+         */
+        Remove
     }
 
     public final Kind kind;
