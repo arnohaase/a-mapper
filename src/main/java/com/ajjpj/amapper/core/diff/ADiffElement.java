@@ -27,6 +27,9 @@ public class ADiffElement {
 
     public final Kind kind;
 
+    /**
+     * path to diff element from the <em>target</em> perspective
+     */
     public final APath path;
 
     /**
@@ -60,6 +63,13 @@ public class ADiffElement {
         return new ADiffElement(Kind.Remove, path, isDerived, oldValue, null);
     }
 
+    /**
+     * @param kind kind of difference, see {@link com.ajjpj.amapper.core.diff.ADiffElement.Kind}
+     * @param path see {@link com.ajjpj.amapper.core.diff.ADiffElement#path}
+     * @param isDerived see {@link com.ajjpj.amapper.core.diff.ADiffElement#isDerived}
+     * @param oldValue see {@link com.ajjpj.amapper.core.diff.ADiffElement#oldValue}
+     * @param newValue see {@link com.ajjpj.amapper.core.diff.ADiffElement#newValue}
+     */
     private ADiffElement(Kind kind, APath path, boolean isDerived, Object oldValue, Object newValue) {
         this.kind = kind;
         this.path = path;
