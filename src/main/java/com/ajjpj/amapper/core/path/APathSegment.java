@@ -1,9 +1,12 @@
 package com.ajjpj.amapper.core.path;
 
+import java.io.Serializable;
+
+
 /**
  * @author arno
  */
-public abstract class APathSegment {
+public abstract class APathSegment implements Serializable {
     private final String name;
 
     public static ASimplePathSegment simple(String name) {
