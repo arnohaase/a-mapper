@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.javabean.builder;
 
-import com.ajjpj.abase.collection.immutable.AOption;
+import com.ajjpj.afoundation.collection.immutable.AOption;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.JavaBeanType;
 import com.ajjpj.amapper.javabean.JavaBeanTypes;

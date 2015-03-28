@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.core;
 
-import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.afoundation.collection.immutable.AMap;
 import com.ajjpj.amapper.classes.ClassRequiringContext;
 import com.ajjpj.amapper.classes.ClassWithContext;
 import com.ajjpj.amapper.classes.PriceClass;

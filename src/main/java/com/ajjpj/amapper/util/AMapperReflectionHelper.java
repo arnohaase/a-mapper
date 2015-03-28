@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.util;
 
-import com.ajjpj.abase.util.AUnchecker;
+import com.ajjpj.afoundation.util.AUnchecker;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.examples.valuemappingdef;
 
-import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.afoundation.collection.immutable.AMap;
 import com.ajjpj.amapper.core.AMapperDiffWorker;
 import com.ajjpj.amapper.core.AMapperWorker;
 import com.ajjpj.amapper.core.AValueMappingDef;

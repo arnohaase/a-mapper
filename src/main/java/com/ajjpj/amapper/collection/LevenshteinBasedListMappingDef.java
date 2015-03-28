@@ -1,11 +1,11 @@
 package com.ajjpj.amapper.collection;
 
-import com.ajjpj.abase.collection.AEquality;
-import com.ajjpj.abase.collection.immutable.AMap;
-import com.ajjpj.abase.collection.immutable.AOption;
-import com.ajjpj.abase.function.AFunction2NoThrow;
-import com.ajjpj.abase.function.APredicate2NoThrow;
-import com.ajjpj.abase.util.AObjectHolder;
+import com.ajjpj.afoundation.collection.AEquality;
+import com.ajjpj.afoundation.collection.immutable.AMap;
+import com.ajjpj.afoundation.collection.immutable.AOption;
+import com.ajjpj.afoundation.function.AFunction2NoThrow;
+import com.ajjpj.afoundation.function.APredicate2NoThrow;
+import com.ajjpj.afoundation.util.AObjectHolder;
 import com.ajjpj.amapper.core.AIdentifierExtractor;
 import com.ajjpj.amapper.core.AMapperDiffWorker;
 import com.ajjpj.amapper.core.AMapperWorker;

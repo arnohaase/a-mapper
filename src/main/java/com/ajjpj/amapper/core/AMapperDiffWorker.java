@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.core;
 
-import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.afoundation.collection.immutable.AMap;
 import com.ajjpj.amapper.core.exclog.AMapperLogger;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.tpe.AQualifiedSourceAndTargetType;

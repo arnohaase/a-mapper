@@ -1,7 +1,7 @@
 package com.ajjpj.amapper.javabean.impl;
 
-import com.ajjpj.abase.collection.immutable.AOption;
-import com.ajjpj.abase.function.AFunction0;
+import com.ajjpj.afoundation.collection.immutable.AOption;
+import com.ajjpj.afoundation.function.AFunction0;
 import com.ajjpj.amapper.AMapper;
 import com.ajjpj.amapper.core.*;
 import com.ajjpj.amapper.core.diff.ADiff;

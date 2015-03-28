@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.core;
 
-import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.afoundation.collection.immutable.AMap;
 import com.ajjpj.amapper.classes.ClassCyclicChild;
 import com.ajjpj.amapper.classes.ClassCyclicParent;
 import com.ajjpj.amapper.classes.duplicateidentity.*;

@@ -1,8 +1,8 @@
 package com.ajjpj.amapper.core;
 
-import com.ajjpj.abase.collection.immutable.AMap;
-import com.ajjpj.abase.collection.immutable.AOption;
-import com.ajjpj.abase.function.AFunction0;
+import com.ajjpj.afoundation.collection.immutable.AMap;
+import com.ajjpj.afoundation.collection.immutable.AOption;
+import com.ajjpj.afoundation.function.AFunction0;
 import com.ajjpj.amapper.AMapper;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;
 import com.ajjpj.amapper.core.exclog.AMapperLogger;

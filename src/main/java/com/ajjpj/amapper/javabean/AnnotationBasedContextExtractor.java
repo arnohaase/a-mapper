@@ -1,7 +1,7 @@
 package com.ajjpj.amapper.javabean;
 
-import com.ajjpj.abase.collection.immutable.AList;
-import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.afoundation.collection.immutable.AList;
+import com.ajjpj.afoundation.collection.immutable.AMap;
 import com.ajjpj.amapper.core.AContextExtractor;
 import com.ajjpj.amapper.core.tpe.AType;
 import com.ajjpj.amapper.javabean.annotation.AContextMarker;

@@ -1,9 +1,9 @@
 package com.ajjpj.amapper.javabean.propbased;
 
-import com.ajjpj.abase.collection.immutable.AMap;
-import com.ajjpj.abase.collection.immutable.AOption;
-import com.ajjpj.abase.function.AFunction0;
-import com.ajjpj.abase.function.AStatement1;
+import com.ajjpj.afoundation.collection.immutable.AMap;
+import com.ajjpj.afoundation.collection.immutable.AOption;
+import com.ajjpj.afoundation.function.AFunction0;
+import com.ajjpj.afoundation.function.AStatement1;
 import com.ajjpj.amapper.core.AMapperDiffWorker;
 import com.ajjpj.amapper.core.AMapperWorker;
 import com.ajjpj.amapper.core.AValueMappingDef;

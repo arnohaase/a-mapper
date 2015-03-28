@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.javabean.builder;
 
-import com.ajjpj.abase.function.AFunction0;
+import com.ajjpj.afoundation.function.AFunction0;
 import com.ajjpj.amapper.core.*;
 import com.ajjpj.amapper.core.exclog.AMapperExceptionHandler;
 import com.ajjpj.amapper.core.exclog.AMapperLogger;

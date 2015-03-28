@@ -1,10 +1,10 @@
 package com.ajjpj.amapper.core.impl;
 
-import com.ajjpj.abase.collection.immutable.AHashMap;
-import com.ajjpj.abase.collection.immutable.AMap;
-import com.ajjpj.abase.collection.immutable.AOption;
-import com.ajjpj.abase.function.AFunction0;
-import com.ajjpj.abase.function.AStatement0;
+import com.ajjpj.afoundation.collection.immutable.AHashMap;
+import com.ajjpj.afoundation.collection.immutable.AMap;
+import com.ajjpj.afoundation.collection.immutable.AOption;
+import com.ajjpj.afoundation.function.AFunction0;
+import com.ajjpj.afoundation.function.AStatement0;
 import com.ajjpj.amapper.AMapper;
 import com.ajjpj.amapper.core.*;
 import com.ajjpj.amapper.core.compile.AMappingDefCompiler;

@@ -1,9 +1,9 @@
 package com.ajjpj.amapper.core.tpe;
 
 
-import com.ajjpj.abase.collection.immutable.AHashMap;
-import com.ajjpj.abase.collection.immutable.AMap;
-import com.ajjpj.abase.collection.immutable.AOption;
+import com.ajjpj.afoundation.collection.immutable.AHashMap;
+import com.ajjpj.afoundation.collection.immutable.AMap;
+import com.ajjpj.afoundation.collection.immutable.AOption;
 
 /**
  * @author arno

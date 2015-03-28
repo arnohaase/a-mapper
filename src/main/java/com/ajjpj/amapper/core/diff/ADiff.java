@@ -1,9 +1,9 @@
 package com.ajjpj.amapper.core.diff;
 
-import com.ajjpj.abase.collection.immutable.*;
-import com.ajjpj.abase.function.AFunction1;
-import com.ajjpj.abase.function.AFunction1NoThrow;
-import com.ajjpj.abase.function.APredicate;
+import com.ajjpj.afoundation.collection.immutable.*;
+import com.ajjpj.afoundation.function.AFunction1;
+import com.ajjpj.afoundation.function.AFunction1NoThrow;
+import com.ajjpj.afoundation.function.APredicate;
 import com.ajjpj.amapper.core.path.APath;
 import com.ajjpj.amapper.core.path.APathSegment;
 

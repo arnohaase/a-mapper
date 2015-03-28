@@ -1,8 +1,8 @@
 package com.ajjpj.amapper.collection;
 
-import com.ajjpj.abase.collection.immutable.AOption;
-import com.ajjpj.abase.function.AFunction2NoThrow;
-import com.ajjpj.abase.function.APredicate2NoThrow;
+import com.ajjpj.afoundation.collection.immutable.AOption;
+import com.ajjpj.afoundation.function.AFunction2NoThrow;
+import com.ajjpj.afoundation.function.APredicate2NoThrow;
 
 import java.util.*;
 

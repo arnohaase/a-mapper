@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.javabean;
 
-import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.afoundation.collection.immutable.AMap;
 import com.ajjpj.amapper.classes.ClassA;
 import com.ajjpj.amapper.classes.ClassB;
 import com.ajjpj.amapper.core.AMapperDiffWorker;

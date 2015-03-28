@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.core.path;
 
-import com.ajjpj.abase.collection.immutable.AList;
+import com.ajjpj.afoundation.collection.immutable.AList;
 
 import java.io.Serializable;
 import java.util.Arrays;

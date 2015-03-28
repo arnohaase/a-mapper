@@ -1,7 +1,7 @@
 package com.ajjpj.amapper.javabean.builder.qualifier;
 
-import com.ajjpj.abase.collection.immutable.AHashMap;
-import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.afoundation.collection.immutable.AHashMap;
+import com.ajjpj.afoundation.collection.immutable.AMap;
 import com.ajjpj.amapper.core.tpe.AQualifier;
 import com.ajjpj.amapper.javabean.annotation.AQualifierAnnotation;
 import com.ajjpj.amapper.util.AMapperReflectionHelper;

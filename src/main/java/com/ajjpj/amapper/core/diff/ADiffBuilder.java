@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.core.diff;
 
-import com.ajjpj.abase.collection.immutable.AList;
+import com.ajjpj.afoundation.collection.immutable.AList;
 
 import java.util.ArrayList;
 import java.util.List;

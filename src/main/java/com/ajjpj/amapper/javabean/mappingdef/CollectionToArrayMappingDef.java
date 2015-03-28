@@ -1,7 +1,7 @@
 package com.ajjpj.amapper.javabean.mappingdef;
 
-import com.ajjpj.abase.collection.immutable.AMap;
-import com.ajjpj.abase.collection.immutable.AOption;
+import com.ajjpj.afoundation.collection.immutable.AMap;
+import com.ajjpj.afoundation.collection.immutable.AOption;
 import com.ajjpj.amapper.collection.ACollectionHelper;
 import com.ajjpj.amapper.core.AIdentifierExtractor;
 import com.ajjpj.amapper.core.AMapperDiffWorker;

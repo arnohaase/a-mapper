@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.javabean;
 
-import com.ajjpj.abase.collection.immutable.AOption;
+import com.ajjpj.afoundation.collection.immutable.AOption;
 import com.ajjpj.amapper.classes.ForTypeTests;
 import org.junit.Test;
 

@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.core;
 
-import com.ajjpj.abase.collection.immutable.AMap;
+import com.ajjpj.afoundation.collection.immutable.AMap;
 import com.ajjpj.amapper.classes.WithQualifiers;
 import com.ajjpj.amapper.classes.WithoutQualifiers;
 import com.ajjpj.amapper.core.diff.ADiffBuilder;

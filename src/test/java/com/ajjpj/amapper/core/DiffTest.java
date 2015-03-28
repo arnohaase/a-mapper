@@ -1,7 +1,7 @@
 package com.ajjpj.amapper.core;
 
-import com.ajjpj.abase.collection.immutable.AList;
-import com.ajjpj.abase.collection.immutable.AOption;
+import com.ajjpj.afoundation.collection.immutable.AList;
+import com.ajjpj.afoundation.collection.immutable.AOption;
 import com.ajjpj.amapper.classes.*;
 import com.ajjpj.amapper.core.diff.ADiff;
 import com.ajjpj.amapper.core.diff.ADiffElement;
@@ -351,14 +351,14 @@ public class DiffTest {
 
         final ADiff diff = mapper.diffList (Arrays.asList(s1, s2), new ArrayList<> (), DiffSource.class, DiffTarget.class);
 
-        final Collection<ADiffElement> targetChildren = diff.byPathString.getRequired ("elements.targetChildren.elements");
+        final Collection<ADiffElement> targetChildren = diff.byPathString.getRequired ("elements.targetChildren.elements").asJavaUtilCollection ();
         assertEquals (2, targetChildren.size ());
         for (ADiffElement diffEl: targetChildren) {
             assertEquals (ADiffElement.Kind.Remove, diffEl.kind);
             assertEquals (true, diffEl.isDerived);
         }
 
-        final Collection<ADiffElement> targetChildrenOids = diff.byPathString.getRequired ("elements.targetChildren.elements.oid");
+        final Collection<ADiffElement> targetChildrenOids = diff.byPathString.getRequired ("elements.targetChildren.elements.oid").asJavaUtilCollection ();
         assertEquals (2, targetChildrenOids.size ());
         for (ADiffElement diffEl: targetChildrenOids) {
             assertEquals (ADiffElement.Kind.Attribute, diffEl.kind);

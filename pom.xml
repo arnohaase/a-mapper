@@ -44,9 +44,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.ajjpj.a-base</groupId>
-            <artifactId>a-base</artifactId>
-            <version>1.0-pre11</version>
+            <groupId>com.ajjpj.a-foundation</groupId>
+            <artifactId>a-foundation</artifactId>
+            <version>1.0-pre13</version>
         </dependency>
 
         <dependency>

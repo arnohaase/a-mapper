@@ -1,6 +1,6 @@
 package com.ajjpj.amapper.javabean;
 
-import com.ajjpj.abase.collection.immutable.AOption;
+import com.ajjpj.afoundation.collection.immutable.AOption;
 import com.ajjpj.amapper.core.tpe.AType;
 
 import java.lang.reflect.ParameterizedType;

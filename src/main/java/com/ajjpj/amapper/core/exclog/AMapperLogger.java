@@ -1,7 +1,7 @@
 package com.ajjpj.amapper.core.exclog;
 
-import com.ajjpj.abase.function.AFunction0;
-import com.ajjpj.abase.function.AFunction0NoThrow;
+import com.ajjpj.afoundation.function.AFunction0;
+import com.ajjpj.afoundation.function.AFunction0NoThrow;
 import com.ajjpj.amapper.core.path.APath;
 import org.apache.log4j.Logger;
 
